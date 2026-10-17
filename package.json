@@ -1,0 +1,45 @@
+{
+  "name": "workaholics-storefront",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@12.13.0",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run --passWithNoTests",
+    "gate": "pnpm typecheck && pnpm lint && pnpm test && pnpm contract:check",
+    "contract:pull": "node scripts/contract.mjs pull",
+    "contract:types": "node scripts/contract.mjs types",
+    "contract:check": "node scripts/contract.mjs check",
+    "dev:mock": "node scripts/dev-mock.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/vazirmatn": "5.3.0",
+    "next": "16.4.1",
+    "next-intl": "4.14.9",
+    "openapi-fetch": "0.17.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "server-only": "0.0.1",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@stoplight/prism-cli": "5.16.0",
+    "@tailwindcss/postcss": "4.3.3",
+    "@types/node": "24.19.2",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "eslint": "10.12.0",
+    "eslint-config-next": "16.4.1",
+    "openapi-typescript": "7.13.0",
+    "tailwindcss": "4.3.3",
+    "typescript": "6.0.3",
+    "vitest": "5.0.4"
+  }
+}
