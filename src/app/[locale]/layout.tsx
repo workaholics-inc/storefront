@@ -1,11 +1,19 @@
 import type { Metadata } from "next";
+import localFont from "next/font/local";
 import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { ReactNode } from "react";
-import "@fontsource-variable/vazirmatn";
 import "../globals.css";
 import { routing } from "@/i18n/routing";
+
+const vazirmatn = localFont({
+  src: "../../../node_modules/vazirmatn/fonts/webfonts/Vazirmatn[wght].woff2",
+  weight: "100 900",
+  style: "normal",
+  display: "swap",
+  variable: "--font-vazirmatn",
+});
 
 type Props = {
   children: ReactNode;
@@ -36,7 +44,11 @@ export default async function LocaleLayout({ children, params }: Props) {
   setRequestLocale(locale);
 
   return (
-    <html lang={locale} dir={locale === "fa" ? "rtl" : "ltr"}>
+    <html
+      lang={locale}
+      dir={locale === "fa" ? "rtl" : "ltr"}
+      className={vazirmatn.variable}
+    >
       <body className="font-sans antialiased">
         <NextIntlClientProvider>{children}</NextIntlClientProvider>
       </body>

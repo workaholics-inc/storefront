@@ -191,9 +191,6 @@ importers:
 
   .:
     dependencies:
-      '@fontsource-variable/vazirmatn':
-        specifier: 5.3.0
-        version: 5.3.0
       next:
         specifier: 16.4.1
         version: 16.4.1(@babel/core@7.29.7(supports-color@10.2.2))(@types/node@24.19.2)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
@@ -212,6 +209,9 @@ importers:
       server-only:
         specifier: 0.0.1
         version: 0.0.1
+      vazirmatn:
+        specifier: 33.0.3
+        version: 33.0.3
       zod:
         specifier: 4.6.7
         version: 4.6.7
@@ -393,9 +393,6 @@ packages:
   '@faker-js/faker@5.5.3':
     resolution: {integrity: sha512-R11tGE6yIFwqpaIqcfkcg7AICXzFg14+5h5v0TfF/9+RMDL6jhzCy/pxHVOfbALGdtVYdt6JdR21tuxEgl34dw==}
     deprecated: Please update to a newer version.
-
-  '@fontsource-variable/vazirmatn@5.3.0':
-    resolution: {integrity: sha512-ZA68W8JHbMdNzzwjYHUWKB2PH22QpxNEnk0ukcXM+XiqYMV6ZWJZAKuNXcrMR2JjuIAwsfAU3KknCXPI6wXUvw==}
 
   '@formatjs/fast-memoize@3.1.7':
     resolution: {integrity: sha512-zXfhLpvA6T7+efdt9JLbBwZ00tT7NsBMDVnDu8rpHeNNv8KfRZAMo2gkG0k9lK/Nzc//3kJ9pImsfuJxk3KhUA==}
@@ -3317,6 +3314,9 @@ packages:
   validate.io-number@1.0.3:
     resolution: {integrity: sha512-kRAyotcbNaSYoDnXvb4MHg/0a1egJdLwS6oJ38TJY7aw9n93Fl/3blIXdyYvPOp55CNxywooG/3BcrwNrBpcSg==}
 
+  vazirmatn@33.0.3:
+    resolution: {integrity: sha512-fbjNc0CMjazZpIegWzz9OHGzI1APFboT+x7ZecXlUCtDe/nkyx7gtCTZnWS/+eeXG7fbfXymCPKJI8EsnM3iqw==}
+
   vite@8.3.4:
     resolution: {integrity: sha512-IftLE8phJhdNRIGNEV4JCCvfNScoZQVfcXaN8TQropWGJtOHcu+iAB9pHcuGvmEb/kddw0LBe/jS8ztdC6xdiQ==}
     engines: {node: ^20.19.0 || >=22.12.0}
@@ -3674,8 +3674,6 @@ snapshots:
   '@faker-js/faker@10.6.0': {}
 
   '@faker-js/faker@5.5.3': {}
-
-  '@fontsource-variable/vazirmatn@5.3.0': {}
 
   '@formatjs/fast-memoize@3.1.7': {}
 
@@ -6720,6 +6718,8 @@ snapshots:
       validate.io-number: 1.0.3
 
   validate.io-number@1.0.3: {}
+
+  vazirmatn@33.0.3: {}
 
   vite@8.3.4(@types/node@24.19.2)(jiti@2.7.0):
     dependencies:
