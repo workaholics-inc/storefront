@@ -1,5 +1,5 @@
 import { NextIntlClientProvider } from "next-intl";
-import { createElement } from "react";
+import { createElement, type ComponentProps, type ComponentType } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import en from "../messages/en.json";
@@ -8,10 +8,16 @@ import { PublicBadge } from "@/components/ui/public-badge";
 
 const messages = { fa, en };
 
+// NextIntlClientProvider types its children as a required prop; the lint rule
+// wants them as a createElement argument, so give the provider a children-free type.
+const Provider = NextIntlClientProvider as ComponentType<
+  Omit<ComponentProps<typeof NextIntlClientProvider>, "children">
+>;
+
 function render(locale: "fa" | "en", visibility: "public" | "members") {
   return renderToStaticMarkup(
     createElement(
-      NextIntlClientProvider,
+      Provider,
       { locale, messages: messages[locale] },
       createElement(PublicBadge, { visibility }),
     ),
