@@ -1,0 +1,33 @@
+name: dco
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  dco:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Check Signed-off-by on every commit
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          failed=""
+          for sha in $(git rev-list --no-merges "$BASE_SHA..$HEAD_SHA"); do
+            name=$(git log -1 --format=%an "$sha")
+            email=$(git log -1 --format=%ae "$sha")
+            if ! git log -1 --format=%B "$sha" | grep -qxF "Signed-off-by: $name <$email>"; then
+              failed="$failed $(git rev-parse --short "$sha")"
+            fi
+          done
+          if [ -n "$failed" ]; then
+            echo "Commits without a matching Signed-off-by:$failed"
+            exit 1
+          fi
+          echo "Every commit is signed off."
