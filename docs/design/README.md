@@ -10,7 +10,7 @@ The storefront's design spec, exported from the maintainers' design board on 202
 | [tokens.json](tokens.json) | Every token with a usage note, light and dark |
 | [components/](components/) | One README per component or page: what it needs from the API, its states, its rules. `components/bundle.css` is reference CSS for all of them: a spec, not a dependency |
 
-Logo files are added here once the vector trace of the logo is approved.
+Logo files are in [assets/logos/](assets/logos/README.md); the owner approved the vector trace on 2026-10-17.
 
 ---
 
@@ -32,7 +32,7 @@ Every Iranian student knows two sheets: the چرک‌نویس, where you work th
 ## Voice and content
 
 - Write plain, direct Persian, the way the manifesto is written. Short sentences. No exclamation marks, emoji or hype ("فوق‌العاده", "بی‌نظیر").
-- Address the member as **تو**, as equals do. Use the imperative for actions: «بازخورد بده», «پاسخ بده», «ورود». In English use "you" and sentence case.
+- Address the member as **شما**, the formal plural (owner's decision, 2026-10-17). Use the plural imperative for actions: «بازخورد بدهید», «پاسخ بدهید», «ورود». In English use "you" and sentence case.
 - Name things the way members say them. These terms are fixed:
 
 | fa | en | meaning |
@@ -52,7 +52,7 @@ Every Iranian student knows two sheets: the چرک‌نویس, where you work th
 | دعوت‌شده توسط | Invited by | The invitation tree on profiles |
 | ایده / در حال ساخت / منتشر شده | Idea / Building / Launched | Project stage |
 
-- Errors say what happened and what to do next, with no apology: «این کد دعوت معتبر نیست یا قبلاً استفاده شده. از کسی که دعوتت کرده کد تازه بخواه.»
+- Errors say what happened and what to do next, with no apology: «این کد دعوت معتبر نیست یا قبلاً استفاده شده. از کسی که دعوتتان کرده کد تازه بخواهید.»
 - Never write a sentence that ranks, compares or counts people: no "پرکارترین اعضا" (most active members), no "۱۲ بازخورد داده" (gave 12 pieces of feedback).
 
 ## Colour

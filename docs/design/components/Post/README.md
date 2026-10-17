@@ -10,4 +10,4 @@ A post on a project: work in progress («نصفه‌کاره») asks for feedbac
 - `bg-sheet`, `border border-rule`, `rounded-md`, padding `spacing-6`. The head row shows the kind with its icon (`file-pen-line` or `file-diff`), the author and the date.
 - «چه بازخوردی می‌خواهم» sits in a `bg-sunken` well. It is the most important part of a work-in-progress post; givers answer it.
 - The update's sections follow the platform's template in order. "One number" is a sentence the owner writes, set as body text. Never turn it into a big-number tile, a chart or a delta arrow.
-- The footer links to the feedback thread and offers «بازخورد بده» to members who are not owners. It never shows how many pieces of feedback there are.
+- The footer links to the feedback thread and offers «بازخورد بدهید» to members who are not owners. It never shows how many pieces of feedback there are.

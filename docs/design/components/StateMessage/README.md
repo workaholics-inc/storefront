@@ -4,7 +4,7 @@ What a page or section shows when there is nothing to show, something failed, th
 
 **Provide:** the kind (`empty`, `error`, `unreachable`, `members-only`), a title, one or two sentences, an optional action, and for errors the platform's error code.
 
-**States:** empty (dashed border, `inbox` or `message-square-text`, an action only when the viewer can fix it, such as «پروژه‌ی تازه»); error (`color-danger` border on `bg-danger-soft`, `circle-alert`, the code in `font-mono`, «دوباره امتحان کن»); platform unreachable (solid `color-rule-strong` border on `bg-sheet`, `cloud-off`, keeps whatever the person typed on the page); members-only (`lock`, «ورود»).
+**States:** empty (dashed border, `inbox` or `message-square-text`, an action only when the viewer can fix it, such as «پروژه‌ی تازه»); error (`color-danger` border on `bg-danger-soft`, `circle-alert`, the code in `font-mono`, «دوباره امتحان کنید»); platform unreachable (solid `color-rule-strong` border on `bg-sheet`, `cloud-off`, keeps whatever the person typed on the page); members-only (`lock`, «ورود»).
 
 **Rules**
 - Align to the inline start inside its section; never centre a whole page around an empty state.

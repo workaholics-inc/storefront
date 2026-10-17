@@ -4,7 +4,7 @@ One piece of feedback with everything that happened to it: the giver's text, its
 
 **Provide:** author, `created_at`, `body`, the post question it answers (optional), the derived state from the platform (`awaiting`, overdue days, or answered in N days), the current response (`status`, `reason`, `recheck_on`, responder, date), replies, and whether the viewer is an owner.
 
-**States:** awaiting (marker chip, dashed empty answer slot «هنوز پاسخی ثبت نشده.»); overdue (stronger marker chip with `clock-alert`, same slot); owner's view of either (an «پاسخ بده» button in the slot, which opens the ResponseControl in place); answered accepted, rejected or testing (answer thread with the tag, reason, responder and date); with the giver's reply under the answer; giver's view after an answer (a quiet «جواب بده» button).
+**States:** awaiting (marker chip, dashed empty answer slot «هنوز پاسخی ثبت نشده.»); overdue (stronger marker chip with `clock-alert`, same slot); owner's view of either (an «پاسخ بدهید» button in the slot, which opens the ResponseControl in place); answered accepted, rejected or testing (answer thread with the tag, reason, responder and date); with the giver's reply under the answer; giver's view after an answer (a quiet «جواب بدهید» button).
 
 **Rules**
 - The response-state chip sits at the inline end of the head row, opposite the byline.

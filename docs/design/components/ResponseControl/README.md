@@ -4,7 +4,7 @@ The owner's answer to one piece of feedback: choose accepted, rejected or testin
 
 **Provide:** the feedback id, the giver's first name (for the hint), today's date in both calendars for the quick picks, the submit handler, and the platform's error code on failure.
 
-**States:** nothing chosen (submit disabled), accepted or rejected chosen (reason field), testing chosen (reason plus the report-back date: a week, two weeks, a month, or another date with three selects), missing reason (error under the textarea: «دلیل را بنویس. پاسخ بدون دلیل ثبت نمی‌شود.»), posting (busy button), posted (a status notice «پاسخ ثبت شد. آرش خبردار می‌شود و می‌تواند جواب بدهد.» and the answer in its final form).
+**States:** nothing chosen (submit disabled), accepted or rejected chosen (reason field), testing chosen (reason plus the report-back date: a week, two weeks, a month, or another date with three selects), missing reason (error under the textarea: «دلیل را بنویسید. پاسخ بدون دلیل ثبت نمی‌شود.»), posting (busy button), posted (a status notice «پاسخ ثبت شد. آرش خبردار می‌شود و می‌تواند جواب بدهد.» and the answer in its final form).
 
 **Rules**
 - A `<fieldset>` with a legend; the three options are real radio inputs in a radiogroup, each with its icon, verb and a one-line meaning taken from the public rules.

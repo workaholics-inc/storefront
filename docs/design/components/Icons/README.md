@@ -7,7 +7,7 @@ The icon set: lucide-react 1.28.0, pinned, with one meaning per icon and a list 
 **Rules**
 - Use only the icons in this card, each for the meaning it lists. Adding an icon means adding it here first.
 - Never use thumbs, hearts, stars, sparkles, trophies, medals, crowns, flames, trend arrows, charts, vote arrows, rockets or any money icon.
-- The SVG files in Assets › Icons are copies of the same icons (ISC licence) for design tools; the storefront imports from the package.
+- The design board keeps SVG copies of these icons (ISC licence) for design tools; the storefront imports them from the package.
 
 ## The icons
 
