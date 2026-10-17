@@ -24,7 +24,7 @@ const FILLS: Record<ResponseChipProps["kind"], string> = {
   awaiting: "bg-marker text-marker-ink px-2",
   "has-unanswered": "bg-marker text-marker-ink px-2",
   overdue: "bg-marker-strong text-marker-strong-ink px-2",
-  answered: "text-ink-muted font-normal px-0",
+  answered: "text-ink-muted px-2",
   accepted: "bg-accepted-soft text-accepted px-2",
   rejected: "bg-rejected-soft text-rejected px-2",
   testing: "bg-testing-soft text-testing px-2",
