@@ -17,6 +17,31 @@ const SECTIONS: readonly HeaderSection[] = [
 
 const NO_MARKER = "list-none [&::-webkit-details-marker]:hidden";
 
+const MENU_ITEM = "rounded-sm p-3 text-ink no-underline";
+
+// One treatment for nav links wherever they render: the current page is ink,
+// weight 600 and underlined in the brand colour, the others are muted.
+function navLinkClasses(isCurrent: boolean, layout: string) {
+  return `${layout} border-b-2 no-underline hover:text-ink ${
+    isCurrent
+      ? "border-brand font-semibold text-ink"
+      : "border-transparent font-medium text-ink-muted"
+  }`;
+}
+
+function SignOutForm({ label, className }: { label: string; className: string }) {
+  return (
+    <form method="post" action="/sign-out">
+      <button
+        type="submit"
+        className={`w-full cursor-pointer bg-transparent text-start ${className}`}
+      >
+        {label}
+      </button>
+    </form>
+  );
+}
+
 export function SiteHeader({
   locale,
   current,
@@ -52,11 +77,10 @@ export function SiteHeader({
               key={section}
               href={`/${section}`}
               aria-current={section === current ? "page" : undefined}
-              className={`inline-flex items-center border-b-2 px-3 text-body no-underline hover:text-ink ${
-                section === current
-                  ? "border-brand font-semibold text-ink"
-                  : "border-transparent font-medium text-ink-muted"
-              }`}
+              className={navLinkClasses(
+                section === current,
+                "inline-flex items-center px-3 text-body",
+              )}
             >
               {t(section)}
             </Link>
@@ -83,18 +107,19 @@ export function SiteHeader({
                 <Icon name="chevron-down" size={16} />
               </summary>
               <div className="absolute end-0 top-full z-10 mt-2 flex w-48 flex-col rounded-md bg-sheet p-2 shadow-float">
-                <Link href="/me" className="rounded-sm p-3 text-ink no-underline hover:bg-sunken">
+                <Link href="/me" className={`${MENU_ITEM} hover:bg-sunken`}>
                   {t("myPage")}
                 </Link>
-                <Link href="/sign-out" className="rounded-sm p-3 text-ink no-underline hover:bg-sunken">
-                  {t("signOut")}
-                </Link>
+                <SignOutForm
+                  label={t("signOut")}
+                  className={`${MENU_ITEM} hover:bg-sunken`}
+                />
               </div>
             </details>
           ) : (
             <Link
               href="/sign-in"
-              className={`hidden md:inline-flex ${buttonClasses({ variant: "secondary", size: "sm" })}`}
+              className={buttonClasses({ variant: "secondary", size: "sm" })}
             >
               {t("signIn")}
             </Link>
@@ -113,31 +138,21 @@ export function SiteHeader({
                   key={section}
                   href={`/${section}`}
                   aria-current={section === current ? "page" : undefined}
-                  className={`rounded-sm p-3 no-underline ${
-                    section === current
-                      ? "bg-brand-soft font-semibold text-link"
-                      : "text-ink"
-                  }`}
+                  className={navLinkClasses(section === current, "rounded-sm p-3")}
                 >
                   {t(section)}
                 </Link>
               ))}
               <hr className="my-2 w-full border-0 border-t border-rule" />
-              {languageLink("rounded-sm p-3 text-ink no-underline")}
+              {languageLink(MENU_ITEM)}
               {member ? (
                 <>
-                  <Link href="/me" className="rounded-sm p-3 text-ink no-underline">
+                  <Link href="/me" className={MENU_ITEM}>
                     {t("myPage")}
                   </Link>
-                  <Link href="/sign-out" className="rounded-sm p-3 text-ink no-underline">
-                    {t("signOut")}
-                  </Link>
+                  <SignOutForm label={t("signOut")} className={MENU_ITEM} />
                 </>
-              ) : (
-                <Link href="/sign-in" className="rounded-sm p-3 text-ink no-underline">
-                  {t("signIn")}
-                </Link>
-              )}
+              ) : null}
             </div>
           </details>
         </div>
