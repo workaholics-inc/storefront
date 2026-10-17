@@ -1,6 +1,6 @@
 # AGENTS.md: workaholics-inc/storefront
 
-Public repo, Apache-2.0. The storefront is the Workaholics website. It renders what the platform API returns and holds no data, secrets or business rules of its own. Read [docs/architecture.md](docs/architecture.md) and [docs/rules.md](docs/rules.md) before changing anything.
+Public repo, Apache-2.0. The storefront is the Workaholics website. It renders what the platform API returns and holds no data, secrets or business rules of its own. Read [docs/architecture.md](docs/architecture.md) and [docs/rules.md](docs/rules.md) before changing anything, and [docs/design/](docs/design/README.md) before building any UI.
 
 ## This is not the Next.js you know
 
