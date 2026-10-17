@@ -5,6 +5,7 @@ import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { ReactNode } from "react";
 import "../globals.css";
+import { SiteHeader } from "@/components/site-header";
 import { routing } from "@/i18n/routing";
 
 const vazirmatn = localFont({
@@ -50,7 +51,12 @@ export default async function LocaleLayout({ children, params }: Props) {
       className={vazirmatn.variable}
     >
       <body className="font-sans antialiased">
-        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        <NextIntlClientProvider>
+          <SiteHeader locale={locale} />
+          <main className="mx-auto max-w-page px-4 py-8 md:py-12">
+            {children}
+          </main>
+        </NextIntlClientProvider>
       </body>
     </html>
   );
