@@ -33,7 +33,8 @@ describe("Button", () => {
     const html = render({ busy: true, busyLabel: "Posting…" });
 
     expect(html).toContain('aria-busy="true"');
-    expect(html).toContain("disabled");
+    expect(html).toMatch(/<button[^>]*\sdisabled=""/);
+    expect(render({})).not.toMatch(/<button[^>]*\sdisabled=""/);
     expect(html).toContain("<svg");
     expect(html).toContain("animate-spin");
     expect(html).toContain("Posting…");
