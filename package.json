@@ -16,7 +16,8 @@
     "gate": "pnpm typecheck && pnpm lint && pnpm test && pnpm contract:check",
     "contract:pull": "node scripts/contract.mjs pull",
     "contract:types": "node scripts/contract.mjs types",
-    "contract:check": "node scripts/contract.mjs check"
+    "contract:check": "node scripts/contract.mjs check",
+    "dev:mock": "node scripts/dev-mock.mjs"
   },
   "dependencies": {
     "@fontsource-variable/vazirmatn": "5.3.0",
@@ -29,6 +30,7 @@
     "zod": "4.6.7"
   },
   "devDependencies": {
+    "@stoplight/prism-cli": "5.16.0",
     "@tailwindcss/postcss": "4.3.3",
     "@types/node": "24.19.2",
     "@types/react": "19.3.0",
