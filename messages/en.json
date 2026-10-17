@@ -6,5 +6,12 @@
   "Home": {
     "title": "Workaholics",
     "tagline": "Build things. Share them. Help each other."
+  },
+  "Health": {
+    "title": "Platform status",
+    "ok": "The platform is up",
+    "version": "Version {version}",
+    "checkedAt": "Checked at {time}",
+    "unreachable": "The platform can't be reached. Try again later."
   }
 }
