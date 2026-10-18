@@ -27,6 +27,18 @@ Browser ──▶ storefront server (Next.js) ──▶ platform /v1 API
 - The platform authorizes everything. The storefront renders results and errors and never decides who may do what.
 - Errors arrive as `{ "error": { "code": "...", "message": "..." } }`; the storefront maps codes to translated messages.
 
+## Sign-in and sessions
+
+- Members sign in with Telegram's OpenID Connect login (authorization code with PKCE). No Telegram script runs on the site.
+  1. The sign-in page posts to `POST /auth/telegram`, which accepts posts only from the site's own origin. The route creates a random state and a PKCE verifier and keeps them, with the locale, the page to return to and any invite code, in the short-lived httpOnly cookie `wh_oidc` (path `/auth/telegram`, 10 minutes). Then it redirects to Telegram's authorization page.
+  2. Telegram sends the member back to `GET /auth/telegram/callback` with a one-time code. The route checks the state against the cookie and forwards the code, the verifier, the callback URL and the invite code to the platform. The platform exchanges the code with Telegram and verifies who signed in; the bot's client secret lives only there.
+  3. On success the route stores the platform's session token in `wh_session` and sends a newcomer to their profile editor, and everyone else to where they were going.
+- `wh_session` is httpOnly, SameSite=Lax and Secure (unless `SITE_URL` is `http://`), and lasts 30 days. The proxy refreshes it on every page load (`GET` only), and the platform slides its own expiry.
+- An expired session clears itself. A page redirects through `/auth/expired`; a form's server action deletes the cookie itself, because Next follows an action's redirect on the server and drops its cookies. Only the platform's `session_required` counts as expired; any other 401 is a configuration error.
+- Sign-out is a `POST` to `/sign-out`, accepted only from the site's own origin. It revokes the session on the platform and clears the cookie, even when the platform cannot be reached.
+- Every page except the home page and sign-in requires a session. After sign-in, the site returns only to same-site paths.
+- Server-only variables: `SITE_URL` (the site's public origin), `TELEGRAM_CLIENT_ID`, and optionally `TELEGRAM_AUTHORIZE_URL`. Mock mode runs a stand-in for Telegram's authorization page, so the whole flow works locally.
+
 ## Contract workflow
 
 1. The platform generates its contract and publishes a new version of the file.
@@ -48,7 +60,7 @@ API changes are requested through issues; contributors never edit the contract b
 
 ## Stack
 
-Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, next-intl, openapi-typescript and openapi-fetch, vitest, pnpm 12.
+Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, next-intl, openapi-typescript and openapi-fetch, vitest (at most 2 workers), pnpm 12.
 
 ## Privacy
 
