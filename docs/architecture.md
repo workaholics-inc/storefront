@@ -74,7 +74,7 @@ API changes are requested through issues; contributors never edit the contract b
 
 ## Stack
 
-Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, next-intl, openapi-typescript and openapi-fetch, vitest (at most 2 workers), pnpm 12.
+Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, next-intl, openapi-typescript and openapi-fetch, vitest (at most 2 workers and, on Linux, pinned to cores 0 and 1 by `vitest.config.ts`), pnpm 12.
 
 ## Privacy
 
