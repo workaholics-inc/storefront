@@ -1,10 +1,11 @@
 import "server-only";
 import { cookies, headers } from "next/headers";
 import createClient from "openapi-fetch";
+import { SESSION_COOKIE } from "../cookies";
 import { serverEnv } from "../env";
 import type { paths } from "./schema";
 
-export const SESSION_COOKIE = "wh_session";
+export { SESSION_COOKIE };
 
 export type PlatformClientOptions = {
   baseUrl: string;
