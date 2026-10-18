@@ -66,9 +66,10 @@ describe("SiteHeader", () => {
     const html = render("fa", { member: { displayName: "سارا مقدم" } });
     const text = visibleText(html);
 
-    for (const label of ["اعضا", "سارا مقدم", "صفحه‌ی من", "خروج"]) {
+    for (const label of ["سارا مقدم", "صفحه‌ی من", "خروج"]) {
       expect(text).toContain(label);
     }
+    expect(text).not.toContain("اعضا");
     expect(html).not.toContain('href="/sign-in"');
   });
 

@@ -13,6 +13,7 @@ export default defineConfig({
   test: {
     environment: "node",
     include: ["test/**/*.test.ts"],
+    maxWorkers: 2,
     server: { deps: { inline: ["next-intl"] } },
   },
 });

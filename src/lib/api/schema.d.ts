@@ -48,6 +48,645 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/auth/telegram": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["SignInRequest"];
+                };
+            };
+            responses: {
+                /** @description Signed in; a newcomer is created when the invite is valid */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SignInResponse"];
+                    };
+                };
+                /** @description 400: validation_failed */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 401: storefront_key_invalid, telegram_signature_invalid */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 403: invite_required, invite_invalid, invite_expired */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 429: rate_limited */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/auth/logout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description The current session was revoked */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 401: storefront_key_invalid, session_required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description The signed-in member */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Member"];
+                    };
+                };
+                /** @description 401: storefront_key_invalid, session_required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UpdateMeRequest"];
+                };
+            };
+            responses: {
+                /** @description The updated member */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Member"];
+                    };
+                };
+                /** @description 400: validation_failed */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 401: storefront_key_invalid, session_required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 409: handle_taken */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/v1/members/{handle}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    handle: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description A member's profile with the projects they own */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["MemberProfile"];
+                    };
+                };
+                /** @description 401: storefront_key_invalid, session_required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 404: not_found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/projects": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    cursor?: string;
+                    limit?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description One page of projects, newest first */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ProjectPage"];
+                    };
+                };
+                /** @description 400: validation_failed */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 401: storefront_key_invalid, session_required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CreateProjectRequest"];
+                };
+            };
+            responses: {
+                /** @description The project was created; the caller is its first owner */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Project"];
+                    };
+                };
+                /** @description 400: validation_failed */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 401: storefront_key_invalid, session_required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 409: slug_taken */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/projects/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    slug: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description The project */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Project"];
+                    };
+                };
+                /** @description 401: storefront_key_invalid, session_required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 404: not_found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    slug: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UpdateProjectRequest"];
+                };
+            };
+            responses: {
+                /** @description The updated project */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Project"];
+                    };
+                };
+                /** @description 400: validation_failed */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 401: storefront_key_invalid, session_required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 403: not_project_owner */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 404: not_found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/v1/projects/{slug}/owners": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    slug: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["AddOwnerRequest"];
+                };
+            };
+            responses: {
+                /** @description The project with its owners */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Project"];
+                    };
+                };
+                /** @description 400: validation_failed */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 401: storefront_key_invalid, session_required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 403: not_project_owner */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 404: not_found (project or member) */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/projects/{slug}/owners/{handle}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    slug: string;
+                    handle: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description The project with its remaining owners */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Project"];
+                    };
+                };
+                /** @description 401: storefront_key_invalid, session_required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 403: not_project_owner */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 404: not_found (project, member, or the member is not an owner) */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 409: last_owner */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -79,6 +718,238 @@ export interface components {
                 code: string;
                 message: string;
             };
+        };
+        /**
+         * @example {
+         *       "session": {
+         *         "token": "mock-session-token-not-a-secret-00000000000",
+         *         "expiresAt": "2026-11-19T10:00:00.000Z"
+         *       },
+         *       "member": {
+         *         "handle": "sara",
+         *         "displayName": "سارا رحیمی",
+         *         "bio": "",
+         *         "links": [],
+         *         "invitedBy": null,
+         *         "joinedAt": "2026-10-20T10:00:00.000Z"
+         *       },
+         *       "joined": true
+         *     }
+         */
+        SignInResponse: {
+            session: components["schemas"]["Session"];
+            member: components["schemas"]["Member"];
+            joined: boolean;
+        };
+        Session: {
+            token: string;
+            /** Format: date-time */
+            expiresAt: string;
+        };
+        /**
+         * @example {
+         *       "handle": "sara",
+         *       "displayName": "سارا رحیمی",
+         *       "bio": "برنامه‌نویس و سازندهٔ دفتر",
+         *       "links": [
+         *         {
+         *           "label": "Website",
+         *           "url": "https://example.com"
+         *         }
+         *       ],
+         *       "invitedBy": {
+         *         "handle": "reza",
+         *         "displayName": "رضا احمدی"
+         *       },
+         *       "joinedAt": "2026-10-20T10:00:00.000Z"
+         *     }
+         */
+        Member: {
+            handle: string;
+            displayName: string;
+            bio: string;
+            links: components["schemas"]["Link"][];
+            invitedBy: components["schemas"]["MemberRef"];
+            /** Format: date-time */
+            joinedAt: string;
+        };
+        /**
+         * @example {
+         *       "label": "Website",
+         *       "url": "https://example.com"
+         *     }
+         */
+        Link: {
+            label: string;
+            /** Format: uri */
+            url: string;
+        };
+        /**
+         * @example {
+         *       "handle": "sara",
+         *       "displayName": "سارا رحیمی"
+         *     }
+         */
+        MemberRef: {
+            handle: string;
+            displayName: string;
+        } | null;
+        /**
+         * @example {
+         *       "code": "4f8a1c2e9b7d",
+         *       "codeVerifier": "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk",
+         *       "redirectUri": "https://workaholics.example/auth/telegram/callback",
+         *       "inviteCode": "kP3xQ9vL2mTn8RzA"
+         *     }
+         */
+        SignInRequest: {
+            code: string;
+            codeVerifier: string;
+            /** Format: uri */
+            redirectUri: string;
+            inviteCode?: string;
+        };
+        UpdateMeRequest: {
+            handle?: string;
+            displayName?: string;
+            bio?: string;
+            links?: components["schemas"]["Link"][];
+        };
+        /**
+         * @example {
+         *       "handle": "sara",
+         *       "displayName": "سارا رحیمی",
+         *       "bio": "برنامه‌نویس و سازندهٔ دفتر",
+         *       "links": [
+         *         {
+         *           "label": "Website",
+         *           "url": "https://example.com"
+         *         }
+         *       ],
+         *       "invitedBy": {
+         *         "handle": "reza",
+         *         "displayName": "رضا احمدی"
+         *       },
+         *       "joinedAt": "2026-10-20T10:00:00.000Z",
+         *       "projects": [
+         *         {
+         *           "slug": "daftar",
+         *           "name": "دفتر",
+         *           "oneLiner": "دفترچهٔ کار برای تیم‌های کوچک",
+         *           "stage": "building",
+         *           "visibility": "members",
+         *           "links": [
+         *             {
+         *               "label": "Website",
+         *               "url": "https://example.com"
+         *             }
+         *           ],
+         *           "owners": [
+         *             {
+         *               "handle": "sara",
+         *               "displayName": "سارا رحیمی"
+         *             }
+         *           ],
+         *           "createdAt": "2026-10-20T10:00:00.000Z",
+         *           "updatedAt": "2026-10-20T10:00:00.000Z"
+         *         }
+         *       ]
+         *     }
+         */
+        MemberProfile: components["schemas"]["Member"] & {
+            projects: components["schemas"]["Project"][];
+        };
+        /**
+         * @example {
+         *       "slug": "daftar",
+         *       "name": "دفتر",
+         *       "oneLiner": "دفترچهٔ کار برای تیم‌های کوچک",
+         *       "stage": "building",
+         *       "visibility": "members",
+         *       "links": [
+         *         {
+         *           "label": "Website",
+         *           "url": "https://example.com"
+         *         }
+         *       ],
+         *       "owners": [
+         *         {
+         *           "handle": "sara",
+         *           "displayName": "سارا رحیمی"
+         *         }
+         *       ],
+         *       "createdAt": "2026-10-20T10:00:00.000Z",
+         *       "updatedAt": "2026-10-20T10:00:00.000Z"
+         *     }
+         */
+        Project: {
+            slug: string;
+            name: string;
+            oneLiner: string;
+            stage: components["schemas"]["ProjectStage"];
+            visibility: components["schemas"]["Visibility"];
+            links: components["schemas"]["Link"][];
+            owners: components["schemas"]["MemberRef"][];
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        /** @enum {string} */
+        ProjectStage: "idea" | "building" | "launched";
+        /** @enum {string} */
+        Visibility: "members" | "public";
+        /**
+         * @example {
+         *       "items": [
+         *         {
+         *           "slug": "daftar",
+         *           "name": "دفتر",
+         *           "oneLiner": "دفترچهٔ کار برای تیم‌های کوچک",
+         *           "stage": "building",
+         *           "visibility": "members",
+         *           "links": [
+         *             {
+         *               "label": "Website",
+         *               "url": "https://example.com"
+         *             }
+         *           ],
+         *           "owners": [
+         *             {
+         *               "handle": "sara",
+         *               "displayName": "سارا رحیمی"
+         *             }
+         *           ],
+         *           "createdAt": "2026-10-20T10:00:00.000Z",
+         *           "updatedAt": "2026-10-20T10:00:00.000Z"
+         *         }
+         *       ],
+         *       "nextCursor": null
+         *     }
+         */
+        ProjectPage: {
+            items: components["schemas"]["Project"][];
+            nextCursor: string | null;
+        };
+        CreateProjectRequest: {
+            slug: string;
+            name: string;
+            /** @default  */
+            oneLiner: string;
+            stage?: components["schemas"]["ProjectStage"];
+            visibility?: components["schemas"]["Visibility"];
+            /** @default [] */
+            links: components["schemas"]["Link"][];
+        };
+        UpdateProjectRequest: {
+            name?: string;
+            oneLiner?: string;
+            stage?: components["schemas"]["ProjectStage"];
+            visibility?: components["schemas"]["Visibility"];
+            links?: components["schemas"]["Link"][];
+        };
+        AddOwnerRequest: {
+            handle: string;
         };
     };
     responses: never;
