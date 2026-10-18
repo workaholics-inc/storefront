@@ -12,7 +12,10 @@ export type FieldError = {
     | "linkIncomplete"
     | "handleTaken"
     | "slugTaken"
-    | "memberNotFound";
+    | "memberNotFound"
+    | "chooseOne"
+    | "dateInvalid"
+    | "reasonRequired";
   max?: number;
   min?: number;
 };
