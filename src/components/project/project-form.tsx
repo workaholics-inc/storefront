@@ -85,6 +85,10 @@ export function ProjectForm({
         error={message(state.errors.oneLiner)}
       />
       <SelectField
+        // A select ignores a defaultValue that changes after its first render,
+        // and React resets the form after the action: remount it to keep the
+        // submitted choice.
+        key={`stage-${value("stage", project?.stage ?? "idea")}`}
         id="project-stage"
         name="stage"
         label={t("stage")}
@@ -98,6 +102,7 @@ export function ProjectForm({
         ))}
       </SelectField>
       <SelectField
+        key={`visibility-${value("visibility", project?.visibility ?? "members")}`}
         id="project-visibility"
         name="visibility"
         label={t("visibility")}
