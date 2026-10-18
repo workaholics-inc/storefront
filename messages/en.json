@@ -13,5 +13,40 @@
     "version": "Version {version}",
     "checkedAt": "Checked at {time}",
     "unreachable": "The platform can't be reached. Try again later."
+  },
+  "ResponseChip": {
+    "awaiting": "Awaiting response",
+    "overdue": "{days, plural, one {# day} other {# days}} overdue",
+    "answered": "Answered in {days, plural, one {# day} other {# days}}",
+    "answeredSameDay": "Answered the same day",
+    "accepted": "Accepted",
+    "rejected": "Rejected",
+    "testing": "Testing · results by {date}",
+    "hasUnanswered": "Has unanswered feedback"
+  },
+  "PublicBadge": {
+    "public": "Public",
+    "publicTitle": "Everyone can see this, not only members",
+    "members": "Members only"
+  },
+  "State": {
+    "retry": "Try again",
+    "signIn": "Sign in",
+    "unreachableTitle": "We can't reach the Workaholics platform right now",
+    "unreachableBody": "The site is up but data isn't coming through. Anything you typed stays on this page; send it again once the connection is back.",
+    "errorTitle": "This page didn't load",
+    "errorBody": "Something went wrong on our side. Try again in a few minutes; if it still fails, send us this code.",
+    "code": "Code: {code}"
+  },
+  "Nav": {
+    "projects": "Projects",
+    "members": "Members",
+    "rules": "Rules",
+    "manifesto": "Manifesto",
+    "signIn": "Sign in",
+    "menu": "Menu",
+    "myPage": "My page",
+    "signOut": "Sign out",
+    "otherLanguage": "فارسی"
   }
 }

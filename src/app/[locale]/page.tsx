@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { StateMessage } from "@/components/ui/state-message";
 import { getPlatformClient } from "@/lib/api/client";
 import { formatDateTime } from "@/lib/format";
 import { routing } from "@/i18n/routing";
@@ -33,25 +34,29 @@ export default async function HomePage({
   const health = await fetchHealth();
 
   return (
-    <main>
-      <h1>{t("title")}</h1>
-      <p>{t("tagline")}</p>
-      <section>
-        <h2>{tHealth("title")}</h2>
+    <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-2">
+        <h1 className="text-display text-ink">{t("title")}</h1>
+        <p className="text-lead text-ink-muted">{t("tagline")}</p>
+      </div>
+      <section className="flex flex-col gap-3">
+        <h2 className="text-title-3 text-ink">{tHealth("title")}</h2>
         {health ? (
-          <>
-            <p>{tHealth("ok")}</p>
-            <p>{tHealth("version", { version: health.version })}</p>
-            <p>
+          <div className="flex flex-col gap-1 rounded-md border border-rule bg-sheet p-4">
+            <p className="text-body-strong text-ink">{tHealth("ok")}</p>
+            <p className="text-small text-ink-muted">
+              {tHealth("version", { version: health.version })}
+            </p>
+            <p className="text-small text-ink-muted">
               {tHealth("checkedAt", {
                 time: formatDateTime(health.time, locale),
               })}
             </p>
-          </>
+          </div>
         ) : (
-          <p>{tHealth("unreachable")}</p>
+          <StateMessage kind="unreachable" />
         )}
       </section>
-    </main>
+    </div>
   );
 }

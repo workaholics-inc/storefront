@@ -191,9 +191,9 @@ importers:
 
   .:
     dependencies:
-      '@fontsource-variable/vazirmatn':
-        specifier: 5.3.0
-        version: 5.3.0
+      lucide-react:
+        specifier: 1.28.0
+        version: 1.28.0(react@19.3.1)
       next:
         specifier: 16.4.1
         version: 16.4.1(@babel/core@7.29.7(supports-color@10.2.2))(@types/node@24.19.2)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
@@ -212,6 +212,9 @@ importers:
       server-only:
         specifier: 0.0.1
         version: 0.0.1
+      vazirmatn:
+        specifier: 33.0.3
+        version: 33.0.3
       zod:
         specifier: 4.6.7
         version: 4.6.7
@@ -393,9 +396,6 @@ packages:
   '@faker-js/faker@5.5.3':
     resolution: {integrity: sha512-R11tGE6yIFwqpaIqcfkcg7AICXzFg14+5h5v0TfF/9+RMDL6jhzCy/pxHVOfbALGdtVYdt6JdR21tuxEgl34dw==}
     deprecated: Please update to a newer version.
-
-  '@fontsource-variable/vazirmatn@5.3.0':
-    resolution: {integrity: sha512-ZA68W8JHbMdNzzwjYHUWKB2PH22QpxNEnk0ukcXM+XiqYMV6ZWJZAKuNXcrMR2JjuIAwsfAU3KknCXPI6wXUvw==}
 
   '@formatjs/fast-memoize@3.1.7':
     resolution: {integrity: sha512-zXfhLpvA6T7+efdt9JLbBwZ00tT7NsBMDVnDu8rpHeNNv8KfRZAMo2gkG0k9lK/Nzc//3kJ9pImsfuJxk3KhUA==}
@@ -2590,6 +2590,11 @@ packages:
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
 
+  lucide-react@1.28.0:
+    resolution: {integrity: sha512-fARAFJULsGuDDydjp6+6blekG/sBIM29TerzLjc9bQUKAcEfrSc4ZQKb25KRz4OMKd87cZTb5dgq0w/T6KufVg==}
+    peerDependencies:
+      react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
   magic-string@0.30.21:
     resolution: {integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==}
 
@@ -3317,6 +3322,9 @@ packages:
   validate.io-number@1.0.3:
     resolution: {integrity: sha512-kRAyotcbNaSYoDnXvb4MHg/0a1egJdLwS6oJ38TJY7aw9n93Fl/3blIXdyYvPOp55CNxywooG/3BcrwNrBpcSg==}
 
+  vazirmatn@33.0.3:
+    resolution: {integrity: sha512-fbjNc0CMjazZpIegWzz9OHGzI1APFboT+x7ZecXlUCtDe/nkyx7gtCTZnWS/+eeXG7fbfXymCPKJI8EsnM3iqw==}
+
   vite@8.3.4:
     resolution: {integrity: sha512-IftLE8phJhdNRIGNEV4JCCvfNScoZQVfcXaN8TQropWGJtOHcu+iAB9pHcuGvmEb/kddw0LBe/jS8ztdC6xdiQ==}
     engines: {node: ^20.19.0 || >=22.12.0}
@@ -3674,8 +3682,6 @@ snapshots:
   '@faker-js/faker@10.6.0': {}
 
   '@faker-js/faker@5.5.3': {}
-
-  '@fontsource-variable/vazirmatn@5.3.0': {}
 
   '@formatjs/fast-memoize@3.1.7': {}
 
@@ -5884,6 +5890,10 @@ snapshots:
     dependencies:
       yallist: 3.1.1
 
+  lucide-react@1.28.0(react@19.3.1):
+    dependencies:
+      react: 19.3.1
+
   magic-string@0.30.21:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.6.0
@@ -6720,6 +6730,8 @@ snapshots:
       validate.io-number: 1.0.3
 
   validate.io-number@1.0.3: {}
+
+  vazirmatn@33.0.3: {}
 
   vite@8.3.4(@types/node@24.19.2)(jiti@2.7.0):
     dependencies:

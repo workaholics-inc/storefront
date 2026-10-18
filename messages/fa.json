@@ -13,5 +13,40 @@
     "version": "نسخه {version}",
     "checkedAt": "بررسی‌شده در {time}",
     "unreachable": "پلتفرم در دسترس نیست. بعداً دوباره امتحان کنید."
+  },
+  "ResponseChip": {
+    "awaiting": "در انتظار پاسخ",
+    "overdue": "{days, number} روز گذشته از مهلت",
+    "answered": "پاسخ در {days, number} روز",
+    "answeredSameDay": "پاسخ در همان روز",
+    "accepted": "پذیرفته",
+    "rejected": "نپذیرفته",
+    "testing": "در حال امتحان · نتیجه تا {date}",
+    "hasUnanswered": "بازخوردِ بی‌پاسخ دارد"
+  },
+  "PublicBadge": {
+    "public": "عمومی",
+    "publicTitle": "همه می‌توانند این را ببینند، نه فقط اعضا",
+    "members": "فقط اعضا"
+  },
+  "State": {
+    "retry": "دوباره امتحان کنید",
+    "signIn": "ورود",
+    "unreachableTitle": "فعلاً به سرور Workaholics دسترسی نداریم",
+    "unreachableBody": "سایت بالاست ولی اطلاعات از سرور نمی‌رسد. چیزی که نوشته‌اید در همین صفحه می‌ماند؛ وقتی اتصال برگشت، دوباره بفرستید.",
+    "errorTitle": "این صفحه باز نشد",
+    "errorBody": "چیزی سمت ما درست کار نکرد. چند دقیقه‌ی دیگر دوباره امتحان کنید؛ اگر باز هم نشد، این کد را برای ما بفرستید.",
+    "code": "کد: {code}"
+  },
+  "Nav": {
+    "projects": "پروژه‌ها",
+    "members": "اعضا",
+    "rules": "قواعد",
+    "manifesto": "مانیفست",
+    "signIn": "ورود",
+    "menu": "منو",
+    "myPage": "صفحه‌ی من",
+    "signOut": "خروج",
+    "otherLanguage": "English"
   }
 }
