@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { authEnv, serverEnv, siteUrl } from "@/lib/env";
+import { authEnv, serverEnv, siteUrl, telegramBotUsername } from "@/lib/env";
 
 const validKey = "k".repeat(32);
 
@@ -105,5 +105,38 @@ describe("authEnv", () => {
 
     expect(message).toContain(name);
     if (value) expect(message).not.toContain(value);
+  });
+});
+
+describe("telegramBotUsername", () => {
+  it.each([
+    ["unset", {}],
+    ["empty", { TELEGRAM_BOT_USERNAME: "" }],
+  ])("is null when it is %s", (_label, source) => {
+    expect(telegramBotUsername(source)).toBeNull();
+  });
+
+  it.each(["workaholics_bot", "a_bot", "Workaholics_Bot", "a".repeat(29) + "bot"])(
+    "keeps the valid username %s",
+    (username) => {
+      expect(telegramBotUsername({ TELEGRAM_BOT_USERNAME: username })).toBe(
+        username,
+      );
+    },
+  );
+
+  it.each([
+    ["has an @", "@workaholics_bot"],
+    ["is a single letter", "x"],
+    ["does not end in bot", "workaholics"],
+    ["starts with a digit", "1workaholics_bot"],
+    ["is 33 characters", "a".repeat(30) + "bot"],
+  ])("throws naming the key, not the value, when it %s", (_label, username) => {
+    const message = messageOf(() =>
+      telegramBotUsername({ TELEGRAM_BOT_USERNAME: username }),
+    );
+
+    expect(message).toContain("TELEGRAM_BOT_USERNAME");
+    expect(message).not.toContain(username);
   });
 });
