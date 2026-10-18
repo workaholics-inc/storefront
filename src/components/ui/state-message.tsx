@@ -42,12 +42,16 @@ export function StateMessage({
 }: StateMessageProps) {
   const t = useTranslations("State");
 
+  // The defaults describe a failure the caller has said nothing about: a
+  // caller's own title replaces them, and its body is the only body.
   const defaults =
-    kind === "unreachable"
-      ? { title: t("unreachableTitle"), body: t("unreachableBody") }
-      : kind === "error"
-        ? { title: t("errorTitle"), body: t("errorBody") }
-        : { title: undefined, body: undefined };
+    title !== undefined
+      ? { title: undefined, body: undefined }
+      : kind === "unreachable"
+        ? { title: t("unreachableTitle"), body: t("unreachableBody") }
+        : kind === "error"
+          ? { title: t("errorTitle"), body: t("errorBody") }
+          : { title: undefined, body: undefined };
   const shownTitle = title ?? defaults.title;
   const shownBody = body ?? defaults.body;
 
