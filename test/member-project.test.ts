@@ -68,6 +68,8 @@ const project: Project = {
   visibility: "members",
   links: [{ label: "Repo", url: "https://example.com/daftar" }],
   owners: [sara, kian],
+  lastPostAt: null,
+  hasUnansweredFeedback: false,
   createdAt: "2026-10-17T08:00:00Z",
   updatedAt: "2026-10-17T08:00:00Z",
 };
