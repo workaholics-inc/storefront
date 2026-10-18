@@ -8,9 +8,9 @@ import { buttonClasses } from "./ui/button";
 
 export type HeaderSection = "projects" | "members" | "rules" | "manifesto";
 
+// "members" is a HeaderSection but not listed: there is no member list to link to yet.
 const SECTIONS: readonly HeaderSection[] = [
   "projects",
-  "members",
   "rules",
   "manifesto",
 ];
@@ -53,7 +53,6 @@ export function SiteHeader({
 }) {
   const t = useTranslations("Nav");
   const otherLocale: Locale = locale === "fa" ? "en" : "fa";
-  const sections = SECTIONS.filter((s) => s !== "members" || member);
   const initial = member ? Array.from(member.displayName.trim())[0] : undefined;
 
   const languageLink = (className: string) => (
@@ -72,7 +71,7 @@ export function SiteHeader({
         </Link>
 
         <nav className="hidden min-w-0 flex-1 items-stretch gap-1 self-stretch md:flex">
-          {sections.map((section) => (
+          {SECTIONS.map((section) => (
             <Link
               key={section}
               href={`/${section}`}
@@ -133,7 +132,7 @@ export function SiteHeader({
               <Icon name="menu" />
             </summary>
             <div className="absolute end-0 top-full z-10 mt-2 flex w-64 flex-col rounded-md bg-sheet p-2 shadow-float">
-              {sections.map((section) => (
+              {SECTIONS.map((section) => (
                 <Link
                   key={section}
                   href={`/${section}`}
