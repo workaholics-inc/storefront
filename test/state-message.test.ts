@@ -27,6 +27,11 @@ function render(locale: "fa" | "en", props: StateMessageProps) {
   );
 }
 
+// What renderToStaticMarkup does to text: the message strings as they appear in markup.
+function escaped(text: string) {
+  return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/'/g, "&#x27;");
+}
+
 describe("StateMessage", () => {
   it("shows the default unreachable title in both locales", () => {
     expect(render("fa", { kind: "unreachable" })).toContain(
@@ -72,6 +77,56 @@ describe("StateMessage", () => {
         html.indexOf(bodies[locale]),
       );
       expect(html.indexOf(bodies[locale])).toBeGreaterThan(-1);
+    }
+  });
+
+  it("shows the default error title and body when given neither", () => {
+    for (const locale of ["fa", "en"] as const) {
+      const html = render(locale, { kind: "error" });
+
+      expect(html).toContain(escaped(messages[locale].State.errorTitle));
+      expect(html).toContain(escaped(messages[locale].State.errorBody));
+    }
+  });
+
+  it("shows the default unreachable body when given neither", () => {
+    for (const locale of ["fa", "en"] as const) {
+      const html = render(locale, { kind: "unreachable" });
+
+      expect(html).toContain(escaped(messages[locale].State.unreachableBody));
+    }
+  });
+
+  it("shows no generic body under an error's own title", () => {
+    for (const locale of ["fa", "en"] as const) {
+      const html = render(locale, { kind: "error", title: "Only owners can do this" });
+
+      expect(html).toContain("Only owners can do this");
+      expect(html).not.toContain(escaped(messages[locale].State.errorTitle));
+      expect(html).not.toContain(escaped(messages[locale].State.errorBody));
+    }
+  });
+
+  it("shows no default unreachable body under an unreachable message's own title", () => {
+    for (const locale of ["fa", "en"] as const) {
+      const html = render(locale, { kind: "unreachable", title: "Custom title" });
+
+      expect(html).toContain("Custom title");
+      expect(html).not.toContain(escaped(messages[locale].State.unreachableBody));
+    }
+  });
+
+  it("shows both a title and a body when the caller gives both", () => {
+    for (const locale of ["fa", "en"] as const) {
+      const html = render(locale, {
+        kind: "error",
+        title: "Own title",
+        body: "Own body",
+      });
+
+      expect(html).toContain("Own title");
+      expect(html).toContain("Own body");
+      expect(html).not.toContain(escaped(messages[locale].State.errorBody));
     }
   });
 });
