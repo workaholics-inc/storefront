@@ -7,6 +7,7 @@ import type { ReactNode } from "react";
 import "../globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { routing } from "@/i18n/routing";
+import { getCurrentMember } from "@/lib/session";
 
 const vazirmatn = localFont({
   src: "../../../node_modules/vazirmatn/fonts/webfonts/Vazirmatn[wght].woff2",
@@ -43,6 +44,7 @@ export default async function LocaleLayout({ children, params }: Props) {
     notFound();
   }
   setRequestLocale(locale);
+  const current = await getCurrentMember();
 
   return (
     <html
@@ -52,7 +54,14 @@ export default async function LocaleLayout({ children, params }: Props) {
     >
       <body className="font-sans antialiased">
         <NextIntlClientProvider>
-          <SiteHeader locale={locale} />
+          <SiteHeader
+            locale={locale}
+            member={
+              current.state === "member"
+                ? { displayName: current.member.displayName }
+                : undefined
+            }
+          />
           <main className="mx-auto max-w-page px-4 py-8 md:py-12">
             {children}
           </main>
