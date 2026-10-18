@@ -88,7 +88,7 @@ export interface paths {
                         "application/json": components["schemas"]["ErrorBody"];
                     };
                 };
-                /** @description 401: storefront_key_invalid, telegram_signature_invalid, telegram_auth_expired */
+                /** @description 401: storefront_key_invalid, telegram_signature_invalid */
                 401: {
                     headers: {
                         [name: string]: unknown;
@@ -794,31 +794,20 @@ export interface components {
             handle: string;
             displayName: string;
         } | null;
-        SignInRequest: {
-            telegram: components["schemas"]["TelegramLogin"];
-            inviteCode?: string;
-        };
         /**
          * @example {
-         *       "id": "123456789",
-         *       "first_name": "سارا",
-         *       "last_name": "رحیمی",
-         *       "username": "sara_dev",
-         *       "photo_url": "https://t.me/i/userpic/320/sara_dev.jpg",
-         *       "auth_date": "1792490400",
-         *       "hash": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+         *       "code": "4f8a1c2e9b7d",
+         *       "codeVerifier": "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk",
+         *       "redirectUri": "https://workaholics.example/auth/telegram/callback",
+         *       "inviteCode": "kP3xQ9vL2mTn8RzA"
          *     }
          */
-        TelegramLogin: {
-            id: string;
-            first_name: string;
-            last_name?: string;
-            username?: string;
-            photo_url?: string;
-            auth_date: string;
-            hash: string;
-        } & {
-            [key: string]: string;
+        SignInRequest: {
+            code: string;
+            codeVerifier: string;
+            /** Format: uri */
+            redirectUri: string;
+            inviteCode?: string;
         };
         UpdateMeRequest: {
             handle?: string;
