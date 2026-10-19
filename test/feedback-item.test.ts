@@ -218,7 +218,7 @@ describe("FeedbackItem: the answer", () => {
 
   it.each(locales)("tags a testing answer with its report-back date (%s)", (locale) => {
     expect(visibleText(render(locale, testing))).toContain(
-      locale === "fa" ? "نتیجه تا ۲۴ آبان" : "results by November 15",
+      locale === "fa" ? "نتیجه تا ۲۴ آبان" : "results by 15 Nov",
     );
   });
 

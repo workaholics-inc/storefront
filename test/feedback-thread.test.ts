@@ -315,7 +315,7 @@ describe("FeedbackSummary", () => {
 
     const testing = visibleText(summary("en", example(4), false));
     expect(testing).toContain("Answered in 2 days");
-    expect(testing).toContain("Testing · results by November 15");
+    expect(testing).toContain("Testing · results by 15 Nov");
   });
 
   it("shows both chips in Persian too", () => {

@@ -233,7 +233,7 @@ describe("Post: update", () => {
 
     expect(second).toContain(`<bdi>${testing?.excerpt}</bdi>`);
     expect(visibleText(second ?? "")).toContain(
-      locale === "fa" ? "نتیجه تا ۲۴ آبان" : "results by November 15",
+      locale === "fa" ? "نتیجه تا ۲۴ آبان" : "results by 15 Nov",
     );
   });
 

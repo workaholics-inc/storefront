@@ -1,4 +1,6 @@
-import { useFormatter, useTranslations } from "next-intl";
+import { hasLocale, useLocale, useTranslations } from "next-intl";
+import { routing } from "@/i18n/routing";
+import { formatDate } from "@/lib/format";
 import { Icon, type IconName } from "../ui/icon";
 
 export type ResponseChipProps =
@@ -32,7 +34,10 @@ const FILLS: Record<ResponseChipProps["kind"], string> = {
 
 export function ResponseChip(props: ResponseChipProps) {
   const t = useTranslations("ResponseChip");
-  const format = useFormatter();
+  const current = useLocale();
+  const locale = hasLocale(routing.locales, current)
+    ? current
+    : routing.defaultLocale;
 
   let text: string;
   switch (props.kind) {
@@ -58,13 +63,7 @@ export function ResponseChip(props: ResponseChipProps) {
       text = t("rejected");
       break;
     case "testing":
-      text = t("testing", {
-        date: format.dateTime(new Date(props.recheckOn), {
-          day: "numeric",
-          month: "long",
-          timeZone: "Asia/Tehran",
-        }),
-      });
+      text = t("testing", { date: formatDate(props.recheckOn, locale) });
       break;
   }
 
