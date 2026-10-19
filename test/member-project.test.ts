@@ -1,7 +1,7 @@
 import { NextIntlClientProvider } from "next-intl";
 import { createElement, type ComponentProps, type ComponentType, type ReactElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import en from "../messages/en.json";
 import fa from "../messages/fa.json";
 import { MemberHead } from "@/components/member/member-head";
@@ -195,6 +195,67 @@ describe("ProjectCard", () => {
         expect(visibleText(html)).toContain(messages[locale].Projects.stages[stage]);
       }
     }
+  });
+
+  describe("last post and unanswered feedback", () => {
+    // The date shows without its year only in the current year.
+    const dates = { fa: "۵ آبان", en: "27 Oct" } as const;
+    const posted: Project = { ...project, lastPostAt: "2026-10-27T10:00:00Z" };
+
+    const cardText = (locale: Locale, card: Project) =>
+      collapsed(render(locale, createElement(ProjectCard, { project: card, locale })));
+
+    beforeEach(() => {
+      vi.useFakeTimers({ toFake: ["Date"] });
+      vi.setSystemTime(new Date("2026-11-01T00:00:00Z"));
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it("shows the date of the last post when there is one", () => {
+      for (const locale of ["fa", "en"] as const) {
+        const text = cardText(locale, posted);
+        const line = messages[locale].Projects.lastPost.replace("{date}", dates[locale]);
+
+        expect(text).toContain(line);
+        expect(text).not.toContain(messages[locale].Projects.noPostsYet);
+      }
+    });
+
+    it("says there are no posts yet when there is no last post", () => {
+      for (const locale of ["fa", "en"] as const) {
+        const text = cardText(locale, project);
+        const lead = messages[locale].Projects.lastPost.replace("{date}", "").trim();
+
+        expect(lead).not.toBe("");
+        expect(text).toContain(messages[locale].Projects.noPostsYet);
+        expect(text).not.toContain(lead);
+      }
+    });
+
+    it("shows the unanswered chip only when the project has unanswered feedback", () => {
+      for (const locale of ["fa", "en"] as const) {
+        const label = messages[locale].ResponseChip.hasUnanswered;
+
+        expect(cardText(locale, { ...posted, hasUnansweredFeedback: true })).toContain(label);
+        expect(cardText(locale, { ...posted, hasUnansweredFeedback: false })).not.toContain(label);
+        expect(cardText(locale, { ...project, hasUnansweredFeedback: true })).toContain(label);
+      }
+    });
+
+    it("shows no digit apart from the date of the last post", () => {
+      for (const locale of ["fa", "en"] as const) {
+        const busy = { ...posted, hasUnansweredFeedback: true };
+        const withDate = cardText(locale, busy);
+        const withoutDate = cardText(locale, { ...busy, lastPostAt: null });
+
+        expect(withDate).toContain(dates[locale]);
+        expect(withDate.replace(dates[locale], "")).not.toMatch(/[0-9۰-۹٠-٩]/);
+        expect(withoutDate).not.toMatch(/[0-9۰-۹٠-٩]/);
+      }
+    });
   });
 });
 
