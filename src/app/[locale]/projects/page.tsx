@@ -101,7 +101,7 @@ export default async function ProjectsPage({
       <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
         <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
           <h1 className="m-0 text-title-1 text-ink">{t("title")}</h1>
-          <span className="text-small text-ink-muted">{t("newestFirst")}</span>
+          <span className="text-small text-ink-muted">{t("byLastPost")}</span>
         </div>
         {newProject}
       </div>
