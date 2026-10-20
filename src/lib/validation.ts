@@ -1,4 +1,5 @@
 import contract from "../../contract/openapi.json";
+import type { Locale } from "@/i18n/routing";
 import { normalizeDigits } from "./digits";
 import type { components } from "./api/schema";
 import {
@@ -6,6 +7,7 @@ import {
   type FieldError,
   type FormState,
 } from "./form-state";
+import { isoFromParts, recheckChoices } from "./recheck";
 
 export { initialFormState };
 export type { FieldError, FormState };
@@ -15,6 +17,11 @@ type Link = Schemas["Link"];
 type UpdateMeRequest = Schemas["UpdateMeRequest"];
 type CreateProjectRequest = Schemas["CreateProjectRequest"];
 type UpdateProjectRequest = Schemas["UpdateProjectRequest"];
+type CreatePostRequest = Schemas["CreatePostRequest"];
+type GiveFeedbackRequest = Schemas["GiveFeedbackRequest"];
+type EditFeedbackRequest = Schemas["EditFeedbackRequest"];
+type RespondRequest = Schemas["RespondRequest"];
+type ReplyRequest = Schemas["ReplyRequest"];
 
 function fromContract(...path: string[]): unknown {
   let node: unknown = contract.components.schemas;
@@ -63,6 +70,28 @@ export const LIMITS = {
   projectNameMax: limit("CreateProjectRequest", "properties", "name", "maxLength"),
   oneLinerMax: limit("CreateProjectRequest", "properties", "oneLiner", "maxLength"),
   inviteCodeMax: limit("SignInRequest", "properties", "inviteCode", "maxLength"),
+  postBodyMax: limit("CreateWipPostRequest", "properties", "body", "maxLength"),
+  questionsMax: limit("CreateWipPostRequest", "properties", "feedbackWanted", "maxItems"),
+  questionMax: limit(
+    "CreateWipPostRequest",
+    "properties",
+    "feedbackWanted",
+    "items",
+    "maxLength",
+  ),
+  selfCritiqueMax: limit("CreateWipPostRequest", "properties", "selfCritique", "maxLength"),
+  whatChangedMax: limit("CreateUpdatePostRequest", "properties", "whatChanged", "maxLength"),
+  actedOnMax: limit("CreateUpdatePostRequest", "properties", "actedOn", "maxItems"),
+  rejectedAndWhyMax: limit(
+    "CreateUpdatePostRequest",
+    "properties",
+    "rejectedAndWhy",
+    "maxLength",
+  ),
+  oneNumberMax: limit("CreateUpdatePostRequest", "properties", "oneNumber", "maxLength"),
+  feedbackBodyMax: limit("GiveFeedbackRequest", "properties", "body", "maxLength"),
+  reasonMax: limit("RespondRequest", "properties", "reason", "maxLength"),
+  replyBodyMax: limit("ReplyRequest", "properties", "body", "maxLength"),
 } as const;
 
 export type ValidationResult<T> =
@@ -79,10 +108,14 @@ function text(form: FormData, name: string): string {
   return typeof value === "string" ? value.trim() : "";
 }
 
+// A name that repeats (a group of checkboxes) keeps every value, joined by ",".
 function submittedValues(form: FormData): Record<string, string> {
   const values: Record<string, string> = {};
   for (const [name, value] of form.entries()) {
-    if (typeof value === "string") values[name] = value;
+    if (typeof value !== "string") continue;
+    values[name] = Object.hasOwn(values, name)
+      ? `${values[name]},${value}`
+      : value;
   }
 
   return values;
@@ -245,4 +278,200 @@ export function readInviteCode(value: unknown): string | undefined | null {
   if (code === "") return undefined;
 
   return code.length > LIMITS.inviteCodeMax ? null : code;
+}
+
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+// The same body serves creating a post and editing it.
+export function validatePost(
+  form: FormData,
+  kind: "wip" | "update",
+): ValidationResult<CreatePostRequest> {
+  const errors: Errors = {};
+  const body = text(form, "body");
+
+  if (kind === "wip") {
+    checkLength(errors, "body", body, LIMITS.postBodyMax, true);
+
+    const feedbackWanted: string[] = [];
+    for (let i = 0; i < LIMITS.questionsMax; i++) {
+      const question = text(form, `question${i}`);
+      if (question === "") continue;
+      if (question.length > LIMITS.questionMax) {
+        errors[`question${i}`] = { key: "tooLong", max: LIMITS.questionMax };
+      }
+      feedbackWanted.push(question);
+    }
+    if (feedbackWanted.length === 0) errors.question0 = { key: "required" };
+
+    const selfCritique = text(form, "selfCritique");
+    checkLength(errors, "selfCritique", selfCritique, LIMITS.selfCritiqueMax, false);
+
+    if (Object.keys(errors).length > 0) return failure(form, errors);
+
+    return {
+      ok: true,
+      body: {
+        kind,
+        body,
+        feedbackWanted,
+        ...(selfCritique === "" ? {} : { selfCritique }),
+      },
+    };
+  }
+
+  checkLength(errors, "body", body, LIMITS.postBodyMax, false);
+  const whatChanged = text(form, "whatChanged");
+  checkLength(errors, "whatChanged", whatChanged, LIMITS.whatChangedMax, true);
+  const oneNumber = text(form, "oneNumber");
+  checkLength(errors, "oneNumber", oneNumber, LIMITS.oneNumberMax, true);
+  const rejectedAndWhy = text(form, "rejectedAndWhy");
+  checkLength(errors, "rejectedAndWhy", rejectedAndWhy, LIMITS.rejectedAndWhyMax, false);
+
+  const actedOn = [
+    ...new Set(
+      form
+        .getAll("actedOn")
+        .filter((value): value is string => typeof value === "string")
+        .map((value) => value.trim())
+        .filter((value) => UUID.test(value)),
+    ),
+  ].slice(0, LIMITS.actedOnMax);
+
+  if (Object.keys(errors).length > 0) return failure(form, errors);
+
+  return {
+    ok: true,
+    body: {
+      kind,
+      body,
+      whatChanged,
+      actedOn,
+      oneNumber,
+      ...(rejectedAndWhy === "" ? {} : { rejectedAndWhy }),
+    },
+  };
+}
+
+export function validateFeedback(
+  form: FormData,
+  mode: "give",
+): ValidationResult<GiveFeedbackRequest>;
+export function validateFeedback(
+  form: FormData,
+  mode: "edit",
+): ValidationResult<EditFeedbackRequest>;
+export function validateFeedback(
+  form: FormData,
+  mode: "give" | "edit",
+): ValidationResult<GiveFeedbackRequest> | ValidationResult<EditFeedbackRequest> {
+  const errors: Errors = {};
+
+  const body = text(form, "body");
+  checkLength(errors, "body", body, LIMITS.feedbackBodyMax, true);
+
+  // "" means a general piece of feedback; the question numbers are 0-4.
+  const picked = text(form, "questionIndex");
+  let questionIndex: number | null = null;
+  if (picked !== "") {
+    if (/^[0-4]$/.test(picked)) questionIndex = Number(picked);
+    else errors.questionIndex = { key: "chooseOne" };
+  }
+
+  if (Object.keys(errors).length > 0) return failure(form, errors);
+
+  return mode === "give"
+    ? {
+        ok: true,
+        body: { body, ...(questionIndex === null ? {} : { questionIndex }) },
+      }
+    : { ok: true, body: { body, questionIndex } };
+}
+
+const RESPONSE_STATUSES = ["accepted", "rejected", "testing"] as const;
+
+// A day that exists: 2026-11-45 is not a date, and neither is 2027-02-30.
+function isRealDate(iso: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return false;
+  const date = new Date(`${iso}T12:00:00Z`);
+
+  return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === iso;
+}
+
+// The date a "testing" answer reports back on: a quick pick carries its own
+// date, "other" is read from three selects in the member's calendar.
+function recheckDate(
+  form: FormData,
+  now: Date,
+  locale: Locale,
+): { ok: true; iso: string } | { ok: false; error: FieldError } {
+  const pick = text(form, "recheckPick");
+  const { min, max } = recheckChoices(now, locale);
+
+  if (pick === "") return { ok: false, error: { key: "chooseOne" } };
+  if (pick === "other") {
+    const iso = isoFromParts(
+      {
+        year: Number(normalizeDigits(text(form, "recheckYear"))),
+        month: Number(normalizeDigits(text(form, "recheckMonth"))),
+        day: Number(normalizeDigits(text(form, "recheckDay"))),
+      },
+      now,
+      locale,
+    );
+
+    return iso === null
+      ? { ok: false, error: { key: "dateInvalid" } }
+      : { ok: true, iso };
+  }
+  if (isRealDate(pick) && pick >= min && pick <= max) {
+    return { ok: true, iso: pick };
+  }
+
+  return { ok: false, error: { key: "dateInvalid" } };
+}
+
+export function validateResponse(
+  form: FormData,
+  now: Date,
+  locale: Locale,
+): ValidationResult<RespondRequest> {
+  const errors: Errors = {};
+
+  const picked = text(form, "status");
+  const status = RESPONSE_STATUSES.find((item) => item === picked);
+  if (status === undefined) errors.status = { key: "chooseOne" };
+
+  const reason = text(form, "reason");
+  if (reason === "") errors.reason = { key: "reasonRequired" };
+  else if (reason.length > LIMITS.reasonMax) {
+    errors.reason = { key: "tooLong", max: LIMITS.reasonMax };
+  }
+
+  let recheckOn: string | undefined;
+  if (status === "testing") {
+    const date = recheckDate(form, now, locale);
+    if (date.ok) recheckOn = date.iso;
+    else errors.recheckOn = date.error;
+  }
+
+  if (status === undefined || Object.keys(errors).length > 0) {
+    return failure(form, errors);
+  }
+
+  return {
+    ok: true,
+    body: { status, reason, ...(recheckOn === undefined ? {} : { recheckOn }) },
+  };
+}
+
+export function validateReply(form: FormData): ValidationResult<ReplyRequest> {
+  const errors: Errors = {};
+
+  const body = text(form, "body");
+  checkLength(errors, "body", body, LIMITS.replyBodyMax, true);
+
+  if (Object.keys(errors).length > 0) return failure(form, errors);
+
+  return { ok: true, body: { body } };
 }

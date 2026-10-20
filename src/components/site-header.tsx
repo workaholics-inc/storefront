@@ -109,6 +109,12 @@ export function SiteHeader({
                 <Link href="/me" className={`${MENU_ITEM} hover:bg-sunken`}>
                   {t("myPage")}
                 </Link>
+                <Link href="/me/awaiting" className={`${MENU_ITEM} hover:bg-sunken`}>
+                  {t("awaiting")}
+                </Link>
+                <Link href="/me/notifications" className={`${MENU_ITEM} hover:bg-sunken`}>
+                  {t("notifications")}
+                </Link>
                 <SignOutForm
                   label={t("signOut")}
                   className={`${MENU_ITEM} hover:bg-sunken`}
@@ -148,6 +154,12 @@ export function SiteHeader({
                 <>
                   <Link href="/me" className={MENU_ITEM}>
                     {t("myPage")}
+                  </Link>
+                  <Link href="/me/awaiting" className={MENU_ITEM}>
+                    {t("awaiting")}
+                  </Link>
+                  <Link href="/me/notifications" className={MENU_ITEM}>
+                    {t("notifications")}
                   </Link>
                   <SignOutForm label={t("signOut")} className={MENU_ITEM} />
                 </>

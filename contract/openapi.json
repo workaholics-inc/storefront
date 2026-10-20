@@ -261,6 +261,41 @@
           "inviteCode": "kP3xQ9vL2mTn8RzA"
         }
       },
+      "Me": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Member"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "telegramDmEnabled": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "telegramDmEnabled"
+            ]
+          }
+        ],
+        "example": {
+          "handle": "sara",
+          "displayName": "سارا رحیمی",
+          "bio": "برنامه‌نویس و سازندهٔ دفتر",
+          "links": [
+            {
+              "label": "Website",
+              "url": "https://example.com"
+            }
+          ],
+          "invitedBy": {
+            "handle": "reza",
+            "displayName": "رضا احمدی"
+          },
+          "joinedAt": "2026-10-20T10:00:00.000Z",
+          "telegramDmEnabled": false
+        }
+      },
       "UpdateMeRequest": {
         "type": "object",
         "properties": {
@@ -340,6 +375,8 @@
                   "displayName": "سارا رحیمی"
                 }
               ],
+              "lastPostAt": "2026-10-27T10:00:00.000Z",
+              "hasUnansweredFeedback": true,
               "createdAt": "2026-10-20T10:00:00.000Z",
               "updatedAt": "2026-10-20T10:00:00.000Z"
             }
@@ -378,6 +415,16 @@
             },
             "minItems": 1
           },
+          "lastPostAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "hasUnansweredFeedback": {
+            "type": "boolean"
+          },
           "createdAt": {
             "type": "string",
             "format": "date-time"
@@ -395,6 +442,8 @@
           "visibility",
           "links",
           "owners",
+          "lastPostAt",
+          "hasUnansweredFeedback",
           "createdAt",
           "updatedAt"
         ],
@@ -416,6 +465,8 @@
               "displayName": "سارا رحیمی"
             }
           ],
+          "lastPostAt": "2026-10-27T10:00:00.000Z",
+          "hasUnansweredFeedback": true,
           "createdAt": "2026-10-20T10:00:00.000Z",
           "updatedAt": "2026-10-20T10:00:00.000Z"
         }
@@ -475,8 +526,28 @@
                   "displayName": "سارا رحیمی"
                 }
               ],
+              "lastPostAt": "2026-10-27T10:00:00.000Z",
+              "hasUnansweredFeedback": true,
               "createdAt": "2026-10-20T10:00:00.000Z",
               "updatedAt": "2026-10-20T10:00:00.000Z"
+            },
+            {
+              "slug": "sabzi",
+              "name": "سبزی",
+              "oneLiner": "فهرست خرید مشترک برای همخانه‌ها",
+              "stage": "idea",
+              "visibility": "members",
+              "links": [],
+              "owners": [
+                {
+                  "handle": "arash",
+                  "displayName": "آرش کاظمی"
+                }
+              ],
+              "lastPostAt": null,
+              "hasUnansweredFeedback": false,
+              "createdAt": "2026-10-12T08:00:00.000Z",
+              "updatedAt": "2026-10-12T08:00:00.000Z"
             }
           ],
           "nextCursor": null
@@ -558,6 +629,1625 @@
         },
         "required": [
           "handle"
+        ]
+      },
+      "Post": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "project": {
+            "$ref": "#/components/schemas/ProjectRef"
+          },
+          "author": {
+            "$ref": "#/components/schemas/MemberRef"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/PostKind"
+          },
+          "body": {
+            "type": "string"
+          },
+          "feedbackWanted": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "selfCritique": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "whatChanged": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "actedOn": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ActedOnItem"
+            }
+          },
+          "rejectedAndWhy": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "oneNumber": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "hasUnansweredFeedback": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "editedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "editableUntil": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "project",
+          "author",
+          "kind",
+          "body",
+          "feedbackWanted",
+          "selfCritique",
+          "whatChanged",
+          "actedOn",
+          "rejectedAndWhy",
+          "oneNumber",
+          "hasUnansweredFeedback",
+          "createdAt",
+          "editedAt",
+          "editableUntil"
+        ],
+        "example": {
+          "id": "0199f1a2-7c3e-7a10-8000-000000000101",
+          "project": {
+            "slug": "daftar",
+            "name": "دفتر",
+            "owners": [
+              {
+                "handle": "sara",
+                "displayName": "سارا رحیمی"
+              }
+            ]
+          },
+          "author": {
+            "handle": "sara",
+            "displayName": "سارا رحیمی"
+          },
+          "kind": "wip",
+          "body": "نسخهٔ اول صفحهٔ شروع دفتر آماده شد. هنوز تصویر نهایی ندارد، ولی جریان کار از ورود تا اولین یادداشت کامل است.",
+          "feedbackWanted": [
+            "آیا توضیح قیمت‌گذاری روشن است؟",
+            "کدام بخش صفحهٔ اول زیادی طولانی است؟",
+            "اگر کسی این را ببیند، اول چه کاری می‌کند؟"
+          ],
+          "selfCritique": "فکر می‌کنم متن قیمت‌گذاری بیش از اندازه طولانی شده و مخاطب را گم می‌کند.",
+          "whatChanged": null,
+          "actedOn": [],
+          "rejectedAndWhy": null,
+          "oneNumber": null,
+          "hasUnansweredFeedback": true,
+          "createdAt": "2026-10-15T09:00:00.000Z",
+          "editedAt": null,
+          "editableUntil": null
+        }
+      },
+      "ProjectRef": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "owners": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MemberRef"
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "slug",
+          "name",
+          "owners"
+        ],
+        "example": {
+          "slug": "daftar",
+          "name": "دفتر",
+          "owners": [
+            {
+              "handle": "sara",
+              "displayName": "سارا رحیمی"
+            }
+          ]
+        }
+      },
+      "PostKind": {
+        "type": "string",
+        "enum": [
+          "wip",
+          "update"
+        ]
+      },
+      "ActedOnItem": {
+        "type": "object",
+        "properties": {
+          "feedbackId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "author": {
+            "$ref": "#/components/schemas/MemberRef"
+          },
+          "excerpt": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ResponseStatus"
+          },
+          "recheckOn": {
+            "$ref": "#/components/schemas/DateOnly"
+          }
+        },
+        "required": [
+          "feedbackId",
+          "author",
+          "excerpt",
+          "status",
+          "recheckOn"
+        ],
+        "example": {
+          "feedbackId": "0199f1a2-7c3e-7a10-8000-000000000203",
+          "author": {
+            "handle": "arash",
+            "displayName": "آرش کاظمی"
+          },
+          "excerpt": "دکمهٔ شروع زیر تصویر گم می‌شود؛ بالاتر ببرش.",
+          "status": "accepted",
+          "recheckOn": null
+        }
+      },
+      "ResponseStatus": {
+        "type": "string",
+        "enum": [
+          "accepted",
+          "rejected",
+          "testing"
+        ]
+      },
+      "DateOnly": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "format": "date",
+        "example": "2026-10-27"
+      },
+      "CreatePostRequest": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/CreateWipPostRequest"
+          },
+          {
+            "$ref": "#/components/schemas/CreateUpdatePostRequest"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "kind",
+          "mapping": {
+            "wip": "#/components/schemas/CreateWipPostRequest",
+            "update": "#/components/schemas/CreateUpdatePostRequest"
+          }
+        }
+      },
+      "CreateWipPostRequest": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "wip"
+            ]
+          },
+          "body": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 5000
+          },
+          "feedbackWanted": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 280
+            },
+            "minItems": 1,
+            "maxItems": 5
+          },
+          "selfCritique": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 1000
+          }
+        },
+        "required": [
+          "kind",
+          "body",
+          "feedbackWanted"
+        ]
+      },
+      "CreateUpdatePostRequest": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "update"
+            ]
+          },
+          "body": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 5000,
+            "default": ""
+          },
+          "whatChanged": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 3000
+          },
+          "actedOn": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "maxItems": 20,
+            "default": []
+          },
+          "rejectedAndWhy": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 2000
+          },
+          "oneNumber": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "kind",
+          "whatChanged",
+          "oneNumber"
+        ]
+      },
+      "PostPage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Post"
+            }
+          },
+          "nextCursor": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor"
+        ],
+        "example": {
+          "items": [
+            {
+              "id": "0199f1a2-7c3e-7a10-8000-000000000102",
+              "project": {
+                "slug": "daftar",
+                "name": "دفتر",
+                "owners": [
+                  {
+                    "handle": "sara",
+                    "displayName": "سارا رحیمی"
+                  }
+                ]
+              },
+              "author": {
+                "handle": "sara",
+                "displayName": "سارا رحیمی"
+              },
+              "kind": "update",
+              "body": "",
+              "feedbackWanted": [],
+              "selfCritique": null,
+              "whatChanged": "دکمهٔ شروع را بالای تصویر بردم و ورود با تلگرام را روی چند نفر دیگر امتحان می‌کنم.",
+              "actedOn": [
+                {
+                  "feedbackId": "0199f1a2-7c3e-7a10-8000-000000000203",
+                  "author": {
+                    "handle": "arash",
+                    "displayName": "آرش کاظمی"
+                  },
+                  "excerpt": "دکمهٔ شروع زیر تصویر گم می‌شود؛ بالاتر ببرش.",
+                  "status": "accepted",
+                  "recheckOn": null
+                },
+                {
+                  "feedbackId": "0199f1a2-7c3e-7a10-8000-000000000205",
+                  "author": {
+                    "handle": "arash",
+                    "displayName": "آرش کاظمی"
+                  },
+                  "excerpt": "ورود با تلگرام را امتحان کردم و دو بار از من کد خواست.",
+                  "status": "testing",
+                  "recheckOn": "2026-11-15"
+                }
+              ],
+              "rejectedAndWhy": "صفحهٔ اول را کوتاه نکردم؛ چند نفر از اولین کاربران همین مثال‌ها را خواستند.",
+              "oneNumber": "از بیست نفری که صفحه را دیدند، دوازده نفر تا اولین یادداشت رفتند.",
+              "hasUnansweredFeedback": false,
+              "createdAt": "2026-10-27T10:00:00.000Z",
+              "editedAt": null,
+              "editableUntil": null
+            },
+            {
+              "id": "0199f1a2-7c3e-7a10-8000-000000000101",
+              "project": {
+                "slug": "daftar",
+                "name": "دفتر",
+                "owners": [
+                  {
+                    "handle": "sara",
+                    "displayName": "سارا رحیمی"
+                  }
+                ]
+              },
+              "author": {
+                "handle": "sara",
+                "displayName": "سارا رحیمی"
+              },
+              "kind": "wip",
+              "body": "نسخهٔ اول صفحهٔ شروع دفتر آماده شد. هنوز تصویر نهایی ندارد، ولی جریان کار از ورود تا اولین یادداشت کامل است.",
+              "feedbackWanted": [
+                "آیا توضیح قیمت‌گذاری روشن است؟",
+                "کدام بخش صفحهٔ اول زیادی طولانی است؟",
+                "اگر کسی این را ببیند، اول چه کاری می‌کند؟"
+              ],
+              "selfCritique": "فکر می‌کنم متن قیمت‌گذاری بیش از اندازه طولانی شده و مخاطب را گم می‌کند.",
+              "whatChanged": null,
+              "actedOn": [],
+              "rejectedAndWhy": null,
+              "oneNumber": null,
+              "hasUnansweredFeedback": true,
+              "createdAt": "2026-10-15T09:00:00.000Z",
+              "editedAt": null,
+              "editableUntil": null
+            }
+          ],
+          "nextCursor": null
+        }
+      },
+      "PostThread": {
+        "type": "object",
+        "properties": {
+          "post": {
+            "$ref": "#/components/schemas/Post"
+          },
+          "feedback": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FeedbackItem"
+            }
+          }
+        },
+        "required": [
+          "post",
+          "feedback"
+        ],
+        "example": {
+          "post": {
+            "id": "0199f1a2-7c3e-7a10-8000-000000000101",
+            "project": {
+              "slug": "daftar",
+              "name": "دفتر",
+              "owners": [
+                {
+                  "handle": "sara",
+                  "displayName": "سارا رحیمی"
+                }
+              ]
+            },
+            "author": {
+              "handle": "sara",
+              "displayName": "سارا رحیمی"
+            },
+            "kind": "wip",
+            "body": "نسخهٔ اول صفحهٔ شروع دفتر آماده شد. هنوز تصویر نهایی ندارد، ولی جریان کار از ورود تا اولین یادداشت کامل است.",
+            "feedbackWanted": [
+              "آیا توضیح قیمت‌گذاری روشن است؟",
+              "کدام بخش صفحهٔ اول زیادی طولانی است؟",
+              "اگر کسی این را ببیند، اول چه کاری می‌کند؟"
+            ],
+            "selfCritique": "فکر می‌کنم متن قیمت‌گذاری بیش از اندازه طولانی شده و مخاطب را گم می‌کند.",
+            "whatChanged": null,
+            "actedOn": [],
+            "rejectedAndWhy": null,
+            "oneNumber": null,
+            "hasUnansweredFeedback": true,
+            "createdAt": "2026-10-15T09:00:00.000Z",
+            "editedAt": null,
+            "editableUntil": null
+          },
+          "feedback": [
+            {
+              "id": "0199f1a2-7c3e-7a10-8000-000000000202",
+              "post": {
+                "id": "0199f1a2-7c3e-7a10-8000-000000000101",
+                "kind": "wip"
+              },
+              "project": {
+                "slug": "daftar",
+                "name": "دفتر",
+                "owners": [
+                  {
+                    "handle": "sara",
+                    "displayName": "سارا رحیمی"
+                  }
+                ]
+              },
+              "author": {
+                "handle": "niloufar",
+                "displayName": "نیلوفر صادقی"
+              },
+              "body": "بخش قیمت‌گذاری سه پاراگراف است و هنوز نمی‌دانم ماهانه چقدر می‌شود.",
+              "questionIndex": 0,
+              "question": "آیا توضیح قیمت‌گذاری روشن است؟",
+              "createdAt": "2026-10-16T10:00:00.000Z",
+              "editedAt": null,
+              "editableUntil": null,
+              "responseState": {
+                "state": "awaiting",
+                "ageDays": 12,
+                "overdue": true,
+                "overdueDays": 5,
+                "answeredInDays": null
+              },
+              "response": null,
+              "replies": []
+            },
+            {
+              "id": "0199f1a2-7c3e-7a10-8000-000000000201",
+              "post": {
+                "id": "0199f1a2-7c3e-7a10-8000-000000000101",
+                "kind": "wip"
+              },
+              "project": {
+                "slug": "daftar",
+                "name": "دفتر",
+                "owners": [
+                  {
+                    "handle": "sara",
+                    "displayName": "سارا رحیمی"
+                  }
+                ]
+              },
+              "author": {
+                "handle": "arash",
+                "displayName": "آرش کاظمی"
+              },
+              "body": "اول صفحه را که دیدم نفهمیدم دفتر دقیقاً برای چه کسی است؛ یک جمله دربارهٔ مخاطب کم است.",
+              "questionIndex": 2,
+              "question": "اگر کسی این را ببیند، اول چه کاری می‌کند؟",
+              "createdAt": "2026-10-26T10:00:00.000Z",
+              "editedAt": null,
+              "editableUntil": null,
+              "responseState": {
+                "state": "awaiting",
+                "ageDays": 2,
+                "overdue": false,
+                "overdueDays": 0,
+                "answeredInDays": null
+              },
+              "response": null,
+              "replies": []
+            },
+            {
+              "id": "0199f1a2-7c3e-7a10-8000-000000000203",
+              "post": {
+                "id": "0199f1a2-7c3e-7a10-8000-000000000101",
+                "kind": "wip"
+              },
+              "project": {
+                "slug": "daftar",
+                "name": "دفتر",
+                "owners": [
+                  {
+                    "handle": "sara",
+                    "displayName": "سارا رحیمی"
+                  }
+                ]
+              },
+              "author": {
+                "handle": "arash",
+                "displayName": "آرش کاظمی"
+              },
+              "body": "دکمهٔ شروع زیر تصویر گم می‌شود؛ بالاتر ببرش.",
+              "questionIndex": null,
+              "question": null,
+              "createdAt": "2026-10-20T09:00:00.000Z",
+              "editedAt": null,
+              "editableUntil": null,
+              "responseState": {
+                "state": "answered",
+                "ageDays": 8,
+                "overdue": false,
+                "overdueDays": 0,
+                "answeredInDays": 0
+              },
+              "response": {
+                "id": "0199f1a2-7c3e-7a10-8000-000000000301",
+                "status": "accepted",
+                "reason": "درست است؛ دکمه را بالای تصویر گذاشتم.",
+                "recheckOn": null,
+                "responder": {
+                  "handle": "sara",
+                  "displayName": "سارا رحیمی"
+                },
+                "createdAt": "2026-10-20T15:00:00.000Z",
+                "editedAt": null,
+                "editableUntil": null
+              },
+              "replies": []
+            },
+            {
+              "id": "0199f1a2-7c3e-7a10-8000-000000000204",
+              "post": {
+                "id": "0199f1a2-7c3e-7a10-8000-000000000101",
+                "kind": "wip"
+              },
+              "project": {
+                "slug": "daftar",
+                "name": "دفتر",
+                "owners": [
+                  {
+                    "handle": "sara",
+                    "displayName": "سارا رحیمی"
+                  }
+                ]
+              },
+              "author": {
+                "handle": "niloufar",
+                "displayName": "نیلوفر صادقی"
+              },
+              "body": "فکر می‌کنم صفحهٔ اول باید کوتاه‌تر شود و فقط یک مثال داشته باشد.",
+              "questionIndex": 1,
+              "question": "کدام بخش صفحهٔ اول زیادی طولانی است؟",
+              "createdAt": "2026-10-21T09:00:00.000Z",
+              "editedAt": null,
+              "editableUntil": null,
+              "responseState": {
+                "state": "answered",
+                "ageDays": 7,
+                "overdue": false,
+                "overdueDays": 0,
+                "answeredInDays": 2
+              },
+              "response": {
+                "id": "0199f1a2-7c3e-7a10-8000-000000000302",
+                "status": "rejected",
+                "reason": "چند نفر از اولین کاربران همین مثال‌ها را خواستند؛ فعلاً می‌مانند.",
+                "recheckOn": null,
+                "responder": {
+                  "handle": "sara",
+                  "displayName": "سارا رحیمی"
+                },
+                "createdAt": "2026-10-23T09:00:00.000Z",
+                "editedAt": null,
+                "editableUntil": null
+              },
+              "replies": [
+                {
+                  "id": "0199f1a2-7c3e-7a10-8000-000000000401",
+                  "author": {
+                    "handle": "niloufar",
+                    "displayName": "نیلوفر صادقی"
+                  },
+                  "body": "ممنونم که توضیح دادی؛ دلیلت برایم روشن است.",
+                  "createdAt": "2026-10-23T12:00:00.000Z",
+                  "editedAt": null,
+                  "editableUntil": null
+                }
+              ]
+            },
+            {
+              "id": "0199f1a2-7c3e-7a10-8000-000000000205",
+              "post": {
+                "id": "0199f1a2-7c3e-7a10-8000-000000000101",
+                "kind": "wip"
+              },
+              "project": {
+                "slug": "daftar",
+                "name": "دفتر",
+                "owners": [
+                  {
+                    "handle": "sara",
+                    "displayName": "سارا رحیمی"
+                  }
+                ]
+              },
+              "author": {
+                "handle": "arash",
+                "displayName": "آرش کاظمی"
+              },
+              "body": "ورود با تلگرام را امتحان کردم و دو بار از من کد خواست.",
+              "questionIndex": null,
+              "question": null,
+              "createdAt": "2026-10-22T09:00:00.000Z",
+              "editedAt": null,
+              "editableUntil": null,
+              "responseState": {
+                "state": "answered",
+                "ageDays": 6,
+                "overdue": false,
+                "overdueDays": 0,
+                "answeredInDays": 2
+              },
+              "response": {
+                "id": "0199f1a2-7c3e-7a10-8000-000000000303",
+                "status": "testing",
+                "reason": "این را با چند نفر دیگر امتحان می‌کنم تا ببینم تکرار می‌شود یا نه.",
+                "recheckOn": "2026-11-15",
+                "responder": {
+                  "handle": "sara",
+                  "displayName": "سارا رحیمی"
+                },
+                "createdAt": "2026-10-24T09:00:00.000Z",
+                "editedAt": null,
+                "editableUntil": null
+              },
+              "replies": []
+            }
+          ]
+        }
+      },
+      "FeedbackItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "post": {
+            "$ref": "#/components/schemas/PostRef"
+          },
+          "project": {
+            "$ref": "#/components/schemas/ProjectRef"
+          },
+          "author": {
+            "$ref": "#/components/schemas/MemberRef"
+          },
+          "body": {
+            "type": "string"
+          },
+          "questionIndex": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 4
+          },
+          "question": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "editedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "editableUntil": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "responseState": {
+            "$ref": "#/components/schemas/ResponseState"
+          },
+          "response": {
+            "$ref": "#/components/schemas/Response"
+          },
+          "replies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Reply"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "post",
+          "project",
+          "author",
+          "body",
+          "questionIndex",
+          "question",
+          "createdAt",
+          "editedAt",
+          "editableUntil",
+          "responseState",
+          "response",
+          "replies"
+        ],
+        "example": {
+          "id": "0199f1a2-7c3e-7a10-8000-000000000204",
+          "post": {
+            "id": "0199f1a2-7c3e-7a10-8000-000000000101",
+            "kind": "wip"
+          },
+          "project": {
+            "slug": "daftar",
+            "name": "دفتر",
+            "owners": [
+              {
+                "handle": "sara",
+                "displayName": "سارا رحیمی"
+              }
+            ]
+          },
+          "author": {
+            "handle": "niloufar",
+            "displayName": "نیلوفر صادقی"
+          },
+          "body": "فکر می‌کنم صفحهٔ اول باید کوتاه‌تر شود و فقط یک مثال داشته باشد.",
+          "questionIndex": 1,
+          "question": "کدام بخش صفحهٔ اول زیادی طولانی است؟",
+          "createdAt": "2026-10-21T09:00:00.000Z",
+          "editedAt": null,
+          "editableUntil": null,
+          "responseState": {
+            "state": "answered",
+            "ageDays": 7,
+            "overdue": false,
+            "overdueDays": 0,
+            "answeredInDays": 2
+          },
+          "response": {
+            "id": "0199f1a2-7c3e-7a10-8000-000000000302",
+            "status": "rejected",
+            "reason": "چند نفر از اولین کاربران همین مثال‌ها را خواستند؛ فعلاً می‌مانند.",
+            "recheckOn": null,
+            "responder": {
+              "handle": "sara",
+              "displayName": "سارا رحیمی"
+            },
+            "createdAt": "2026-10-23T09:00:00.000Z",
+            "editedAt": null,
+            "editableUntil": null
+          },
+          "replies": [
+            {
+              "id": "0199f1a2-7c3e-7a10-8000-000000000401",
+              "author": {
+                "handle": "niloufar",
+                "displayName": "نیلوفر صادقی"
+              },
+              "body": "ممنونم که توضیح دادی؛ دلیلت برایم روشن است.",
+              "createdAt": "2026-10-23T12:00:00.000Z",
+              "editedAt": null,
+              "editableUntil": null
+            }
+          ]
+        }
+      },
+      "PostRef": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/PostKind"
+          }
+        },
+        "required": [
+          "id",
+          "kind"
+        ],
+        "example": {
+          "id": "0199f1a2-7c3e-7a10-8000-000000000101",
+          "kind": "wip"
+        }
+      },
+      "ResponseState": {
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string",
+            "enum": [
+              "awaiting",
+              "answered"
+            ]
+          },
+          "ageDays": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "overdue": {
+            "type": "boolean"
+          },
+          "overdueDays": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "answeredInDays": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          }
+        },
+        "required": [
+          "state",
+          "ageDays",
+          "overdue",
+          "overdueDays",
+          "answeredInDays"
+        ],
+        "example": {
+          "state": "awaiting",
+          "ageDays": 2,
+          "overdue": false,
+          "overdueDays": 0,
+          "answeredInDays": null
+        }
+      },
+      "Response": {
+        "type": [
+          "object",
+          "null"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ResponseStatus"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "recheckOn": {
+            "$ref": "#/components/schemas/DateOnly"
+          },
+          "responder": {
+            "$ref": "#/components/schemas/MemberRef"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "editedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "editableUntil": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "reason",
+          "recheckOn",
+          "responder",
+          "createdAt",
+          "editedAt",
+          "editableUntil"
+        ],
+        "example": {
+          "id": "0199f1a2-7c3e-7a10-8000-000000000303",
+          "status": "accepted",
+          "reason": "درست می‌گویی؛ توضیح قیمت را کوتاه‌تر کردم.",
+          "recheckOn": null,
+          "responder": {
+            "handle": "sara",
+            "displayName": "سارا رحیمی"
+          },
+          "createdAt": "2026-10-20T15:00:00.000Z",
+          "editedAt": null,
+          "editableUntil": null
+        }
+      },
+      "Reply": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "author": {
+            "$ref": "#/components/schemas/MemberRef"
+          },
+          "body": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "editedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "editableUntil": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "author",
+          "body",
+          "createdAt",
+          "editedAt",
+          "editableUntil"
+        ],
+        "example": {
+          "id": "0199f1a2-7c3e-7a10-8000-000000000404",
+          "author": {
+            "handle": "niloufar",
+            "displayName": "نیلوفر صادقی"
+          },
+          "body": "ممنونم که توضیح دادی؛ دلیلت برایم روشن است.",
+          "createdAt": "2026-10-23T12:00:00.000Z",
+          "editedAt": null,
+          "editableUntil": null
+        }
+      },
+      "EditPostRequest": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/CreateWipPostRequest"
+          },
+          {
+            "$ref": "#/components/schemas/CreateUpdatePostRequest"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "kind",
+          "mapping": {
+            "wip": "#/components/schemas/CreateWipPostRequest",
+            "update": "#/components/schemas/CreateUpdatePostRequest"
+          }
+        }
+      },
+      "GiveFeedbackRequest": {
+        "type": "object",
+        "properties": {
+          "body": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 3000
+          },
+          "questionIndex": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 4
+          }
+        },
+        "required": [
+          "body"
+        ]
+      },
+      "EditFeedbackRequest": {
+        "type": "object",
+        "properties": {
+          "body": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 3000
+          },
+          "questionIndex": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 4
+          }
+        },
+        "required": [
+          "body",
+          "questionIndex"
+        ]
+      },
+      "RespondRequest": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/ResponseStatus"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "recheckOn": {
+            "$ref": "#/components/schemas/DateOnly"
+          }
+        },
+        "required": [
+          "status",
+          "reason"
+        ]
+      },
+      "ReplyRequest": {
+        "type": "object",
+        "properties": {
+          "body": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          }
+        },
+        "required": [
+          "body"
+        ]
+      },
+      "EditReplyRequest": {
+        "type": "object",
+        "properties": {
+          "body": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          }
+        },
+        "required": [
+          "body"
+        ]
+      },
+      "FeedbackPage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FeedbackItem"
+            }
+          },
+          "nextCursor": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor"
+        ],
+        "example": {
+          "items": [
+            {
+              "id": "0199f1a2-7c3e-7a10-8000-000000000201",
+              "post": {
+                "id": "0199f1a2-7c3e-7a10-8000-000000000101",
+                "kind": "wip"
+              },
+              "project": {
+                "slug": "daftar",
+                "name": "دفتر",
+                "owners": [
+                  {
+                    "handle": "sara",
+                    "displayName": "سارا رحیمی"
+                  }
+                ]
+              },
+              "author": {
+                "handle": "arash",
+                "displayName": "آرش کاظمی"
+              },
+              "body": "اول صفحه را که دیدم نفهمیدم دفتر دقیقاً برای چه کسی است؛ یک جمله دربارهٔ مخاطب کم است.",
+              "questionIndex": 2,
+              "question": "اگر کسی این را ببیند، اول چه کاری می‌کند؟",
+              "createdAt": "2026-10-26T10:00:00.000Z",
+              "editedAt": null,
+              "editableUntil": null,
+              "responseState": {
+                "state": "awaiting",
+                "ageDays": 2,
+                "overdue": false,
+                "overdueDays": 0,
+                "answeredInDays": null
+              },
+              "response": null,
+              "replies": []
+            },
+            {
+              "id": "0199f1a2-7c3e-7a10-8000-000000000202",
+              "post": {
+                "id": "0199f1a2-7c3e-7a10-8000-000000000101",
+                "kind": "wip"
+              },
+              "project": {
+                "slug": "daftar",
+                "name": "دفتر",
+                "owners": [
+                  {
+                    "handle": "sara",
+                    "displayName": "سارا رحیمی"
+                  }
+                ]
+              },
+              "author": {
+                "handle": "niloufar",
+                "displayName": "نیلوفر صادقی"
+              },
+              "body": "بخش قیمت‌گذاری سه پاراگراف است و هنوز نمی‌دانم ماهانه چقدر می‌شود.",
+              "questionIndex": 0,
+              "question": "آیا توضیح قیمت‌گذاری روشن است؟",
+              "createdAt": "2026-10-16T10:00:00.000Z",
+              "editedAt": null,
+              "editableUntil": null,
+              "responseState": {
+                "state": "awaiting",
+                "ageDays": 12,
+                "overdue": true,
+                "overdueDays": 5,
+                "answeredInDays": null
+              },
+              "response": null,
+              "replies": []
+            },
+            {
+              "id": "0199f1a2-7c3e-7a10-8000-000000000203",
+              "post": {
+                "id": "0199f1a2-7c3e-7a10-8000-000000000101",
+                "kind": "wip"
+              },
+              "project": {
+                "slug": "daftar",
+                "name": "دفتر",
+                "owners": [
+                  {
+                    "handle": "sara",
+                    "displayName": "سارا رحیمی"
+                  }
+                ]
+              },
+              "author": {
+                "handle": "arash",
+                "displayName": "آرش کاظمی"
+              },
+              "body": "دکمهٔ شروع زیر تصویر گم می‌شود؛ بالاتر ببرش.",
+              "questionIndex": null,
+              "question": null,
+              "createdAt": "2026-10-20T09:00:00.000Z",
+              "editedAt": null,
+              "editableUntil": null,
+              "responseState": {
+                "state": "answered",
+                "ageDays": 8,
+                "overdue": false,
+                "overdueDays": 0,
+                "answeredInDays": 0
+              },
+              "response": {
+                "id": "0199f1a2-7c3e-7a10-8000-000000000301",
+                "status": "accepted",
+                "reason": "درست است؛ دکمه را بالای تصویر گذاشتم.",
+                "recheckOn": null,
+                "responder": {
+                  "handle": "sara",
+                  "displayName": "سارا رحیمی"
+                },
+                "createdAt": "2026-10-20T15:00:00.000Z",
+                "editedAt": null,
+                "editableUntil": null
+              },
+              "replies": []
+            },
+            {
+              "id": "0199f1a2-7c3e-7a10-8000-000000000204",
+              "post": {
+                "id": "0199f1a2-7c3e-7a10-8000-000000000101",
+                "kind": "wip"
+              },
+              "project": {
+                "slug": "daftar",
+                "name": "دفتر",
+                "owners": [
+                  {
+                    "handle": "sara",
+                    "displayName": "سارا رحیمی"
+                  }
+                ]
+              },
+              "author": {
+                "handle": "niloufar",
+                "displayName": "نیلوفر صادقی"
+              },
+              "body": "فکر می‌کنم صفحهٔ اول باید کوتاه‌تر شود و فقط یک مثال داشته باشد.",
+              "questionIndex": 1,
+              "question": "کدام بخش صفحهٔ اول زیادی طولانی است؟",
+              "createdAt": "2026-10-21T09:00:00.000Z",
+              "editedAt": null,
+              "editableUntil": null,
+              "responseState": {
+                "state": "answered",
+                "ageDays": 7,
+                "overdue": false,
+                "overdueDays": 0,
+                "answeredInDays": 2
+              },
+              "response": {
+                "id": "0199f1a2-7c3e-7a10-8000-000000000302",
+                "status": "rejected",
+                "reason": "چند نفر از اولین کاربران همین مثال‌ها را خواستند؛ فعلاً می‌مانند.",
+                "recheckOn": null,
+                "responder": {
+                  "handle": "sara",
+                  "displayName": "سارا رحیمی"
+                },
+                "createdAt": "2026-10-23T09:00:00.000Z",
+                "editedAt": null,
+                "editableUntil": null
+              },
+              "replies": [
+                {
+                  "id": "0199f1a2-7c3e-7a10-8000-000000000401",
+                  "author": {
+                    "handle": "niloufar",
+                    "displayName": "نیلوفر صادقی"
+                  },
+                  "body": "ممنونم که توضیح دادی؛ دلیلت برایم روشن است.",
+                  "createdAt": "2026-10-23T12:00:00.000Z",
+                  "editedAt": null,
+                  "editableUntil": null
+                }
+              ]
+            },
+            {
+              "id": "0199f1a2-7c3e-7a10-8000-000000000205",
+              "post": {
+                "id": "0199f1a2-7c3e-7a10-8000-000000000101",
+                "kind": "wip"
+              },
+              "project": {
+                "slug": "daftar",
+                "name": "دفتر",
+                "owners": [
+                  {
+                    "handle": "sara",
+                    "displayName": "سارا رحیمی"
+                  }
+                ]
+              },
+              "author": {
+                "handle": "arash",
+                "displayName": "آرش کاظمی"
+              },
+              "body": "ورود با تلگرام را امتحان کردم و دو بار از من کد خواست.",
+              "questionIndex": null,
+              "question": null,
+              "createdAt": "2026-10-22T09:00:00.000Z",
+              "editedAt": null,
+              "editableUntil": null,
+              "responseState": {
+                "state": "answered",
+                "ageDays": 6,
+                "overdue": false,
+                "overdueDays": 0,
+                "answeredInDays": 2
+              },
+              "response": {
+                "id": "0199f1a2-7c3e-7a10-8000-000000000303",
+                "status": "testing",
+                "reason": "این را با چند نفر دیگر امتحان می‌کنم تا ببینم تکرار می‌شود یا نه.",
+                "recheckOn": "2026-11-15",
+                "responder": {
+                  "handle": "sara",
+                  "displayName": "سارا رحیمی"
+                },
+                "createdAt": "2026-10-24T09:00:00.000Z",
+                "editedAt": null,
+                "editableUntil": null
+              },
+              "replies": []
+            }
+          ],
+          "nextCursor": null
+        }
+      },
+      "NotificationPage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Notification"
+            }
+          },
+          "nextCursor": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "hasUnread": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor",
+          "hasUnread"
+        ],
+        "example": {
+          "items": [
+            {
+              "id": "0199f1a2-7c3e-7a10-8000-000000000504",
+              "kind": "response_due",
+              "actor": null,
+              "project": {
+                "slug": "daftar",
+                "name": "دفتر"
+              },
+              "post": {
+                "id": "0199f1a2-7c3e-7a10-8000-000000000101",
+                "kind": "wip"
+              },
+              "feedbackId": "0199f1a2-7c3e-7a10-8000-000000000202",
+              "createdAt": "2026-10-28T09:00:00.000Z",
+              "readAt": null
+            },
+            {
+              "id": "0199f1a2-7c3e-7a10-8000-000000000503",
+              "kind": "reply_received",
+              "actor": {
+                "handle": "niloufar",
+                "displayName": "نیلوفر صادقی"
+              },
+              "project": {
+                "slug": "daftar",
+                "name": "دفتر"
+              },
+              "post": {
+                "id": "0199f1a2-7c3e-7a10-8000-000000000101",
+                "kind": "wip"
+              },
+              "feedbackId": "0199f1a2-7c3e-7a10-8000-000000000204",
+              "createdAt": "2026-10-23T12:00:00.000Z",
+              "readAt": null
+            },
+            {
+              "id": "0199f1a2-7c3e-7a10-8000-000000000502",
+              "kind": "response_received",
+              "actor": {
+                "handle": "sara",
+                "displayName": "سارا رحیمی"
+              },
+              "project": {
+                "slug": "daftar",
+                "name": "دفتر"
+              },
+              "post": {
+                "id": "0199f1a2-7c3e-7a10-8000-000000000101",
+                "kind": "wip"
+              },
+              "feedbackId": "0199f1a2-7c3e-7a10-8000-000000000204",
+              "createdAt": "2026-10-23T09:00:00.000Z",
+              "readAt": "2026-10-23T18:00:00.000Z"
+            },
+            {
+              "id": "0199f1a2-7c3e-7a10-8000-000000000501",
+              "kind": "feedback_received",
+              "actor": {
+                "handle": "arash",
+                "displayName": "آرش کاظمی"
+              },
+              "project": {
+                "slug": "daftar",
+                "name": "دفتر"
+              },
+              "post": {
+                "id": "0199f1a2-7c3e-7a10-8000-000000000101",
+                "kind": "wip"
+              },
+              "feedbackId": "0199f1a2-7c3e-7a10-8000-000000000203",
+              "createdAt": "2026-10-22T09:00:00.000Z",
+              "readAt": "2026-10-22T20:00:00.000Z"
+            }
+          ],
+          "nextCursor": null,
+          "hasUnread": true
+        }
+      },
+      "Notification": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/NotificationKind"
+          },
+          "actor": {
+            "$ref": "#/components/schemas/MemberRef"
+          },
+          "project": {
+            "type": "object",
+            "properties": {
+              "slug": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "slug",
+              "name"
+            ]
+          },
+          "post": {
+            "$ref": "#/components/schemas/PostRef"
+          },
+          "feedbackId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "readAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "actor",
+          "project",
+          "post",
+          "feedbackId",
+          "createdAt",
+          "readAt"
+        ],
+        "example": {
+          "id": "0199f1a2-7c3e-7a10-8000-000000000503",
+          "kind": "reply_received",
+          "actor": {
+            "handle": "niloufar",
+            "displayName": "نیلوفر صادقی"
+          },
+          "project": {
+            "slug": "daftar",
+            "name": "دفتر"
+          },
+          "post": {
+            "id": "0199f1a2-7c3e-7a10-8000-000000000101",
+            "kind": "wip"
+          },
+          "feedbackId": "0199f1a2-7c3e-7a10-8000-000000000204",
+          "createdAt": "2026-10-23T12:00:00.000Z",
+          "readAt": null
+        }
+      },
+      "NotificationKind": {
+        "type": "string",
+        "enum": [
+          "feedback_received",
+          "response_received",
+          "reply_received",
+          "response_due"
+        ]
+      },
+      "MarkReadRequest": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "minItems": 1,
+                "maxItems": 100
+              }
+            },
+            "required": [
+              "ids"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "all": {
+                "type": "boolean",
+                "enum": [
+                  true
+                ]
+              }
+            },
+            "required": [
+              "all"
+            ]
+          }
         ]
       }
     },
@@ -713,7 +2403,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Member"
+                  "$ref": "#/components/schemas/Me"
                 }
               }
             }
@@ -756,7 +2446,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Member"
+                  "$ref": "#/components/schemas/Me"
                 }
               }
             }
@@ -885,7 +2575,7 @@
         ],
         "responses": {
           "200": {
-            "description": "One page of projects, newest first",
+            "description": "One page of projects, latest activity first (the last post, or creation when there is none)",
             "content": {
               "application/json": {
                 "schema": {
@@ -1293,6 +2983,1261 @@
           },
           "409": {
             "description": "409: last_owner",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/projects/{slug}/posts": {
+      "post": {
+        "tags": [
+          "posts"
+        ],
+        "security": [
+          {
+            "storefrontKey": [],
+            "memberSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 60,
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+              "example": "daftar"
+            },
+            "required": true,
+            "name": "slug",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePostRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The post was created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Post"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400: validation_failed, acted_on_invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401: storefront_key_invalid, session_required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "403: not_project_owner",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404: not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "posts"
+        ],
+        "security": [
+          {
+            "storefrontKey": [],
+            "memberSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 60,
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+              "example": "daftar"
+            },
+            "required": true,
+            "name": "slug",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "name": "cursor",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            },
+            "required": false,
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "One page of the project's posts, newest first",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400: validation_failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401: storefront_key_invalid, session_required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404: not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/posts/{id}": {
+      "get": {
+        "tags": [
+          "posts"
+        ],
+        "security": [
+          {
+            "storefrontKey": [],
+            "memberSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "0199f1a2-7c3e-7a10-8000-000000000001"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The post with its feedback: awaiting items first, then answered ones, each oldest first",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostThread"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400: validation_failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401: storefront_key_invalid, session_required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404: not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "posts"
+        ],
+        "security": [
+          {
+            "storefrontKey": [],
+            "memberSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "0199f1a2-7c3e-7a10-8000-000000000001"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditPostRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The post, edited inside its edit window",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Post"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400: validation_failed, acted_on_invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401: storefront_key_invalid, session_required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "403: not_author",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404: not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "409: edit_window_closed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/posts/{id}/feedback": {
+      "post": {
+        "tags": [
+          "feedback"
+        ],
+        "security": [
+          {
+            "storefrontKey": [],
+            "memberSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "0199f1a2-7c3e-7a10-8000-000000000001"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GiveFeedbackRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The feedback was given; it awaits an answer from the project's owners",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeedbackItem"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400: validation_failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401: storefront_key_invalid, session_required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "403: own_project",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404: not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/feedback/{id}": {
+      "put": {
+        "tags": [
+          "feedback"
+        ],
+        "security": [
+          {
+            "storefrontKey": [],
+            "memberSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "0199f1a2-7c3e-7a10-8000-000000000001"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditFeedbackRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The feedback, edited inside its edit window",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeedbackItem"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400: validation_failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401: storefront_key_invalid, session_required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "403: not_author",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404: not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "409: edit_window_closed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/feedback/{id}/responses": {
+      "post": {
+        "tags": [
+          "feedback"
+        ],
+        "security": [
+          {
+            "storefrontKey": [],
+            "memberSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "0199f1a2-7c3e-7a10-8000-000000000001"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RespondRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The answer was recorded and is now the current answer",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeedbackItem"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400: validation_failed, recheck_required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401: storefront_key_invalid, session_required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "403: not_project_owner",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404: not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/responses/{id}": {
+      "put": {
+        "tags": [
+          "feedback"
+        ],
+        "security": [
+          {
+            "storefrontKey": [],
+            "memberSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "0199f1a2-7c3e-7a10-8000-000000000001"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RespondRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The current answer, edited inside its edit window",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeedbackItem"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400: validation_failed, recheck_required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401: storefront_key_invalid, session_required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "403: not_author",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404: not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "409: edit_window_closed, not_current_response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/feedback/{id}/replies": {
+      "post": {
+        "tags": [
+          "feedback"
+        ],
+        "security": [
+          {
+            "storefrontKey": [],
+            "memberSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "0199f1a2-7c3e-7a10-8000-000000000001"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReplyRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The reply was added",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeedbackItem"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400: validation_failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401: storefront_key_invalid, session_required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "403: reply_not_allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404: not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/replies/{id}": {
+      "put": {
+        "tags": [
+          "feedback"
+        ],
+        "security": [
+          {
+            "storefrontKey": [],
+            "memberSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "0199f1a2-7c3e-7a10-8000-000000000001"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditReplyRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The reply, edited inside its edit window",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeedbackItem"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400: validation_failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401: storefront_key_invalid, session_required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "403: not_author",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404: not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "409: edit_window_closed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/projects/{slug}/feedback": {
+      "get": {
+        "tags": [
+          "feedback"
+        ],
+        "security": [
+          {
+            "storefrontKey": [],
+            "memberSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 60,
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+              "example": "daftar"
+            },
+            "required": true,
+            "name": "slug",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "name": "cursor",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            },
+            "required": false,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "awaiting",
+                "answered"
+              ]
+            },
+            "required": false,
+            "name": "state",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "One page of the project's feedback, newest first",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeedbackPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400: validation_failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401: storefront_key_invalid, session_required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404: not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/me/awaiting": {
+      "get": {
+        "tags": [
+          "feedback"
+        ],
+        "security": [
+          {
+            "storefrontKey": [],
+            "memberSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "name": "cursor",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            },
+            "required": false,
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "One page of the feedback on the caller's projects that awaits an answer, oldest first",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeedbackPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400: validation_failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401: storefront_key_invalid, session_required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/members/{handle}/feedback": {
+      "get": {
+        "tags": [
+          "feedback"
+        ],
+        "security": [
+          {
+            "storefrontKey": [],
+            "memberSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_]{2,29}$",
+              "example": "sara"
+            },
+            "required": true,
+            "name": "handle",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "name": "cursor",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            },
+            "required": false,
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "One page of the feedback the member gave, newest first",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeedbackPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400: validation_failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401: storefront_key_invalid, session_required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404: not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/me/notifications": {
+      "get": {
+        "tags": [
+          "notifications"
+        ],
+        "security": [
+          {
+            "storefrontKey": [],
+            "memberSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "name": "cursor",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            },
+            "required": false,
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "One page of the caller's notifications, newest first",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400: validation_failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401: storefront_key_invalid, session_required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/me/notifications/read": {
+      "post": {
+        "tags": [
+          "notifications"
+        ],
+        "security": [
+          {
+            "storefrontKey": [],
+            "memberSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarkReadRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "The listed notifications, or all of them, are marked read"
+          },
+          "400": {
+            "description": "400: validation_failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401: storefront_key_invalid, session_required",
             "content": {
               "application/json": {
                 "schema": {

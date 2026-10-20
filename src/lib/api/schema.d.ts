@@ -187,7 +187,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["Member"];
+                        "application/json": components["schemas"]["Me"];
                     };
                 };
                 /** @description 401: storefront_key_invalid, session_required */
@@ -225,7 +225,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["Member"];
+                        "application/json": components["schemas"]["Me"];
                     };
                 };
                 /** @description 400: validation_failed */
@@ -333,7 +333,7 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
-                /** @description One page of projects, newest first */
+                /** @description One page of projects, latest activity first (the last post, or creation when there is none) */
                 200: {
                     headers: {
                         [name: string]: unknown;
@@ -687,6 +687,1059 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/projects/{slug}/posts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    cursor?: string;
+                    limit?: number;
+                };
+                header?: never;
+                path: {
+                    slug: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description One page of the project's posts, newest first */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PostPage"];
+                    };
+                };
+                /** @description 400: validation_failed */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 401: storefront_key_invalid, session_required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 404: not_found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    slug: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CreatePostRequest"];
+                };
+            };
+            responses: {
+                /** @description The post was created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Post"];
+                    };
+                };
+                /** @description 400: validation_failed, acted_on_invalid */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 401: storefront_key_invalid, session_required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 403: not_project_owner */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 404: not_found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/posts/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description The post with its feedback: awaiting items first, then answered ones, each oldest first */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PostThread"];
+                    };
+                };
+                /** @description 400: validation_failed */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 401: storefront_key_invalid, session_required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 404: not_found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+            };
+        };
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["EditPostRequest"];
+                };
+            };
+            responses: {
+                /** @description The post, edited inside its edit window */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Post"];
+                    };
+                };
+                /** @description 400: validation_failed, acted_on_invalid */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 401: storefront_key_invalid, session_required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 403: not_author */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 404: not_found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 409: edit_window_closed */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/posts/{id}/feedback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["GiveFeedbackRequest"];
+                };
+            };
+            responses: {
+                /** @description The feedback was given; it awaits an answer from the project's owners */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["FeedbackItem"];
+                    };
+                };
+                /** @description 400: validation_failed */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 401: storefront_key_invalid, session_required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 403: own_project */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 404: not_found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/feedback/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["EditFeedbackRequest"];
+                };
+            };
+            responses: {
+                /** @description The feedback, edited inside its edit window */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["FeedbackItem"];
+                    };
+                };
+                /** @description 400: validation_failed */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 401: storefront_key_invalid, session_required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 403: not_author */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 404: not_found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 409: edit_window_closed */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/feedback/{id}/responses": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["RespondRequest"];
+                };
+            };
+            responses: {
+                /** @description The answer was recorded and is now the current answer */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["FeedbackItem"];
+                    };
+                };
+                /** @description 400: validation_failed, recheck_required */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 401: storefront_key_invalid, session_required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 403: not_project_owner */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 404: not_found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/responses/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["RespondRequest"];
+                };
+            };
+            responses: {
+                /** @description The current answer, edited inside its edit window */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["FeedbackItem"];
+                    };
+                };
+                /** @description 400: validation_failed, recheck_required */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 401: storefront_key_invalid, session_required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 403: not_author */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 404: not_found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 409: edit_window_closed, not_current_response */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/feedback/{id}/replies": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["ReplyRequest"];
+                };
+            };
+            responses: {
+                /** @description The reply was added */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["FeedbackItem"];
+                    };
+                };
+                /** @description 400: validation_failed */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 401: storefront_key_invalid, session_required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 403: reply_not_allowed */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 404: not_found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/replies/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["EditReplyRequest"];
+                };
+            };
+            responses: {
+                /** @description The reply, edited inside its edit window */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["FeedbackItem"];
+                    };
+                };
+                /** @description 400: validation_failed */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 401: storefront_key_invalid, session_required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 403: not_author */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 404: not_found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 409: edit_window_closed */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/projects/{slug}/feedback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    cursor?: string;
+                    limit?: number;
+                    state?: "awaiting" | "answered";
+                };
+                header?: never;
+                path: {
+                    slug: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description One page of the project's feedback, newest first */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["FeedbackPage"];
+                    };
+                };
+                /** @description 400: validation_failed */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 401: storefront_key_invalid, session_required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 404: not_found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/me/awaiting": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    cursor?: string;
+                    limit?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description One page of the feedback on the caller's projects that awaits an answer, oldest first */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["FeedbackPage"];
+                    };
+                };
+                /** @description 400: validation_failed */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 401: storefront_key_invalid, session_required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/members/{handle}/feedback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    cursor?: string;
+                    limit?: number;
+                };
+                header?: never;
+                path: {
+                    handle: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description One page of the feedback the member gave, newest first */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["FeedbackPage"];
+                    };
+                };
+                /** @description 400: validation_failed */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 401: storefront_key_invalid, session_required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 404: not_found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/me/notifications": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    cursor?: string;
+                    limit?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description One page of the caller's notifications, newest first */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["NotificationPage"];
+                    };
+                };
+                /** @description 400: validation_failed */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 401: storefront_key_invalid, session_required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/me/notifications/read": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["MarkReadRequest"];
+                };
+            };
+            responses: {
+                /** @description The listed notifications, or all of them, are marked read */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 400: validation_failed */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 401: storefront_key_invalid, session_required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -809,6 +1862,28 @@ export interface components {
             redirectUri: string;
             inviteCode?: string;
         };
+        /**
+         * @example {
+         *       "handle": "sara",
+         *       "displayName": "سارا رحیمی",
+         *       "bio": "برنامه‌نویس و سازندهٔ دفتر",
+         *       "links": [
+         *         {
+         *           "label": "Website",
+         *           "url": "https://example.com"
+         *         }
+         *       ],
+         *       "invitedBy": {
+         *         "handle": "reza",
+         *         "displayName": "رضا احمدی"
+         *       },
+         *       "joinedAt": "2026-10-20T10:00:00.000Z",
+         *       "telegramDmEnabled": false
+         *     }
+         */
+        Me: components["schemas"]["Member"] & {
+            telegramDmEnabled: boolean;
+        };
         UpdateMeRequest: {
             handle?: string;
             displayName?: string;
@@ -850,6 +1925,8 @@ export interface components {
          *               "displayName": "سارا رحیمی"
          *             }
          *           ],
+         *           "lastPostAt": "2026-10-27T10:00:00.000Z",
+         *           "hasUnansweredFeedback": true,
          *           "createdAt": "2026-10-20T10:00:00.000Z",
          *           "updatedAt": "2026-10-20T10:00:00.000Z"
          *         }
@@ -878,6 +1955,8 @@ export interface components {
          *           "displayName": "سارا رحیمی"
          *         }
          *       ],
+         *       "lastPostAt": "2026-10-27T10:00:00.000Z",
+         *       "hasUnansweredFeedback": true,
          *       "createdAt": "2026-10-20T10:00:00.000Z",
          *       "updatedAt": "2026-10-20T10:00:00.000Z"
          *     }
@@ -890,6 +1969,9 @@ export interface components {
             visibility: components["schemas"]["Visibility"];
             links: components["schemas"]["Link"][];
             owners: components["schemas"]["MemberRef"][];
+            /** Format: date-time */
+            lastPostAt: string | null;
+            hasUnansweredFeedback: boolean;
             /** Format: date-time */
             createdAt: string;
             /** Format: date-time */
@@ -920,8 +2002,28 @@ export interface components {
          *               "displayName": "سارا رحیمی"
          *             }
          *           ],
+         *           "lastPostAt": "2026-10-27T10:00:00.000Z",
+         *           "hasUnansweredFeedback": true,
          *           "createdAt": "2026-10-20T10:00:00.000Z",
          *           "updatedAt": "2026-10-20T10:00:00.000Z"
+         *         },
+         *         {
+         *           "slug": "sabzi",
+         *           "name": "سبزی",
+         *           "oneLiner": "فهرست خرید مشترک برای همخانه‌ها",
+         *           "stage": "idea",
+         *           "visibility": "members",
+         *           "links": [],
+         *           "owners": [
+         *             {
+         *               "handle": "arash",
+         *               "displayName": "آرش کاظمی"
+         *             }
+         *           ],
+         *           "lastPostAt": null,
+         *           "hasUnansweredFeedback": false,
+         *           "createdAt": "2026-10-12T08:00:00.000Z",
+         *           "updatedAt": "2026-10-12T08:00:00.000Z"
          *         }
          *       ],
          *       "nextCursor": null
@@ -950,6 +2052,1052 @@ export interface components {
         };
         AddOwnerRequest: {
             handle: string;
+        };
+        /**
+         * @example {
+         *       "id": "0199f1a2-7c3e-7a10-8000-000000000101",
+         *       "project": {
+         *         "slug": "daftar",
+         *         "name": "دفتر",
+         *         "owners": [
+         *           {
+         *             "handle": "sara",
+         *             "displayName": "سارا رحیمی"
+         *           }
+         *         ]
+         *       },
+         *       "author": {
+         *         "handle": "sara",
+         *         "displayName": "سارا رحیمی"
+         *       },
+         *       "kind": "wip",
+         *       "body": "نسخهٔ اول صفحهٔ شروع دفتر آماده شد. هنوز تصویر نهایی ندارد، ولی جریان کار از ورود تا اولین یادداشت کامل است.",
+         *       "feedbackWanted": [
+         *         "آیا توضیح قیمت‌گذاری روشن است؟",
+         *         "کدام بخش صفحهٔ اول زیادی طولانی است؟",
+         *         "اگر کسی این را ببیند، اول چه کاری می‌کند؟"
+         *       ],
+         *       "selfCritique": "فکر می‌کنم متن قیمت‌گذاری بیش از اندازه طولانی شده و مخاطب را گم می‌کند.",
+         *       "whatChanged": null,
+         *       "actedOn": [],
+         *       "rejectedAndWhy": null,
+         *       "oneNumber": null,
+         *       "hasUnansweredFeedback": true,
+         *       "createdAt": "2026-10-15T09:00:00.000Z",
+         *       "editedAt": null,
+         *       "editableUntil": null
+         *     }
+         */
+        Post: {
+            /** Format: uuid */
+            id: string;
+            project: components["schemas"]["ProjectRef"];
+            author: components["schemas"]["MemberRef"];
+            kind: components["schemas"]["PostKind"];
+            body: string;
+            feedbackWanted: string[];
+            selfCritique: string | null;
+            whatChanged: string | null;
+            actedOn: components["schemas"]["ActedOnItem"][];
+            rejectedAndWhy: string | null;
+            oneNumber: string | null;
+            hasUnansweredFeedback: boolean;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            editedAt: string | null;
+            /** Format: date-time */
+            editableUntil: string | null;
+        };
+        /**
+         * @example {
+         *       "slug": "daftar",
+         *       "name": "دفتر",
+         *       "owners": [
+         *         {
+         *           "handle": "sara",
+         *           "displayName": "سارا رحیمی"
+         *         }
+         *       ]
+         *     }
+         */
+        ProjectRef: {
+            slug: string;
+            name: string;
+            owners: components["schemas"]["MemberRef"][];
+        };
+        /** @enum {string} */
+        PostKind: "wip" | "update";
+        /**
+         * @example {
+         *       "feedbackId": "0199f1a2-7c3e-7a10-8000-000000000203",
+         *       "author": {
+         *         "handle": "arash",
+         *         "displayName": "آرش کاظمی"
+         *       },
+         *       "excerpt": "دکمهٔ شروع زیر تصویر گم می‌شود؛ بالاتر ببرش.",
+         *       "status": "accepted",
+         *       "recheckOn": null
+         *     }
+         */
+        ActedOnItem: {
+            /** Format: uuid */
+            feedbackId: string;
+            author: components["schemas"]["MemberRef"];
+            excerpt: string;
+            status: components["schemas"]["ResponseStatus"];
+            recheckOn: components["schemas"]["DateOnly"];
+        };
+        /** @enum {string} */
+        ResponseStatus: "accepted" | "rejected" | "testing";
+        /**
+         * Format: date
+         * @example 2026-10-27
+         */
+        DateOnly: string | null;
+        CreatePostRequest: components["schemas"]["CreateWipPostRequest"] | components["schemas"]["CreateUpdatePostRequest"];
+        CreateWipPostRequest: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "wip";
+            body: string;
+            feedbackWanted: string[];
+            selfCritique?: string;
+        };
+        CreateUpdatePostRequest: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "update";
+            /** @default  */
+            body: string;
+            whatChanged: string;
+            /** @default [] */
+            actedOn: string[];
+            rejectedAndWhy?: string;
+            oneNumber: string;
+        };
+        /**
+         * @example {
+         *       "items": [
+         *         {
+         *           "id": "0199f1a2-7c3e-7a10-8000-000000000102",
+         *           "project": {
+         *             "slug": "daftar",
+         *             "name": "دفتر",
+         *             "owners": [
+         *               {
+         *                 "handle": "sara",
+         *                 "displayName": "سارا رحیمی"
+         *               }
+         *             ]
+         *           },
+         *           "author": {
+         *             "handle": "sara",
+         *             "displayName": "سارا رحیمی"
+         *           },
+         *           "kind": "update",
+         *           "body": "",
+         *           "feedbackWanted": [],
+         *           "selfCritique": null,
+         *           "whatChanged": "دکمهٔ شروع را بالای تصویر بردم و ورود با تلگرام را روی چند نفر دیگر امتحان می‌کنم.",
+         *           "actedOn": [
+         *             {
+         *               "feedbackId": "0199f1a2-7c3e-7a10-8000-000000000203",
+         *               "author": {
+         *                 "handle": "arash",
+         *                 "displayName": "آرش کاظمی"
+         *               },
+         *               "excerpt": "دکمهٔ شروع زیر تصویر گم می‌شود؛ بالاتر ببرش.",
+         *               "status": "accepted",
+         *               "recheckOn": null
+         *             },
+         *             {
+         *               "feedbackId": "0199f1a2-7c3e-7a10-8000-000000000205",
+         *               "author": {
+         *                 "handle": "arash",
+         *                 "displayName": "آرش کاظمی"
+         *               },
+         *               "excerpt": "ورود با تلگرام را امتحان کردم و دو بار از من کد خواست.",
+         *               "status": "testing",
+         *               "recheckOn": "2026-11-15"
+         *             }
+         *           ],
+         *           "rejectedAndWhy": "صفحهٔ اول را کوتاه نکردم؛ چند نفر از اولین کاربران همین مثال‌ها را خواستند.",
+         *           "oneNumber": "از بیست نفری که صفحه را دیدند، دوازده نفر تا اولین یادداشت رفتند.",
+         *           "hasUnansweredFeedback": false,
+         *           "createdAt": "2026-10-27T10:00:00.000Z",
+         *           "editedAt": null,
+         *           "editableUntil": null
+         *         },
+         *         {
+         *           "id": "0199f1a2-7c3e-7a10-8000-000000000101",
+         *           "project": {
+         *             "slug": "daftar",
+         *             "name": "دفتر",
+         *             "owners": [
+         *               {
+         *                 "handle": "sara",
+         *                 "displayName": "سارا رحیمی"
+         *               }
+         *             ]
+         *           },
+         *           "author": {
+         *             "handle": "sara",
+         *             "displayName": "سارا رحیمی"
+         *           },
+         *           "kind": "wip",
+         *           "body": "نسخهٔ اول صفحهٔ شروع دفتر آماده شد. هنوز تصویر نهایی ندارد، ولی جریان کار از ورود تا اولین یادداشت کامل است.",
+         *           "feedbackWanted": [
+         *             "آیا توضیح قیمت‌گذاری روشن است؟",
+         *             "کدام بخش صفحهٔ اول زیادی طولانی است؟",
+         *             "اگر کسی این را ببیند، اول چه کاری می‌کند؟"
+         *           ],
+         *           "selfCritique": "فکر می‌کنم متن قیمت‌گذاری بیش از اندازه طولانی شده و مخاطب را گم می‌کند.",
+         *           "whatChanged": null,
+         *           "actedOn": [],
+         *           "rejectedAndWhy": null,
+         *           "oneNumber": null,
+         *           "hasUnansweredFeedback": true,
+         *           "createdAt": "2026-10-15T09:00:00.000Z",
+         *           "editedAt": null,
+         *           "editableUntil": null
+         *         }
+         *       ],
+         *       "nextCursor": null
+         *     }
+         */
+        PostPage: {
+            items: components["schemas"]["Post"][];
+            nextCursor: string | null;
+        };
+        /**
+         * @example {
+         *       "post": {
+         *         "id": "0199f1a2-7c3e-7a10-8000-000000000101",
+         *         "project": {
+         *           "slug": "daftar",
+         *           "name": "دفتر",
+         *           "owners": [
+         *             {
+         *               "handle": "sara",
+         *               "displayName": "سارا رحیمی"
+         *             }
+         *           ]
+         *         },
+         *         "author": {
+         *           "handle": "sara",
+         *           "displayName": "سارا رحیمی"
+         *         },
+         *         "kind": "wip",
+         *         "body": "نسخهٔ اول صفحهٔ شروع دفتر آماده شد. هنوز تصویر نهایی ندارد، ولی جریان کار از ورود تا اولین یادداشت کامل است.",
+         *         "feedbackWanted": [
+         *           "آیا توضیح قیمت‌گذاری روشن است؟",
+         *           "کدام بخش صفحهٔ اول زیادی طولانی است؟",
+         *           "اگر کسی این را ببیند، اول چه کاری می‌کند؟"
+         *         ],
+         *         "selfCritique": "فکر می‌کنم متن قیمت‌گذاری بیش از اندازه طولانی شده و مخاطب را گم می‌کند.",
+         *         "whatChanged": null,
+         *         "actedOn": [],
+         *         "rejectedAndWhy": null,
+         *         "oneNumber": null,
+         *         "hasUnansweredFeedback": true,
+         *         "createdAt": "2026-10-15T09:00:00.000Z",
+         *         "editedAt": null,
+         *         "editableUntil": null
+         *       },
+         *       "feedback": [
+         *         {
+         *           "id": "0199f1a2-7c3e-7a10-8000-000000000202",
+         *           "post": {
+         *             "id": "0199f1a2-7c3e-7a10-8000-000000000101",
+         *             "kind": "wip"
+         *           },
+         *           "project": {
+         *             "slug": "daftar",
+         *             "name": "دفتر",
+         *             "owners": [
+         *               {
+         *                 "handle": "sara",
+         *                 "displayName": "سارا رحیمی"
+         *               }
+         *             ]
+         *           },
+         *           "author": {
+         *             "handle": "niloufar",
+         *             "displayName": "نیلوفر صادقی"
+         *           },
+         *           "body": "بخش قیمت‌گذاری سه پاراگراف است و هنوز نمی‌دانم ماهانه چقدر می‌شود.",
+         *           "questionIndex": 0,
+         *           "question": "آیا توضیح قیمت‌گذاری روشن است؟",
+         *           "createdAt": "2026-10-16T10:00:00.000Z",
+         *           "editedAt": null,
+         *           "editableUntil": null,
+         *           "responseState": {
+         *             "state": "awaiting",
+         *             "ageDays": 12,
+         *             "overdue": true,
+         *             "overdueDays": 5,
+         *             "answeredInDays": null
+         *           },
+         *           "response": null,
+         *           "replies": []
+         *         },
+         *         {
+         *           "id": "0199f1a2-7c3e-7a10-8000-000000000201",
+         *           "post": {
+         *             "id": "0199f1a2-7c3e-7a10-8000-000000000101",
+         *             "kind": "wip"
+         *           },
+         *           "project": {
+         *             "slug": "daftar",
+         *             "name": "دفتر",
+         *             "owners": [
+         *               {
+         *                 "handle": "sara",
+         *                 "displayName": "سارا رحیمی"
+         *               }
+         *             ]
+         *           },
+         *           "author": {
+         *             "handle": "arash",
+         *             "displayName": "آرش کاظمی"
+         *           },
+         *           "body": "اول صفحه را که دیدم نفهمیدم دفتر دقیقاً برای چه کسی است؛ یک جمله دربارهٔ مخاطب کم است.",
+         *           "questionIndex": 2,
+         *           "question": "اگر کسی این را ببیند، اول چه کاری می‌کند؟",
+         *           "createdAt": "2026-10-26T10:00:00.000Z",
+         *           "editedAt": null,
+         *           "editableUntil": null,
+         *           "responseState": {
+         *             "state": "awaiting",
+         *             "ageDays": 2,
+         *             "overdue": false,
+         *             "overdueDays": 0,
+         *             "answeredInDays": null
+         *           },
+         *           "response": null,
+         *           "replies": []
+         *         },
+         *         {
+         *           "id": "0199f1a2-7c3e-7a10-8000-000000000203",
+         *           "post": {
+         *             "id": "0199f1a2-7c3e-7a10-8000-000000000101",
+         *             "kind": "wip"
+         *           },
+         *           "project": {
+         *             "slug": "daftar",
+         *             "name": "دفتر",
+         *             "owners": [
+         *               {
+         *                 "handle": "sara",
+         *                 "displayName": "سارا رحیمی"
+         *               }
+         *             ]
+         *           },
+         *           "author": {
+         *             "handle": "arash",
+         *             "displayName": "آرش کاظمی"
+         *           },
+         *           "body": "دکمهٔ شروع زیر تصویر گم می‌شود؛ بالاتر ببرش.",
+         *           "questionIndex": null,
+         *           "question": null,
+         *           "createdAt": "2026-10-20T09:00:00.000Z",
+         *           "editedAt": null,
+         *           "editableUntil": null,
+         *           "responseState": {
+         *             "state": "answered",
+         *             "ageDays": 8,
+         *             "overdue": false,
+         *             "overdueDays": 0,
+         *             "answeredInDays": 0
+         *           },
+         *           "response": {
+         *             "id": "0199f1a2-7c3e-7a10-8000-000000000301",
+         *             "status": "accepted",
+         *             "reason": "درست است؛ دکمه را بالای تصویر گذاشتم.",
+         *             "recheckOn": null,
+         *             "responder": {
+         *               "handle": "sara",
+         *               "displayName": "سارا رحیمی"
+         *             },
+         *             "createdAt": "2026-10-20T15:00:00.000Z",
+         *             "editedAt": null,
+         *             "editableUntil": null
+         *           },
+         *           "replies": []
+         *         },
+         *         {
+         *           "id": "0199f1a2-7c3e-7a10-8000-000000000204",
+         *           "post": {
+         *             "id": "0199f1a2-7c3e-7a10-8000-000000000101",
+         *             "kind": "wip"
+         *           },
+         *           "project": {
+         *             "slug": "daftar",
+         *             "name": "دفتر",
+         *             "owners": [
+         *               {
+         *                 "handle": "sara",
+         *                 "displayName": "سارا رحیمی"
+         *               }
+         *             ]
+         *           },
+         *           "author": {
+         *             "handle": "niloufar",
+         *             "displayName": "نیلوفر صادقی"
+         *           },
+         *           "body": "فکر می‌کنم صفحهٔ اول باید کوتاه‌تر شود و فقط یک مثال داشته باشد.",
+         *           "questionIndex": 1,
+         *           "question": "کدام بخش صفحهٔ اول زیادی طولانی است؟",
+         *           "createdAt": "2026-10-21T09:00:00.000Z",
+         *           "editedAt": null,
+         *           "editableUntil": null,
+         *           "responseState": {
+         *             "state": "answered",
+         *             "ageDays": 7,
+         *             "overdue": false,
+         *             "overdueDays": 0,
+         *             "answeredInDays": 2
+         *           },
+         *           "response": {
+         *             "id": "0199f1a2-7c3e-7a10-8000-000000000302",
+         *             "status": "rejected",
+         *             "reason": "چند نفر از اولین کاربران همین مثال‌ها را خواستند؛ فعلاً می‌مانند.",
+         *             "recheckOn": null,
+         *             "responder": {
+         *               "handle": "sara",
+         *               "displayName": "سارا رحیمی"
+         *             },
+         *             "createdAt": "2026-10-23T09:00:00.000Z",
+         *             "editedAt": null,
+         *             "editableUntil": null
+         *           },
+         *           "replies": [
+         *             {
+         *               "id": "0199f1a2-7c3e-7a10-8000-000000000401",
+         *               "author": {
+         *                 "handle": "niloufar",
+         *                 "displayName": "نیلوفر صادقی"
+         *               },
+         *               "body": "ممنونم که توضیح دادی؛ دلیلت برایم روشن است.",
+         *               "createdAt": "2026-10-23T12:00:00.000Z",
+         *               "editedAt": null,
+         *               "editableUntil": null
+         *             }
+         *           ]
+         *         },
+         *         {
+         *           "id": "0199f1a2-7c3e-7a10-8000-000000000205",
+         *           "post": {
+         *             "id": "0199f1a2-7c3e-7a10-8000-000000000101",
+         *             "kind": "wip"
+         *           },
+         *           "project": {
+         *             "slug": "daftar",
+         *             "name": "دفتر",
+         *             "owners": [
+         *               {
+         *                 "handle": "sara",
+         *                 "displayName": "سارا رحیمی"
+         *               }
+         *             ]
+         *           },
+         *           "author": {
+         *             "handle": "arash",
+         *             "displayName": "آرش کاظمی"
+         *           },
+         *           "body": "ورود با تلگرام را امتحان کردم و دو بار از من کد خواست.",
+         *           "questionIndex": null,
+         *           "question": null,
+         *           "createdAt": "2026-10-22T09:00:00.000Z",
+         *           "editedAt": null,
+         *           "editableUntil": null,
+         *           "responseState": {
+         *             "state": "answered",
+         *             "ageDays": 6,
+         *             "overdue": false,
+         *             "overdueDays": 0,
+         *             "answeredInDays": 2
+         *           },
+         *           "response": {
+         *             "id": "0199f1a2-7c3e-7a10-8000-000000000303",
+         *             "status": "testing",
+         *             "reason": "این را با چند نفر دیگر امتحان می‌کنم تا ببینم تکرار می‌شود یا نه.",
+         *             "recheckOn": "2026-11-15",
+         *             "responder": {
+         *               "handle": "sara",
+         *               "displayName": "سارا رحیمی"
+         *             },
+         *             "createdAt": "2026-10-24T09:00:00.000Z",
+         *             "editedAt": null,
+         *             "editableUntil": null
+         *           },
+         *           "replies": []
+         *         }
+         *       ]
+         *     }
+         */
+        PostThread: {
+            post: components["schemas"]["Post"];
+            feedback: components["schemas"]["FeedbackItem"][];
+        };
+        /**
+         * @example {
+         *       "id": "0199f1a2-7c3e-7a10-8000-000000000204",
+         *       "post": {
+         *         "id": "0199f1a2-7c3e-7a10-8000-000000000101",
+         *         "kind": "wip"
+         *       },
+         *       "project": {
+         *         "slug": "daftar",
+         *         "name": "دفتر",
+         *         "owners": [
+         *           {
+         *             "handle": "sara",
+         *             "displayName": "سارا رحیمی"
+         *           }
+         *         ]
+         *       },
+         *       "author": {
+         *         "handle": "niloufar",
+         *         "displayName": "نیلوفر صادقی"
+         *       },
+         *       "body": "فکر می‌کنم صفحهٔ اول باید کوتاه‌تر شود و فقط یک مثال داشته باشد.",
+         *       "questionIndex": 1,
+         *       "question": "کدام بخش صفحهٔ اول زیادی طولانی است؟",
+         *       "createdAt": "2026-10-21T09:00:00.000Z",
+         *       "editedAt": null,
+         *       "editableUntil": null,
+         *       "responseState": {
+         *         "state": "answered",
+         *         "ageDays": 7,
+         *         "overdue": false,
+         *         "overdueDays": 0,
+         *         "answeredInDays": 2
+         *       },
+         *       "response": {
+         *         "id": "0199f1a2-7c3e-7a10-8000-000000000302",
+         *         "status": "rejected",
+         *         "reason": "چند نفر از اولین کاربران همین مثال‌ها را خواستند؛ فعلاً می‌مانند.",
+         *         "recheckOn": null,
+         *         "responder": {
+         *           "handle": "sara",
+         *           "displayName": "سارا رحیمی"
+         *         },
+         *         "createdAt": "2026-10-23T09:00:00.000Z",
+         *         "editedAt": null,
+         *         "editableUntil": null
+         *       },
+         *       "replies": [
+         *         {
+         *           "id": "0199f1a2-7c3e-7a10-8000-000000000401",
+         *           "author": {
+         *             "handle": "niloufar",
+         *             "displayName": "نیلوفر صادقی"
+         *           },
+         *           "body": "ممنونم که توضیح دادی؛ دلیلت برایم روشن است.",
+         *           "createdAt": "2026-10-23T12:00:00.000Z",
+         *           "editedAt": null,
+         *           "editableUntil": null
+         *         }
+         *       ]
+         *     }
+         */
+        FeedbackItem: {
+            /** Format: uuid */
+            id: string;
+            post: components["schemas"]["PostRef"];
+            project: components["schemas"]["ProjectRef"];
+            author: components["schemas"]["MemberRef"];
+            body: string;
+            questionIndex: number | null;
+            question: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            editedAt: string | null;
+            /** Format: date-time */
+            editableUntil: string | null;
+            responseState: components["schemas"]["ResponseState"];
+            response: components["schemas"]["Response"];
+            replies: components["schemas"]["Reply"][];
+        };
+        /**
+         * @example {
+         *       "id": "0199f1a2-7c3e-7a10-8000-000000000101",
+         *       "kind": "wip"
+         *     }
+         */
+        PostRef: {
+            /** Format: uuid */
+            id: string;
+            kind: components["schemas"]["PostKind"];
+        };
+        /**
+         * @example {
+         *       "state": "awaiting",
+         *       "ageDays": 2,
+         *       "overdue": false,
+         *       "overdueDays": 0,
+         *       "answeredInDays": null
+         *     }
+         */
+        ResponseState: {
+            /** @enum {string} */
+            state: "awaiting" | "answered";
+            ageDays: number;
+            overdue: boolean;
+            overdueDays: number;
+            answeredInDays: number | null;
+        };
+        /**
+         * @example {
+         *       "id": "0199f1a2-7c3e-7a10-8000-000000000303",
+         *       "status": "accepted",
+         *       "reason": "درست می‌گویی؛ توضیح قیمت را کوتاه‌تر کردم.",
+         *       "recheckOn": null,
+         *       "responder": {
+         *         "handle": "sara",
+         *         "displayName": "سارا رحیمی"
+         *       },
+         *       "createdAt": "2026-10-20T15:00:00.000Z",
+         *       "editedAt": null,
+         *       "editableUntil": null
+         *     }
+         */
+        Response: {
+            /** Format: uuid */
+            id: string;
+            status: components["schemas"]["ResponseStatus"];
+            reason: string;
+            recheckOn: components["schemas"]["DateOnly"];
+            responder: components["schemas"]["MemberRef"];
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            editedAt: string | null;
+            /** Format: date-time */
+            editableUntil: string | null;
+        } | null;
+        /**
+         * @example {
+         *       "id": "0199f1a2-7c3e-7a10-8000-000000000404",
+         *       "author": {
+         *         "handle": "niloufar",
+         *         "displayName": "نیلوفر صادقی"
+         *       },
+         *       "body": "ممنونم که توضیح دادی؛ دلیلت برایم روشن است.",
+         *       "createdAt": "2026-10-23T12:00:00.000Z",
+         *       "editedAt": null,
+         *       "editableUntil": null
+         *     }
+         */
+        Reply: {
+            /** Format: uuid */
+            id: string;
+            author: components["schemas"]["MemberRef"];
+            body: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            editedAt: string | null;
+            /** Format: date-time */
+            editableUntil: string | null;
+        };
+        EditPostRequest: components["schemas"]["CreateWipPostRequest"] | components["schemas"]["CreateUpdatePostRequest"];
+        GiveFeedbackRequest: {
+            body: string;
+            questionIndex?: number;
+        };
+        EditFeedbackRequest: {
+            body: string;
+            questionIndex: number | null;
+        };
+        RespondRequest: {
+            status: components["schemas"]["ResponseStatus"];
+            reason: string;
+            recheckOn?: components["schemas"]["DateOnly"];
+        };
+        ReplyRequest: {
+            body: string;
+        };
+        EditReplyRequest: {
+            body: string;
+        };
+        /**
+         * @example {
+         *       "items": [
+         *         {
+         *           "id": "0199f1a2-7c3e-7a10-8000-000000000201",
+         *           "post": {
+         *             "id": "0199f1a2-7c3e-7a10-8000-000000000101",
+         *             "kind": "wip"
+         *           },
+         *           "project": {
+         *             "slug": "daftar",
+         *             "name": "دفتر",
+         *             "owners": [
+         *               {
+         *                 "handle": "sara",
+         *                 "displayName": "سارا رحیمی"
+         *               }
+         *             ]
+         *           },
+         *           "author": {
+         *             "handle": "arash",
+         *             "displayName": "آرش کاظمی"
+         *           },
+         *           "body": "اول صفحه را که دیدم نفهمیدم دفتر دقیقاً برای چه کسی است؛ یک جمله دربارهٔ مخاطب کم است.",
+         *           "questionIndex": 2,
+         *           "question": "اگر کسی این را ببیند، اول چه کاری می‌کند؟",
+         *           "createdAt": "2026-10-26T10:00:00.000Z",
+         *           "editedAt": null,
+         *           "editableUntil": null,
+         *           "responseState": {
+         *             "state": "awaiting",
+         *             "ageDays": 2,
+         *             "overdue": false,
+         *             "overdueDays": 0,
+         *             "answeredInDays": null
+         *           },
+         *           "response": null,
+         *           "replies": []
+         *         },
+         *         {
+         *           "id": "0199f1a2-7c3e-7a10-8000-000000000202",
+         *           "post": {
+         *             "id": "0199f1a2-7c3e-7a10-8000-000000000101",
+         *             "kind": "wip"
+         *           },
+         *           "project": {
+         *             "slug": "daftar",
+         *             "name": "دفتر",
+         *             "owners": [
+         *               {
+         *                 "handle": "sara",
+         *                 "displayName": "سارا رحیمی"
+         *               }
+         *             ]
+         *           },
+         *           "author": {
+         *             "handle": "niloufar",
+         *             "displayName": "نیلوفر صادقی"
+         *           },
+         *           "body": "بخش قیمت‌گذاری سه پاراگراف است و هنوز نمی‌دانم ماهانه چقدر می‌شود.",
+         *           "questionIndex": 0,
+         *           "question": "آیا توضیح قیمت‌گذاری روشن است؟",
+         *           "createdAt": "2026-10-16T10:00:00.000Z",
+         *           "editedAt": null,
+         *           "editableUntil": null,
+         *           "responseState": {
+         *             "state": "awaiting",
+         *             "ageDays": 12,
+         *             "overdue": true,
+         *             "overdueDays": 5,
+         *             "answeredInDays": null
+         *           },
+         *           "response": null,
+         *           "replies": []
+         *         },
+         *         {
+         *           "id": "0199f1a2-7c3e-7a10-8000-000000000203",
+         *           "post": {
+         *             "id": "0199f1a2-7c3e-7a10-8000-000000000101",
+         *             "kind": "wip"
+         *           },
+         *           "project": {
+         *             "slug": "daftar",
+         *             "name": "دفتر",
+         *             "owners": [
+         *               {
+         *                 "handle": "sara",
+         *                 "displayName": "سارا رحیمی"
+         *               }
+         *             ]
+         *           },
+         *           "author": {
+         *             "handle": "arash",
+         *             "displayName": "آرش کاظمی"
+         *           },
+         *           "body": "دکمهٔ شروع زیر تصویر گم می‌شود؛ بالاتر ببرش.",
+         *           "questionIndex": null,
+         *           "question": null,
+         *           "createdAt": "2026-10-20T09:00:00.000Z",
+         *           "editedAt": null,
+         *           "editableUntil": null,
+         *           "responseState": {
+         *             "state": "answered",
+         *             "ageDays": 8,
+         *             "overdue": false,
+         *             "overdueDays": 0,
+         *             "answeredInDays": 0
+         *           },
+         *           "response": {
+         *             "id": "0199f1a2-7c3e-7a10-8000-000000000301",
+         *             "status": "accepted",
+         *             "reason": "درست است؛ دکمه را بالای تصویر گذاشتم.",
+         *             "recheckOn": null,
+         *             "responder": {
+         *               "handle": "sara",
+         *               "displayName": "سارا رحیمی"
+         *             },
+         *             "createdAt": "2026-10-20T15:00:00.000Z",
+         *             "editedAt": null,
+         *             "editableUntil": null
+         *           },
+         *           "replies": []
+         *         },
+         *         {
+         *           "id": "0199f1a2-7c3e-7a10-8000-000000000204",
+         *           "post": {
+         *             "id": "0199f1a2-7c3e-7a10-8000-000000000101",
+         *             "kind": "wip"
+         *           },
+         *           "project": {
+         *             "slug": "daftar",
+         *             "name": "دفتر",
+         *             "owners": [
+         *               {
+         *                 "handle": "sara",
+         *                 "displayName": "سارا رحیمی"
+         *               }
+         *             ]
+         *           },
+         *           "author": {
+         *             "handle": "niloufar",
+         *             "displayName": "نیلوفر صادقی"
+         *           },
+         *           "body": "فکر می‌کنم صفحهٔ اول باید کوتاه‌تر شود و فقط یک مثال داشته باشد.",
+         *           "questionIndex": 1,
+         *           "question": "کدام بخش صفحهٔ اول زیادی طولانی است؟",
+         *           "createdAt": "2026-10-21T09:00:00.000Z",
+         *           "editedAt": null,
+         *           "editableUntil": null,
+         *           "responseState": {
+         *             "state": "answered",
+         *             "ageDays": 7,
+         *             "overdue": false,
+         *             "overdueDays": 0,
+         *             "answeredInDays": 2
+         *           },
+         *           "response": {
+         *             "id": "0199f1a2-7c3e-7a10-8000-000000000302",
+         *             "status": "rejected",
+         *             "reason": "چند نفر از اولین کاربران همین مثال‌ها را خواستند؛ فعلاً می‌مانند.",
+         *             "recheckOn": null,
+         *             "responder": {
+         *               "handle": "sara",
+         *               "displayName": "سارا رحیمی"
+         *             },
+         *             "createdAt": "2026-10-23T09:00:00.000Z",
+         *             "editedAt": null,
+         *             "editableUntil": null
+         *           },
+         *           "replies": [
+         *             {
+         *               "id": "0199f1a2-7c3e-7a10-8000-000000000401",
+         *               "author": {
+         *                 "handle": "niloufar",
+         *                 "displayName": "نیلوفر صادقی"
+         *               },
+         *               "body": "ممنونم که توضیح دادی؛ دلیلت برایم روشن است.",
+         *               "createdAt": "2026-10-23T12:00:00.000Z",
+         *               "editedAt": null,
+         *               "editableUntil": null
+         *             }
+         *           ]
+         *         },
+         *         {
+         *           "id": "0199f1a2-7c3e-7a10-8000-000000000205",
+         *           "post": {
+         *             "id": "0199f1a2-7c3e-7a10-8000-000000000101",
+         *             "kind": "wip"
+         *           },
+         *           "project": {
+         *             "slug": "daftar",
+         *             "name": "دفتر",
+         *             "owners": [
+         *               {
+         *                 "handle": "sara",
+         *                 "displayName": "سارا رحیمی"
+         *               }
+         *             ]
+         *           },
+         *           "author": {
+         *             "handle": "arash",
+         *             "displayName": "آرش کاظمی"
+         *           },
+         *           "body": "ورود با تلگرام را امتحان کردم و دو بار از من کد خواست.",
+         *           "questionIndex": null,
+         *           "question": null,
+         *           "createdAt": "2026-10-22T09:00:00.000Z",
+         *           "editedAt": null,
+         *           "editableUntil": null,
+         *           "responseState": {
+         *             "state": "answered",
+         *             "ageDays": 6,
+         *             "overdue": false,
+         *             "overdueDays": 0,
+         *             "answeredInDays": 2
+         *           },
+         *           "response": {
+         *             "id": "0199f1a2-7c3e-7a10-8000-000000000303",
+         *             "status": "testing",
+         *             "reason": "این را با چند نفر دیگر امتحان می‌کنم تا ببینم تکرار می‌شود یا نه.",
+         *             "recheckOn": "2026-11-15",
+         *             "responder": {
+         *               "handle": "sara",
+         *               "displayName": "سارا رحیمی"
+         *             },
+         *             "createdAt": "2026-10-24T09:00:00.000Z",
+         *             "editedAt": null,
+         *             "editableUntil": null
+         *           },
+         *           "replies": []
+         *         }
+         *       ],
+         *       "nextCursor": null
+         *     }
+         */
+        FeedbackPage: {
+            items: components["schemas"]["FeedbackItem"][];
+            nextCursor: string | null;
+        };
+        /**
+         * @example {
+         *       "items": [
+         *         {
+         *           "id": "0199f1a2-7c3e-7a10-8000-000000000504",
+         *           "kind": "response_due",
+         *           "actor": null,
+         *           "project": {
+         *             "slug": "daftar",
+         *             "name": "دفتر"
+         *           },
+         *           "post": {
+         *             "id": "0199f1a2-7c3e-7a10-8000-000000000101",
+         *             "kind": "wip"
+         *           },
+         *           "feedbackId": "0199f1a2-7c3e-7a10-8000-000000000202",
+         *           "createdAt": "2026-10-28T09:00:00.000Z",
+         *           "readAt": null
+         *         },
+         *         {
+         *           "id": "0199f1a2-7c3e-7a10-8000-000000000503",
+         *           "kind": "reply_received",
+         *           "actor": {
+         *             "handle": "niloufar",
+         *             "displayName": "نیلوفر صادقی"
+         *           },
+         *           "project": {
+         *             "slug": "daftar",
+         *             "name": "دفتر"
+         *           },
+         *           "post": {
+         *             "id": "0199f1a2-7c3e-7a10-8000-000000000101",
+         *             "kind": "wip"
+         *           },
+         *           "feedbackId": "0199f1a2-7c3e-7a10-8000-000000000204",
+         *           "createdAt": "2026-10-23T12:00:00.000Z",
+         *           "readAt": null
+         *         },
+         *         {
+         *           "id": "0199f1a2-7c3e-7a10-8000-000000000502",
+         *           "kind": "response_received",
+         *           "actor": {
+         *             "handle": "sara",
+         *             "displayName": "سارا رحیمی"
+         *           },
+         *           "project": {
+         *             "slug": "daftar",
+         *             "name": "دفتر"
+         *           },
+         *           "post": {
+         *             "id": "0199f1a2-7c3e-7a10-8000-000000000101",
+         *             "kind": "wip"
+         *           },
+         *           "feedbackId": "0199f1a2-7c3e-7a10-8000-000000000204",
+         *           "createdAt": "2026-10-23T09:00:00.000Z",
+         *           "readAt": "2026-10-23T18:00:00.000Z"
+         *         },
+         *         {
+         *           "id": "0199f1a2-7c3e-7a10-8000-000000000501",
+         *           "kind": "feedback_received",
+         *           "actor": {
+         *             "handle": "arash",
+         *             "displayName": "آرش کاظمی"
+         *           },
+         *           "project": {
+         *             "slug": "daftar",
+         *             "name": "دفتر"
+         *           },
+         *           "post": {
+         *             "id": "0199f1a2-7c3e-7a10-8000-000000000101",
+         *             "kind": "wip"
+         *           },
+         *           "feedbackId": "0199f1a2-7c3e-7a10-8000-000000000203",
+         *           "createdAt": "2026-10-22T09:00:00.000Z",
+         *           "readAt": "2026-10-22T20:00:00.000Z"
+         *         }
+         *       ],
+         *       "nextCursor": null,
+         *       "hasUnread": true
+         *     }
+         */
+        NotificationPage: {
+            items: components["schemas"]["Notification"][];
+            nextCursor: string | null;
+            hasUnread: boolean;
+        };
+        /**
+         * @example {
+         *       "id": "0199f1a2-7c3e-7a10-8000-000000000503",
+         *       "kind": "reply_received",
+         *       "actor": {
+         *         "handle": "niloufar",
+         *         "displayName": "نیلوفر صادقی"
+         *       },
+         *       "project": {
+         *         "slug": "daftar",
+         *         "name": "دفتر"
+         *       },
+         *       "post": {
+         *         "id": "0199f1a2-7c3e-7a10-8000-000000000101",
+         *         "kind": "wip"
+         *       },
+         *       "feedbackId": "0199f1a2-7c3e-7a10-8000-000000000204",
+         *       "createdAt": "2026-10-23T12:00:00.000Z",
+         *       "readAt": null
+         *     }
+         */
+        Notification: {
+            /** Format: uuid */
+            id: string;
+            kind: components["schemas"]["NotificationKind"];
+            actor: components["schemas"]["MemberRef"];
+            project: {
+                slug: string;
+                name: string;
+            };
+            post: components["schemas"]["PostRef"];
+            /** Format: uuid */
+            feedbackId: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            readAt: string | null;
+        };
+        /** @enum {string} */
+        NotificationKind: "feedback_received" | "response_received" | "reply_received" | "response_due";
+        MarkReadRequest: {
+            ids: string[];
+        } | {
+            /** @enum {boolean} */
+            all: true;
         };
     };
     responses: never;

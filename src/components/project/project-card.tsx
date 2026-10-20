@@ -3,6 +3,8 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import type { components } from "@/lib/api/schema";
+import { formatDate } from "@/lib/format";
+import { ResponseChip } from "../feedback/response-chip";
 import { PublicBadge } from "../ui/public-badge";
 
 type Project = components["schemas"]["Project"];
@@ -54,6 +56,16 @@ export function ProjectCard({
         ) : null}
         <span>{t(`stages.${project.stage}`)}</span>
       </p>
+      <div className="mt-auto flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+        <span className="text-small text-ink-muted">
+          {project.lastPostAt
+            ? t("lastPost", { date: formatDate(project.lastPostAt, locale) })
+            : t("noPostsYet")}
+        </span>
+        {project.hasUnansweredFeedback ? (
+          <ResponseChip kind="has-unanswered" />
+        ) : null}
+      </div>
     </article>
   );
 }

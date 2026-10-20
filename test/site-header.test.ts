@@ -108,6 +108,76 @@ describe("SiteHeader", () => {
     expect(visibleText(html)).toContain("workaholics");
   });
 
+  describe("member menu links", () => {
+    const member = { displayName: "سارا مقدم" };
+    const prefixes = { fa: "", en: "/en" } as const;
+
+    // The signed-in header has two menus, the desktop dropdown and then the phone sheet.
+    function menus(html: string) {
+      return html.split("<details").slice(1);
+    }
+
+    it("lists awaiting and notifications after My page and before Sign out, in both menus", () => {
+      for (const locale of ["fa", "en"] as const) {
+        const prefix = prefixes[locale];
+        const sections = menus(render(locale, { member }));
+
+        expect(sections).toHaveLength(2);
+        for (const section of sections) {
+          const hrefs = [`${prefix}/me"`, `${prefix}/me/awaiting"`, `${prefix}/me/notifications"`].map(
+            (tail) => section.indexOf(`href="${tail}`),
+          );
+          const signOut = section.indexOf('action="/sign-out"');
+
+          for (const index of hrefs) expect(index).toBeGreaterThan(-1);
+          expect(hrefs).toEqual([...hrefs].sort((a, b) => a - b));
+          expect(signOut).toBeGreaterThan(hrefs[2] ?? Infinity);
+        }
+      }
+    });
+
+    it("labels the links with the menu's own words", () => {
+      for (const locale of ["fa", "en"] as const) {
+        const prefix = prefixes[locale];
+        const html = render(locale, { member });
+
+        for (const [path, label] of [
+          ["/me/awaiting", messages[locale].Nav.awaiting],
+          ["/me/notifications", messages[locale].Nav.notifications],
+        ] as const) {
+          const tags = [...html.matchAll(new RegExp(`<a[^>]*href="${prefix}${path}"[^>]*>([^<]*)</a>`, "g"))];
+
+          expect(tags.map((tag) => tag[1])).toEqual([label, label]);
+        }
+      }
+    });
+
+    it("has neither link when signed out", () => {
+      for (const locale of ["fa", "en"] as const) {
+        const html = render(locale);
+
+        expect(html).not.toContain("/me/awaiting");
+        expect(html).not.toContain("/me/notifications");
+        expect(html).not.toMatch(/href="[^"]*\/me"/);
+      }
+    });
+  });
+
+  it("holds no count and no unread marker when signed in", () => {
+    for (const locale of ["fa", "en"] as const) {
+      const html = render(locale, { current: "projects", member: { displayName: "سارا مقدم" } });
+      const labels = [...html.matchAll(/\saria-label="([^"]*)"/g)].map((match) => match[1]);
+
+      expect(visibleText(html)).not.toMatch(/[0-9۰-۹٠-٩]/);
+      // The only label is the phone menu button's.
+      expect(labels).toEqual([messages[locale].Nav.menu]);
+      // The initials circle is the only round element: no dot badge.
+      expect(html.match(/rounded-full/g)).toHaveLength(1);
+      expect(html).not.toContain("sr-only");
+      expect(html).not.toMatch(/\s(?:data-unread|aria-live|role="status")/);
+    }
+  });
+
   it("keeps the current path in the language link", () => {
     const faLinks = languageLinks(render("fa", {}, "/projects"), "en");
     const enLinks = languageLinks(render("en", {}, "/en/projects"), "fa");

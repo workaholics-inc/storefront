@@ -9,7 +9,7 @@ import { platformCall } from "./api/errors";
 import type { components } from "./api/schema";
 import { SESSION_COOKIE } from "./cookies";
 
-export type Member = components["schemas"]["Member"];
+export type Member = components["schemas"]["Me"];
 
 export type CurrentMember =
   | { state: "signed-out" }

@@ -37,7 +37,21 @@ Browser ──▶ storefront server (Next.js) ──▶ platform /v1 API
 - An expired session clears itself. A page redirects through `/auth/expired`; a form's server action deletes the cookie itself, because Next follows an action's redirect on the server and drops its cookies. Only the platform's `session_required` counts as expired; any other 401 is a configuration error.
 - Sign-out is a `POST` to `/sign-out`, accepted only from the site's own origin. It revokes the session on the platform and clears the cookie, even when the platform cannot be reached.
 - Every page except the home page and sign-in requires a session. After sign-in, the site returns only to same-site paths.
-- Server-only variables: `SITE_URL` (the site's public origin), `TELEGRAM_CLIENT_ID`, and optionally `TELEGRAM_AUTHORIZE_URL`. Mock mode runs a stand-in for Telegram's authorization page, so the whole flow works locally.
+- Server-only variables: `SITE_URL` (the site's public origin), `TELEGRAM_CLIENT_ID`, and optionally `TELEGRAM_AUTHORIZE_URL` and `TELEGRAM_BOT_USERNAME` (the same bot, written without the `@`; the notifications page links to it so members can turn on Telegram messages). Mock mode runs a stand-in for Telegram's authorization page, so the whole flow works locally.
+
+## The practice pages
+
+Added with milestone M2 (the feedback loop). Every page requires a session and follows `docs/design/`.
+
+- `/projects/<slug>`: the project and its timeline of posts, newest first, with older posts on request. Owners get the link to a new post.
+- `/projects/<slug>/posts/new` and `/projects/<slug>/posts/<id>/edit`: the post form, for work in progress (up to five questions, an optional self-critique) or an update (what changed, the feedback acted on, what was rejected and why, one number). The edit page works only while the platform says the post is editable.
+- `/projects/<slug>/posts/<id>`: the thread. Telegram messages link here. The post, then its feedback filtered by All, Awaiting response or Answered, with no counts; forms to give feedback, answer it (owners) and reply; edits happen in place within the 15-minute window.
+- `/me/awaiting`: feedback on the member's projects that still waits for their answer, oldest first.
+- `/me/notifications`: the member's notifications. Opening one marks it read; there is also a button to mark all read. When private messages are off, the page links to the Telegram bot.
+- `/members/<handle>`: the profile gains a section with the feedback that member gave and each item's current state.
+- The member menu links to the two `/me` pages. Project lists are ordered by the latest activity, and project cards show the last post's date and whether feedback waits for an answer.
+
+The platform computes every state shown here (awaiting, overdue, answered in N days, editable until); the storefront only words it.
 
 ## Contract workflow
 
@@ -60,7 +74,7 @@ API changes are requested through issues; contributors never edit the contract b
 
 ## Stack
 
-Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, next-intl, openapi-typescript and openapi-fetch, vitest (at most 2 workers), pnpm 12.
+Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, next-intl, openapi-typescript and openapi-fetch, vitest (at most 2 workers and, on Linux, pinned to cores 0 and 1 by `vitest.config.ts`), pnpm 12.
 
 ## Privacy
 

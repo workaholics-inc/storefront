@@ -78,3 +78,21 @@ export function authEnv(
       parsed.data.TELEGRAM_AUTHORIZE_URL ?? DEFAULT_TELEGRAM_AUTHORIZE_URL,
   };
 }
+
+// The bot's username is public, but it differs per deployment, so it is a
+// setting. Without it the notifications page hides the link to the bot.
+const botSchema = z.object({
+  TELEGRAM_BOT_USERNAME: z.string().regex(/^[A-Za-z][A-Za-z0-9_]{1,28}bot$/i),
+});
+
+export function telegramBotUsername(
+  source: Record<string, string | undefined> = process.env,
+): string | null {
+  const value = source.TELEGRAM_BOT_USERNAME;
+  if (value === undefined || value === "") return null;
+
+  const parsed = botSchema.safeParse({ TELEGRAM_BOT_USERNAME: value });
+  if (!parsed.success) throw invalidEnvironment(parsed.error);
+
+  return parsed.data.TELEGRAM_BOT_USERNAME;
+}

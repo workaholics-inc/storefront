@@ -58,7 +58,7 @@ describe("ResponseChip", () => {
     ).toContain("آبان");
     expect(
       render("en", { kind: "testing", recheckOn: "2026-10-24" }),
-    ).toContain("October");
+    ).toContain("24 Oct");
   });
 
   it.each<ResponseChipProps>([
