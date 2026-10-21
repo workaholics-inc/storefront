@@ -38,7 +38,7 @@ export function ProjectCard({
         ) : null}
       </div>
       {project.oneLiner ? (
-        <p className="m-0 text-ink">{project.oneLiner}</p>
+        <p className="m-0 text-ink"><bdi>{project.oneLiner}</bdi></p>
       ) : null}
       <p className="m-0 flex flex-wrap items-baseline gap-x-2 text-small text-ink-muted">
         {owners.length > 0 ? (

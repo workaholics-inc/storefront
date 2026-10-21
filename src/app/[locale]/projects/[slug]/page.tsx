@@ -193,7 +193,7 @@ export default async function ProjectPage({
           {project.visibility === "public" ? <PublicBadge visibility="public" /> : null}
         </div>
         {project.oneLiner ? (
-          <p className="m-0 max-w-read text-lead text-ink">{project.oneLiner}</p>
+          <p className="m-0 max-w-read text-lead text-ink"><bdi>{project.oneLiner}</bdi></p>
         ) : null}
         <div className="flex flex-wrap items-baseline gap-x-2 text-small text-ink-muted">
           <span>
