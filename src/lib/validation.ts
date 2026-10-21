@@ -18,6 +18,8 @@ type UpdateMeRequest = Schemas["UpdateMeRequest"];
 type CreateProjectRequest = Schemas["CreateProjectRequest"];
 type UpdateProjectRequest = Schemas["UpdateProjectRequest"];
 type CreatePostRequest = Schemas["CreatePostRequest"];
+type CreateCaseRequest = Schemas["CreateCaseRequest"];
+type UpdateCaseRequest = Schemas["UpdateCaseRequest"];
 type ItemVisibility = Schemas["ItemVisibility"];
 type SetVisibilityRequest = Schemas["SetVisibilityRequest"];
 type GiveFeedbackRequest = Schemas["GiveFeedbackRequest"];
@@ -94,6 +96,14 @@ export const LIMITS = {
   feedbackBodyMax: limit("GiveFeedbackRequest", "properties", "body", "maxLength"),
   reasonMax: limit("RespondRequest", "properties", "reason", "maxLength"),
   replyBodyMax: limit("ReplyRequest", "properties", "body", "maxLength"),
+  caseTitleMax: limit("CreateCaseRequest", "properties", "title", "maxLength"),
+  caseFeedbackStoryMax: limit("CreateCaseRequest", "properties", "feedbackStory", "maxLength"),
+  caseChangeMax: limit("CreateCaseRequest", "properties", "change", "maxLength"),
+  caseResultMax: limit("CreateCaseRequest", "properties", "result", "maxLength"),
+  caseOneNumberMax: limit("CreateCaseRequest", "properties", "oneNumber", "maxLength"),
+  caseFeedbackMin: limit("CreateCaseRequest", "properties", "feedbackIds", "minItems"),
+  caseFeedbackMax: limit("CreateCaseRequest", "properties", "feedbackIds", "maxItems"),
+  casePostsMax: limit("CreateCaseRequest", "properties", "postIds", "maxItems"),
 } as const;
 
 export type ValidationResult<T> =
@@ -375,6 +385,72 @@ export function validatePost(
       ...(rejectedAndWhy === "" ? {} : { rejectedAndWhy }),
       ...(visibility === undefined ? {} : { visibility }),
     },
+  };
+}
+
+// A repeated checkbox name: the ids that look like ids, once each, the first `max`.
+function readIds(form: FormData, name: string, max: number): string[] {
+  return [
+    ...new Set(
+      form
+        .getAll(name)
+        .filter((value): value is string => typeof value === "string")
+        .map((value) => value.trim())
+        .filter((value) => UUID.test(value)),
+    ),
+  ].slice(0, max);
+}
+
+export function validateCase(
+  form: FormData,
+  mode: "create",
+): ValidationResult<CreateCaseRequest>;
+export function validateCase(
+  form: FormData,
+  mode: "update",
+): ValidationResult<UpdateCaseRequest>;
+export function validateCase(
+  form: FormData,
+  mode: "create" | "update",
+): ValidationResult<CreateCaseRequest> | ValidationResult<UpdateCaseRequest> {
+  const errors: Errors = {};
+
+  const title = text(form, "title");
+  checkLength(errors, "title", title, LIMITS.caseTitleMax, true);
+  const feedbackStory = text(form, "feedbackStory");
+  checkLength(errors, "feedbackStory", feedbackStory, LIMITS.caseFeedbackStoryMax, true);
+  const change = text(form, "change");
+  checkLength(errors, "change", change, LIMITS.caseChangeMax, true);
+  const result = text(form, "result");
+  checkLength(errors, "result", result, LIMITS.caseResultMax, true);
+  const oneNumber = text(form, "oneNumber");
+  checkLength(errors, "oneNumber", oneNumber, LIMITS.caseOneNumberMax, false);
+
+  const { visibility, error: visibilityError } = readVisibility(form);
+  if (visibilityError) errors.visibility = visibilityError;
+
+  const feedbackIds = readIds(form, "feedbackIds", LIMITS.caseFeedbackMax);
+  if (feedbackIds.length < LIMITS.caseFeedbackMin) {
+    errors.feedbackIds = { key: "chooseOne" };
+  }
+  const postIds = readIds(form, "postIds", LIMITS.casePostsMax);
+
+  if (Object.keys(errors).length > 0) return failure(form, errors);
+
+  const body = {
+    title,
+    feedbackStory,
+    change,
+    result,
+    feedbackIds,
+    postIds,
+    ...(visibility === undefined ? {} : { visibility }),
+  };
+
+  // An edit always sends the number ("" clears it); a new case leaves it out.
+  return {
+    ok: true,
+    body: mode === "update" ? { ...body, oneNumber } : { ...body, ...(oneNumber === "" ? {} : { oneNumber }) },
   };
 }
 
