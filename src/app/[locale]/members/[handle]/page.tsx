@@ -25,7 +25,7 @@ export default async function MemberPage({
   searchParams,
 }: {
   params: Promise<{ locale: string; handle: string }>;
-  searchParams: Promise<{ cursor?: string | string[] }>;
+  searchParams: Promise<{ cursor?: string | string[]; export?: string | string[] }>;
 }) {
   const { locale, handle } = await params;
   if (!hasLocale(routing.locales, locale)) {
@@ -38,9 +38,11 @@ export default async function MemberPage({
   const t = await getTranslations("Profile");
   const tProjects = await getTranslations("Projects");
   const tFeedback = await getTranslations("Feedback");
+  const tExport = await getTranslations("Export");
 
-  const { cursor: rawCursor } = await searchParams;
+  const { cursor: rawCursor, export: rawExport } = await searchParams;
   const cursor = Array.isArray(rawCursor) ? rawCursor[0] : rawCursor;
+  const exportParam = Array.isArray(rawExport) ? rawExport[0] : rawExport;
   const lowerHandle = handle.toLowerCase();
 
   const [result, given] = await Promise.all([
@@ -69,6 +71,7 @@ export default async function MemberPage({
 
   const profile = result.data;
   const isSelf = profile.handle === me.handle;
+  const exportFailed = isSelf && exportParam === "failed";
   const profilePath = `/members/${encodeURIComponent(profile.handle)}`;
   const projects = [...profile.projects].sort(
     (a, b) =>
@@ -174,6 +177,31 @@ export default async function MemberPage({
         </div>
         <aside>
           <p className="m-0 text-small text-ink-muted">{t("noScores")}</p>
+          {isSelf ? (
+            <section
+              id="export"
+              aria-labelledby="export-title"
+              className="mt-6 flex flex-col gap-2"
+            >
+              <h2 id="export-title" className="m-0 text-label font-bold text-ink-muted">
+                {tExport("title")}
+              </h2>
+              <p className="m-0 text-small">{tExport("body")}</p>
+              {exportFailed ? (
+                <p role="alert" className="m-0 text-small text-danger">
+                  {tExport("failed")}
+                </p>
+              ) : null}
+              {/* A plain link without `download`: next-intl's Link would prefetch
+                  the route, and a prefetch GET would run the export. */}
+              <a
+                href={localePath(locale, "/me/export")}
+                className={buttonClasses({ variant: "secondary", size: "sm" })}
+              >
+                {tExport("download")}
+              </a>
+            </section>
+          ) : null}
         </aside>
       </div>
     </div>
