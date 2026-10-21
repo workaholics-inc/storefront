@@ -7,6 +7,7 @@ import { answerChip } from "../feedback/chips";
 import { ResponseChip } from "../feedback/response-chip";
 import { buttonClasses } from "../ui/button";
 import { Icon } from "../ui/icon";
+import { PublicBadge, itemBadge } from "../ui/public-badge";
 
 type PostData = components["schemas"]["Post"];
 
@@ -21,6 +22,7 @@ export function Post({
   showThreadLink,
   canGiveFeedback,
   now,
+  projectPublic,
 }: {
   post: PostData;
   locale: Locale;
@@ -28,6 +30,7 @@ export function Post({
   showThreadLink: boolean;
   canGiveFeedback: boolean;
   now: Date;
+  projectPublic?: boolean;
 }) {
   const t = useTranslations("Posts");
   const f = useTranslations("Feedback");
@@ -36,6 +39,7 @@ export function Post({
   const editable =
     post.editableUntil !== null && new Date(post.editableUntil) > now;
   const isWip = post.kind === "wip";
+  const badge = itemBadge({ isPublic: post.isPublic, projectPublic });
 
   return (
     <article className="flex min-w-0 flex-col gap-4 rounded-md border border-rule bg-sheet p-4 sm:p-6">
@@ -48,6 +52,7 @@ export function Post({
           />
           {isWip ? t("wip") : t("update")}
         </span>
+        {badge ? <PublicBadge visibility={badge} /> : null}
         <span className="text-small text-ink-muted">
           {post.author ? <bdi>{post.author.displayName}</bdi> : f("unknownMember")}
         </span>
