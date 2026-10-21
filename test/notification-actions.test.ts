@@ -97,7 +97,7 @@ describe("openNotification", () => {
     ["en", `/en${THREAD}#feedback-${FEEDBACK}`],
   ])("marks it read and opens the item in the thread in %s", async (locale, path) => {
     const target = await redirectedTo(
-      openNotification(locale, NOTIFICATION, "daftar", POST_ID, FEEDBACK, form),
+      openNotification(locale, NOTIFICATION, "daftar", POST_ID, FEEDBACK, "", form),
     );
 
     expect(target).toBe(path);
@@ -114,7 +114,7 @@ describe("openNotification", () => {
     ["en", `/en${THREAD}`],
   ])("opens the thread without a hash when there is no item in %s", async (locale, path) => {
     const target = await redirectedTo(
-      openNotification(locale, NOTIFICATION, "daftar", POST_ID, "", form),
+      openNotification(locale, NOTIFICATION, "daftar", POST_ID, "", "", form),
     );
 
     expect(target).toBe(path);
@@ -131,7 +131,7 @@ describe("openNotification", () => {
     h.answer = answer;
 
     const target = await redirectedTo(
-      openNotification("fa", NOTIFICATION, "daftar", POST_ID, FEEDBACK, form),
+      openNotification("fa", NOTIFICATION, "daftar", POST_ID, FEEDBACK, "", form),
     );
 
     expect(target).toBe(`${THREAD}#feedback-${FEEDBACK}`);
@@ -147,7 +147,7 @@ describe("openNotification", () => {
       h.answer = fail(401, "session_required");
 
       const target = await redirectedTo(
-        openNotification(locale, NOTIFICATION, "daftar", POST_ID, FEEDBACK, form),
+        openNotification(locale, NOTIFICATION, "daftar", POST_ID, FEEDBACK, "", form),
       );
 
       expect(target).toBe(path);
@@ -168,12 +168,12 @@ describe("openNotification", () => {
     async (_name, [id, slug, postId, feedbackId]) => {
       expect(
         await redirectedTo(
-          openNotification("fa", id!, slug!, postId!, feedbackId!, form),
+          openNotification("fa", id!, slug!, postId!, feedbackId!, "", form),
         ),
       ).toBe("/me/notifications");
       expect(
         await redirectedTo(
-          openNotification("en", id!, slug!, postId!, feedbackId!, form),
+          openNotification("en", id!, slug!, postId!, feedbackId!, "", form),
         ),
       ).toBe("/en/me/notifications");
       expect(h.calls).toHaveLength(0);
@@ -182,7 +182,7 @@ describe("openNotification", () => {
 
   it("treats a bound locale that is not a locale as the default", async () => {
     const target = await redirectedTo(
-      openNotification("//evil.example", NOTIFICATION, "daftar", POST_ID, "", form),
+      openNotification("//evil.example", NOTIFICATION, "daftar", POST_ID, "", "", form),
     );
 
     expect(target).toBe(THREAD);

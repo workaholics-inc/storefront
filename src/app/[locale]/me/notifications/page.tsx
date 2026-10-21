@@ -93,6 +93,7 @@ export default async function NotificationsPage({
                     notification.project.slug,
                     notification.post.id,
                     notification.feedbackId ?? "",
+                    notification.caseId ?? "",
                   )}
                 >
                   <button
