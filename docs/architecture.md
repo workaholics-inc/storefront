@@ -36,7 +36,7 @@ Browser ──▶ storefront server (Next.js) ──▶ platform /v1 API
 - `wh_session` is httpOnly, SameSite=Lax and Secure (unless `SITE_URL` is `http://`), and lasts 30 days. The proxy refreshes it on every page load (`GET` only), and the platform slides its own expiry.
 - An expired session clears itself. A page redirects through `/auth/expired`; a form's server action deletes the cookie itself, because Next follows an action's redirect on the server and drops its cookies. Only the platform's `session_required` counts as expired; any other 401 is a configuration error.
 - Sign-out is a `POST` to `/sign-out`, accepted only from the site's own origin. It revokes the session on the platform and clears the cookie, even when the platform cannot be reached.
-- Every page except the home page and sign-in requires a session. After sign-in, the site returns only to same-site paths.
+- Every page except the home page, sign-in, the transparency page and the public views below requires a session. After sign-in, the site returns only to same-site paths.
 - Server-only variables: `SITE_URL` (the site's public origin), `TELEGRAM_CLIENT_ID`, and optionally `TELEGRAM_AUTHORIZE_URL` and `TELEGRAM_BOT_USERNAME` (the same bot, written without the `@`; the notifications page links to it so members can turn on Telegram messages). Mock mode runs a stand-in for Telegram's authorization page, so the whole flow works locally.
 
 ## The practice pages
@@ -52,6 +52,17 @@ Added with milestone M2 (the feedback loop). Every page requires a session and f
 - The member menu links to the two `/me` pages. Project lists are ordered by the latest activity, and project cards show the last post's date and whether feedback waits for an answer.
 
 The platform computes every state shown here (awaiting, overdue, answered in N days, editable until); the storefront only words it.
+
+## Public pages
+
+Added with milestone M3 (the record). Members and visitors use the same addresses:
+
+- `/projects/<slug>`, `/projects/<slug>/posts/<id>`, `/projects/<slug>/changelog`, `/projects/<slug>/cases` and `/projects/<slug>/cases/<id>`: a signed-in member sees the members' page. A visitor (no session cookie at all) sees the public view, read from the platform's `/v1/public/*` routes. When the platform says it is not public, the visitor is sent to sign-in, so a members-only address reveals nothing. A member whose session has expired goes through `/auth/expired` as before, never to the public view.
+- Public views show only the owner's words: no feedback, answers, replies or names of givers, except names in a case after the giver consented.
+- `/practice`: the transparency page with the community's monthly numbers and their rules (see `docs/rules.md`). It is the one page that shows numbers, and they are community-wide.
+- `/badge/<slug>.svg`: a static badge image for public projects, served by the storefront after it checks the project is public, so browsers never call the platform. Owners of a public project see the embed snippet on its page.
+- `/me/export`: downloads the member's data from the platform as a JSON file.
+- Owners write and edit cases at `/projects/<slug>/cases/new` and `/projects/<slug>/cases/<id>/edit`; a credited member answers the naming question on the case page.
 
 ## Contract workflow
 
