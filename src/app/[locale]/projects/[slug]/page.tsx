@@ -1,22 +1,34 @@
-import type { ReactNode } from "react";
+import { cache, type ReactNode } from "react";
+import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Post } from "@/components/post/post";
+import { PublicPost } from "@/components/post/public-post";
+import { BadgeSnippet } from "@/components/project/badge-snippet";
 import { buttonClasses } from "@/components/ui/button";
 import { Icon, type IconName } from "@/components/ui/icon";
 import { PublicBadge } from "@/components/ui/public-badge";
 import { StateMessage } from "@/components/ui/state-message";
 import { Link } from "@/i18n/navigation";
-import { routing } from "@/i18n/routing";
+import { routing, type Locale } from "@/i18n/routing";
 import { getPlatformClient } from "@/lib/api/client";
 import { platformCall } from "@/lib/api/errors";
 import type { components } from "@/lib/api/schema";
+import { siteUrl } from "@/lib/env";
 import { formatDate } from "@/lib/format";
-import { expiredPath, localePath, requireMember } from "@/lib/session";
+import {
+  expiredPath,
+  getCurrentMember,
+  getViewer,
+  localePath,
+  signInPath,
+} from "@/lib/session";
 
 type Project = components["schemas"]["Project"];
 type PostPage = components["schemas"]["PostPage"];
+type PublicProject = components["schemas"]["PublicProject"];
+type PublicPostPage = components["schemas"]["PublicPostPage"];
 type Owner = NonNullable<components["schemas"]["MemberRef"]>;
 
 const PROJECT_TIMEOUT_MS = 5000;
@@ -42,6 +54,192 @@ function Entry({ icon, children }: { icon: IconName; children: ReactNode }) {
   );
 }
 
+// One platform call per request, shared by the page and its metadata.
+const loadPublicProject = cache(async (slug: string) =>
+  platformCall<PublicProject>(async () =>
+    (await getPlatformClient()).GET("/v1/public/projects/{slug}", {
+      params: { path: { slug } },
+      signal: AbortSignal.timeout(PROJECT_TIMEOUT_MS),
+    }),
+  ),
+);
+
+// Only a visitor gets a title of their own; members' pages keep the layout's.
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; slug: string }>;
+}): Promise<Metadata> {
+  const { locale, slug } = await params;
+  if (!hasLocale(routing.locales, locale)) return {};
+  if ((await getCurrentMember()).state !== "signed-out") return {};
+
+  const result = await loadPublicProject(slug.toLowerCase());
+  if (!result.ok) return {};
+  const t = await getTranslations({ locale, namespace: "PublicPages" });
+
+  return { title: t("projectMetaTitle", { project: result.data.name }) };
+}
+
+// What a visitor (no session cookie at all) sees: the owners' public words
+// only, from the platform's public routes. Every refusal reads as sign-in, so a
+// members-only address reveals nothing.
+async function PublicProjectView({
+  locale,
+  slug,
+  cursor,
+  here,
+}: {
+  locale: Locale;
+  slug: string;
+  cursor: string | undefined;
+  here: string;
+}) {
+  const t = await getTranslations("Projects");
+  const tPublic = await getTranslations("PublicPages");
+
+  const [result, posts] = await Promise.all([
+    loadPublicProject(slug),
+    platformCall<PublicPostPage>(async () =>
+      (await getPlatformClient()).GET("/v1/public/projects/{slug}/posts", {
+        params: { path: { slug }, query: { cursor, limit: POSTS_PAGE_SIZE } },
+        signal: AbortSignal.timeout(PROJECT_TIMEOUT_MS),
+      }),
+    ),
+  ]);
+  if (!result.ok) {
+    if (result.status === 404) redirect(signInPath(locale, { next: here }));
+    if (result.code === "unreachable") return <StateMessage kind="unreachable" />;
+    throw new Error("platform error: " + result.code);
+  }
+
+  const project = result.data;
+  const owners = project.owners.filter((owner): owner is Owner => owner !== null);
+  const projectPath = `/projects/${encodeURIComponent(project.slug)}`;
+
+  let timeline: ReactNode;
+  if (!posts.ok) {
+    if (posts.status === 404) redirect(signInPath(locale, { next: here }));
+    if (posts.code === "unreachable") {
+      timeline = <StateMessage kind="unreachable" />;
+    } else if (posts.status === 400) {
+      // A cursor the platform does not accept: offer the way back.
+      timeline = (
+        <StateMessage
+          kind="error"
+          action={
+            <Link
+              href={projectPath}
+              className={buttonClasses({ variant: "secondary" })}
+            >
+              {t("backToNewest")}
+            </Link>
+          }
+        />
+      );
+    } else {
+      throw new Error("platform error: " + posts.code);
+    }
+  } else if (posts.data.items.length === 0 && !cursor) {
+    timeline = <StateMessage kind="empty" title={tPublic("timelineEmpty")} />;
+  } else {
+    const { items, nextCursor } = posts.data;
+    timeline = (
+      <>
+        <ol className="relative m-0 flex list-none flex-col gap-8 p-0 before:absolute before:bottom-0 before:start-[0.9375rem] before:top-3 before:border-s-2 before:border-rail before:content-['']">
+          {items.map((post) => (
+            <Entry key={post.id} icon={KIND_ICON[post.kind]}>
+              <time
+                dateTime={post.createdAt}
+                className="text-small font-semibold leading-8 text-ink-muted"
+              >
+                {formatDate(post.createdAt, locale)}
+              </time>
+              <PublicPost
+                post={post}
+                variant={post.kind === "update" ? "full" : "compact"}
+                href={`${projectPath}/posts/${encodeURIComponent(post.id)}`}
+              />
+            </Entry>
+          ))}
+          {nextCursor === null ? (
+            <Entry icon="plus">
+              <p className="m-0 text-small leading-8 text-ink-muted">
+                {t("created", { date: formatDate(project.createdAt, locale) })}
+              </p>
+            </Entry>
+          ) : null}
+        </ol>
+        {nextCursor ? (
+          <div>
+            <Link
+              href={`${projectPath}?cursor=${encodeURIComponent(nextCursor)}`}
+              className={buttonClasses({ variant: "secondary" })}
+            >
+              {t("olderPosts")}
+            </Link>
+          </div>
+        ) : null}
+      </>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-6">
+      <p className="m-0 text-small text-ink-muted">{tPublic("projectNote")}</p>
+      <div className="flex flex-col gap-3">
+        <h1 className="m-0 text-title-1 text-ink">
+          <bdi>{project.name}</bdi>
+        </h1>
+        {project.oneLiner ? (
+          <p className="m-0 max-w-read text-lead text-ink"><bdi>{project.oneLiner}</bdi></p>
+        ) : null}
+        <div className="flex flex-wrap items-baseline gap-x-2 text-small text-ink-muted">
+          <span>
+            {owners.map((owner, index) => (
+              <span key={owner.handle}>
+                {index > 0 ? (locale === "fa" ? "، " : ", ") : null}
+                <span className="font-semibold text-ink">
+                  <bdi>{owner.displayName}</bdi>
+                </span>
+              </span>
+            ))}
+          </span>
+          <span aria-hidden="true">·</span>
+          <span>{t(`stages.${project.stage}`)}</span>
+          <span aria-hidden="true">·</span>
+          <span>{t("since", { date: formatDate(project.createdAt, locale) })}</span>
+        </div>
+        {project.links.length > 0 ? (
+          <ul className="m-0 flex list-none flex-wrap gap-x-4 gap-y-1 p-0">
+            {project.links.map((link) => (
+              <li key={`${link.label}\n${link.url}`}>
+                <a
+                  href={link.url}
+                  rel="nofollow ugc noopener"
+                  className="inline-flex items-center gap-1 text-small font-medium text-link"
+                >
+                  <bdi>{link.label}</bdi>
+                  <Icon name="external-link" size={16} />
+                </a>
+              </li>
+            ))}
+          </ul>
+        ) : null}
+      </div>
+      <section aria-labelledby="timeline-title" className="flex flex-col gap-4">
+        <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+          <h2 id="timeline-title" className="m-0 text-title-2 text-ink">
+            {t("timeline")}
+          </h2>
+          <span className="text-small text-ink-muted">{t("newestFirst")}</span>
+        </div>
+        {timeline}
+      </section>
+    </div>
+  );
+}
+
 export default async function ProjectPage({
   params,
   searchParams,
@@ -57,11 +255,14 @@ export default async function ProjectPage({
 
   const slug = rawSlug.toLowerCase();
   const here = localePath(locale, "/projects/" + slug);
-  const me = await requireMember(locale, here);
-  const t = await getTranslations("Projects");
-
   const { cursor: rawCursor } = await searchParams;
   const cursor = Array.isArray(rawCursor) ? rawCursor[0] : rawCursor;
+  const viewer = await getViewer(locale, here);
+  if (viewer.kind === "visitor") {
+    return <PublicProjectView locale={locale} slug={slug} cursor={cursor} here={here} />;
+  }
+  const me = viewer.member;
+  const t = await getTranslations("Projects");
 
   const [result, posts] = await Promise.all([
     platformCall<Project>(async () =>
@@ -145,6 +346,7 @@ export default async function ProjectPage({
                 showThreadLink
                 canGiveFeedback={!isOwner}
                 now={now}
+                projectPublic={project.visibility === "public"}
               />
             </Entry>
           ))}
@@ -257,6 +459,12 @@ export default async function ProjectPage({
         </div>
         {timeline}
       </section>
+      {isOwner && project.visibility === "public" ? (
+        <BadgeSnippet
+          pageUrl={siteUrl() + localePath(locale, "/projects/" + project.slug)}
+          imageUrl={`${siteUrl()}/badge/${project.slug}.svg?lang=${locale}`}
+        />
+      ) : null}
     </div>
   );
 }
