@@ -18,6 +18,10 @@ type UpdateMeRequest = Schemas["UpdateMeRequest"];
 type CreateProjectRequest = Schemas["CreateProjectRequest"];
 type UpdateProjectRequest = Schemas["UpdateProjectRequest"];
 type CreatePostRequest = Schemas["CreatePostRequest"];
+type CreateCaseRequest = Schemas["CreateCaseRequest"];
+type UpdateCaseRequest = Schemas["UpdateCaseRequest"];
+type ItemVisibility = Schemas["ItemVisibility"];
+type SetVisibilityRequest = Schemas["SetVisibilityRequest"];
 type GiveFeedbackRequest = Schemas["GiveFeedbackRequest"];
 type EditFeedbackRequest = Schemas["EditFeedbackRequest"];
 type RespondRequest = Schemas["RespondRequest"];
@@ -92,6 +96,14 @@ export const LIMITS = {
   feedbackBodyMax: limit("GiveFeedbackRequest", "properties", "body", "maxLength"),
   reasonMax: limit("RespondRequest", "properties", "reason", "maxLength"),
   replyBodyMax: limit("ReplyRequest", "properties", "body", "maxLength"),
+  caseTitleMax: limit("CreateCaseRequest", "properties", "title", "maxLength"),
+  caseFeedbackStoryMax: limit("CreateCaseRequest", "properties", "feedbackStory", "maxLength"),
+  caseChangeMax: limit("CreateCaseRequest", "properties", "change", "maxLength"),
+  caseResultMax: limit("CreateCaseRequest", "properties", "result", "maxLength"),
+  caseOneNumberMax: limit("CreateCaseRequest", "properties", "oneNumber", "maxLength"),
+  caseFeedbackMin: limit("CreateCaseRequest", "properties", "feedbackIds", "minItems"),
+  caseFeedbackMax: limit("CreateCaseRequest", "properties", "feedbackIds", "maxItems"),
+  casePostsMax: limit("CreateCaseRequest", "properties", "postIds", "maxItems"),
 } as const;
 
 export type ValidationResult<T> =
@@ -102,6 +114,7 @@ type Errors = Record<string, FieldError>;
 
 const STAGES = ["idea", "building", "launched"] as const;
 const VISIBILITIES = ["members", "public"] as const;
+const ITEM_VISIBILITIES = ["inherit", "members", "public"] as const satisfies readonly ItemVisibility[];
 
 function text(form: FormData, name: string): string {
   const value = form.get(name);
@@ -282,6 +295,24 @@ export function readInviteCode(value: unknown): string | undefined | null {
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
+// "" (absent or empty) is no choice; anything but the three settings is an error.
+function readVisibility(form: FormData): { visibility?: ItemVisibility; error?: FieldError } {
+  const visibility = text(form, "visibility");
+  if (visibility === "") return {};
+  const chosen = ITEM_VISIBILITIES.find((option) => option === visibility);
+
+  return chosen ? { visibility: chosen } : { error: { key: "chooseOne" } };
+}
+
+export function validateVisibility(form: FormData): ValidationResult<SetVisibilityRequest> {
+  const { visibility } = readVisibility(form);
+  if (visibility === undefined) {
+    return failure(form, { visibility: { key: "chooseOne" } });
+  }
+
+  return { ok: true, body: { visibility } };
+}
+
 // The same body serves creating a post and editing it.
 export function validatePost(
   form: FormData,
@@ -289,6 +320,8 @@ export function validatePost(
 ): ValidationResult<CreatePostRequest> {
   const errors: Errors = {};
   const body = text(form, "body");
+  const { visibility, error: visibilityError } = readVisibility(form);
+  if (visibilityError) errors.visibility = visibilityError;
 
   if (kind === "wip") {
     checkLength(errors, "body", body, LIMITS.postBodyMax, true);
@@ -316,6 +349,7 @@ export function validatePost(
         body,
         feedbackWanted,
         ...(selfCritique === "" ? {} : { selfCritique }),
+        ...(visibility === undefined ? {} : { visibility }),
       },
     };
   }
@@ -349,7 +383,74 @@ export function validatePost(
       actedOn,
       oneNumber,
       ...(rejectedAndWhy === "" ? {} : { rejectedAndWhy }),
+      ...(visibility === undefined ? {} : { visibility }),
     },
+  };
+}
+
+// A repeated checkbox name: the ids that look like ids, once each, the first `max`.
+function readIds(form: FormData, name: string, max: number): string[] {
+  return [
+    ...new Set(
+      form
+        .getAll(name)
+        .filter((value): value is string => typeof value === "string")
+        .map((value) => value.trim())
+        .filter((value) => UUID.test(value)),
+    ),
+  ].slice(0, max);
+}
+
+export function validateCase(
+  form: FormData,
+  mode: "create",
+): ValidationResult<CreateCaseRequest>;
+export function validateCase(
+  form: FormData,
+  mode: "update",
+): ValidationResult<UpdateCaseRequest>;
+export function validateCase(
+  form: FormData,
+  mode: "create" | "update",
+): ValidationResult<CreateCaseRequest> | ValidationResult<UpdateCaseRequest> {
+  const errors: Errors = {};
+
+  const title = text(form, "title");
+  checkLength(errors, "title", title, LIMITS.caseTitleMax, true);
+  const feedbackStory = text(form, "feedbackStory");
+  checkLength(errors, "feedbackStory", feedbackStory, LIMITS.caseFeedbackStoryMax, true);
+  const change = text(form, "change");
+  checkLength(errors, "change", change, LIMITS.caseChangeMax, true);
+  const result = text(form, "result");
+  checkLength(errors, "result", result, LIMITS.caseResultMax, true);
+  const oneNumber = text(form, "oneNumber");
+  checkLength(errors, "oneNumber", oneNumber, LIMITS.caseOneNumberMax, false);
+
+  const { visibility, error: visibilityError } = readVisibility(form);
+  if (visibilityError) errors.visibility = visibilityError;
+
+  const feedbackIds = readIds(form, "feedbackIds", LIMITS.caseFeedbackMax);
+  if (feedbackIds.length < LIMITS.caseFeedbackMin) {
+    errors.feedbackIds = { key: "chooseOne" };
+  }
+  const postIds = readIds(form, "postIds", LIMITS.casePostsMax);
+
+  if (Object.keys(errors).length > 0) return failure(form, errors);
+
+  const body = {
+    title,
+    feedbackStory,
+    change,
+    result,
+    feedbackIds,
+    postIds,
+    ...(visibility === undefined ? {} : { visibility }),
+  };
+
+  // An edit always sends the number ("" clears it); a new case leaves it out.
+  return {
+    ok: true,
+    body: mode === "update" ? { ...body, oneNumber } : { ...body, ...(oneNumber === "" ? {} : { oneNumber }) },
   };
 }
 

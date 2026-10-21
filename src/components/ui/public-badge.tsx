@@ -27,3 +27,13 @@ export function PublicBadge({
     </span>
   );
 }
+
+// The PublicBadge design rule: members-only is never labelled, except inside a public project.
+export function itemBadge(item: {
+  isPublic: boolean;
+  projectPublic?: boolean;
+}): "public" | "members" | null {
+  if (item.isPublic) return "public";
+  if (item.projectPublic === true) return "members";
+  return null;
+}

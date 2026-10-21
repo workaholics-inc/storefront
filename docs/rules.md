@@ -13,8 +13,26 @@ Workaholics has no hosts or judges above its members. The rules that shape what 
 
 - Everything a member posts is visible **only to members** by default.
 - The owner of a project can make the project public. An owner can also make a single post public, or keep one post members-only inside a public project.
-- Public pages show only what the owner made public.
-- Until public pages ship, every post and every piece of feedback is visible only to members.
+- Each post has one of three settings: **same as the project** (the default), **members only**, or **public**. Any owner of the project can change it at any time; that is not an edit. A case has the same three settings.
+- Public pages show only what the owner made public, and only the owner's own words: the project, its public posts and changelog, and its public cases. Anyone with the link can read them without signing in.
+- Feedback, answers and replies are never public, and neither is whose feedback an update acted on: the people who wrote them never agreed to publish them.
+- A public page's address is the same one members use. Without signing in, an address that is not public leads to the sign-in page, so it never reveals whether something exists.
+- There is no public list of projects. Public pages are reached through the links owners share.
+
+## Changelog and cases
+
+- A project's **changelog** is its update posts, newest first. Nothing is written twice.
+- A **case** is a short story an owner writes about one loop: the feedback, what they changed, what happened, and one number. It links 1 to 10 pieces of answered feedback on the project, and up to 10 of its updates.
+- Everyone whose feedback a case links, other than the project's owners, is asked whether they want to be named. Until they say yes, the case says "a member" instead of their name. They can change their answer at any time.
+- Owners can edit a case at any time. Cases cannot be deleted.
+
+## Your data
+
+- You can download everything you created (your profile, projects, posts, feedback, answers, replies, cases, credits and the invites you made) as one file, from your page.
+
+## The badge
+
+- The owner of a public project can put a "Building in public at Workaholics" badge on their own site. It links to the project's public page and shows no number.
 
 ## Answering feedback
 
@@ -47,6 +65,18 @@ Workaholics has no hosts or judges above its members. The rules that shape what 
 
 - Every Monday at 09:00 Tehran time, each member who started the bot gets one private message: the work posted in the past week and the feedback still waiting for an answer, in random order, with no numbers.
 - When someone posts an update, it is announced in the members-only Telegram group once its 15-minute edit window closes, so members see each other working.
-- A public version of the digest comes later.
+- Each public update is also announced in the public Telegram channel once its 15-minute edit window closes. Members-only posts never go there.
 
-More rules (monthly practice numbers, invitations) are added here as each part of the platform ships.
+## Monthly practice numbers
+
+The transparency page shows five numbers for the whole community, one set per month. They are never shown per member, per project or per owner.
+
+- **Months** are calendar months (Gregorian) in UTC.
+- **Members:** active members who joined before the month ended.
+- **Members posting work in progress:** members who posted at least one work-in-progress post that month.
+- **Products with a public changelog:** projects that were public when the month's numbers were computed and had at least one public update before the month ended.
+- **Feedback answered within 7 days:** a piece of feedback counts in the month its 7-day window closes, at the moment it would show as overdue (8 whole days after it was given). Of those, the share whose first answer came before that moment, as a whole percent rounded down. When no feedback was due, the page shows a dash.
+- **Cases written:** cases created that month.
+- A month's numbers are computed once, at the start of the next month, and never changed afterwards. Each set records the version of these rules it was computed with.
+
+More rules (invitations, moderation) are added here as each part of the platform ships.

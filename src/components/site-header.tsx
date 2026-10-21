@@ -6,12 +6,18 @@ import { LanguageLink } from "./language-link";
 import { Logo } from "./logo";
 import { buttonClasses } from "./ui/button";
 
-export type HeaderSection = "projects" | "members" | "rules" | "manifesto";
+export type HeaderSection =
+  | "projects"
+  | "members"
+  | "rules"
+  | "practice"
+  | "manifesto";
 
 // "members" is a HeaderSection but not listed: there is no member list to link to yet.
 const SECTIONS: readonly HeaderSection[] = [
   "projects",
   "rules",
+  "practice",
   "manifesto",
 ];
 

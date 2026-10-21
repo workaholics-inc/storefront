@@ -689,6 +689,12 @@
           "hasUnansweredFeedback": {
             "type": "boolean"
           },
+          "visibility": {
+            "$ref": "#/components/schemas/ItemVisibility"
+          },
+          "isPublic": {
+            "type": "boolean"
+          },
           "createdAt": {
             "type": "string",
             "format": "date-time"
@@ -721,6 +727,8 @@
           "rejectedAndWhy",
           "oneNumber",
           "hasUnansweredFeedback",
+          "visibility",
+          "isPublic",
           "createdAt",
           "editedAt",
           "editableUntil"
@@ -754,6 +762,8 @@
           "rejectedAndWhy": null,
           "oneNumber": null,
           "hasUnansweredFeedback": true,
+          "visibility": "inherit",
+          "isPublic": false,
           "createdAt": "2026-10-15T09:00:00.000Z",
           "editedAt": null,
           "editableUntil": null
@@ -853,6 +863,14 @@
         "format": "date",
         "example": "2026-10-27"
       },
+      "ItemVisibility": {
+        "type": "string",
+        "enum": [
+          "inherit",
+          "members",
+          "public"
+        ]
+      },
       "CreatePostRequest": {
         "oneOf": [
           {
@@ -898,6 +916,9 @@
             "type": "string",
             "minLength": 0,
             "maxLength": 1000
+          },
+          "visibility": {
+            "$ref": "#/components/schemas/ItemVisibility"
           }
         },
         "required": [
@@ -944,6 +965,9 @@
             "type": "string",
             "minLength": 1,
             "maxLength": 200
+          },
+          "visibility": {
+            "$ref": "#/components/schemas/ItemVisibility"
           }
         },
         "required": [
@@ -1020,6 +1044,8 @@
               "rejectedAndWhy": "صفحهٔ اول را کوتاه نکردم؛ چند نفر از اولین کاربران همین مثال‌ها را خواستند.",
               "oneNumber": "از بیست نفری که صفحه را دیدند، دوازده نفر تا اولین یادداشت رفتند.",
               "hasUnansweredFeedback": false,
+              "visibility": "public",
+              "isPublic": true,
               "createdAt": "2026-10-27T10:00:00.000Z",
               "editedAt": null,
               "editableUntil": null
@@ -1053,6 +1079,8 @@
               "rejectedAndWhy": null,
               "oneNumber": null,
               "hasUnansweredFeedback": true,
+              "visibility": "inherit",
+              "isPublic": false,
               "createdAt": "2026-10-15T09:00:00.000Z",
               "editedAt": null,
               "editableUntil": null
@@ -1108,6 +1136,8 @@
             "rejectedAndWhy": null,
             "oneNumber": null,
             "hasUnansweredFeedback": true,
+            "visibility": "inherit",
+            "isPublic": false,
             "createdAt": "2026-10-15T09:00:00.000Z",
             "editedAt": null,
             "editableUntil": null
@@ -1668,19 +1698,101 @@
       "EditPostRequest": {
         "oneOf": [
           {
-            "$ref": "#/components/schemas/CreateWipPostRequest"
+            "$ref": "#/components/schemas/EditWipPostRequest"
           },
           {
-            "$ref": "#/components/schemas/CreateUpdatePostRequest"
+            "$ref": "#/components/schemas/EditUpdatePostRequest"
           }
         ],
         "discriminator": {
           "propertyName": "kind",
           "mapping": {
-            "wip": "#/components/schemas/CreateWipPostRequest",
-            "update": "#/components/schemas/CreateUpdatePostRequest"
+            "wip": "#/components/schemas/EditWipPostRequest",
+            "update": "#/components/schemas/EditUpdatePostRequest"
           }
         }
+      },
+      "EditWipPostRequest": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "wip"
+            ]
+          },
+          "body": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 5000
+          },
+          "feedbackWanted": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 280
+            },
+            "minItems": 1,
+            "maxItems": 5
+          },
+          "selfCritique": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 1000
+          }
+        },
+        "required": [
+          "kind",
+          "body",
+          "feedbackWanted"
+        ]
+      },
+      "EditUpdatePostRequest": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "update"
+            ]
+          },
+          "body": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 5000,
+            "default": ""
+          },
+          "whatChanged": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 3000
+          },
+          "actedOn": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "maxItems": 20,
+            "default": []
+          },
+          "rejectedAndWhy": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 2000
+          },
+          "oneNumber": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "kind",
+          "whatChanged",
+          "oneNumber"
+        ]
       },
       "GiveFeedbackRequest": {
         "type": "object",
@@ -2049,6 +2161,26 @@
         "example": {
           "items": [
             {
+              "id": "0199f1a2-7c3e-7a10-8000-000000000505",
+              "kind": "credit_requested",
+              "actor": {
+                "handle": "sara",
+                "displayName": "سارا رحیمی"
+              },
+              "project": {
+                "slug": "daftar",
+                "name": "دفتر"
+              },
+              "post": {
+                "id": "0199f1a2-7c3e-7a10-8000-000000000101",
+                "kind": "wip"
+              },
+              "feedbackId": "0199f1a2-7c3e-7a10-8000-000000000204",
+              "caseId": "0199f1a2-7c3e-7a10-8000-000000000601",
+              "createdAt": "2026-11-02T09:00:00.000Z",
+              "readAt": null
+            },
+            {
               "id": "0199f1a2-7c3e-7a10-8000-000000000504",
               "kind": "response_due",
               "actor": null,
@@ -2061,6 +2193,7 @@
                 "kind": "wip"
               },
               "feedbackId": "0199f1a2-7c3e-7a10-8000-000000000202",
+              "caseId": null,
               "createdAt": "2026-10-28T09:00:00.000Z",
               "readAt": null
             },
@@ -2080,6 +2213,7 @@
                 "kind": "wip"
               },
               "feedbackId": "0199f1a2-7c3e-7a10-8000-000000000204",
+              "caseId": null,
               "createdAt": "2026-10-23T12:00:00.000Z",
               "readAt": null
             },
@@ -2099,6 +2233,7 @@
                 "kind": "wip"
               },
               "feedbackId": "0199f1a2-7c3e-7a10-8000-000000000204",
+              "caseId": null,
               "createdAt": "2026-10-23T09:00:00.000Z",
               "readAt": "2026-10-23T18:00:00.000Z"
             },
@@ -2118,6 +2253,7 @@
                 "kind": "wip"
               },
               "feedbackId": "0199f1a2-7c3e-7a10-8000-000000000203",
+              "caseId": null,
               "createdAt": "2026-10-22T09:00:00.000Z",
               "readAt": "2026-10-22T20:00:00.000Z"
             }
@@ -2164,6 +2300,13 @@
             ],
             "format": "uuid"
           },
+          "caseId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          },
           "createdAt": {
             "type": "string",
             "format": "date-time"
@@ -2183,6 +2326,7 @@
           "project",
           "post",
           "feedbackId",
+          "caseId",
           "createdAt",
           "readAt"
         ],
@@ -2202,6 +2346,7 @@
             "kind": "wip"
           },
           "feedbackId": "0199f1a2-7c3e-7a10-8000-000000000204",
+          "caseId": null,
           "createdAt": "2026-10-23T12:00:00.000Z",
           "readAt": null
         }
@@ -2212,7 +2357,8 @@
           "feedback_received",
           "response_received",
           "reply_received",
-          "response_due"
+          "response_due",
+          "credit_requested"
         ]
       },
       "MarkReadRequest": {
@@ -2248,6 +2394,1771 @@
               "all"
             ]
           }
+        ]
+      },
+      "SetVisibilityRequest": {
+        "type": "object",
+        "properties": {
+          "visibility": {
+            "$ref": "#/components/schemas/ItemVisibility"
+          }
+        },
+        "required": [
+          "visibility"
+        ]
+      },
+      "PublicProject": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "oneLiner": {
+            "type": "string"
+          },
+          "stage": {
+            "$ref": "#/components/schemas/ProjectStage"
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Link"
+            },
+            "maxItems": 5
+          },
+          "owners": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MemberRef"
+            },
+            "minItems": 1
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastPostAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "When the latest publicly visible post was created; null when there is none. Members-only posts never move it."
+          }
+        },
+        "required": [
+          "slug",
+          "name",
+          "oneLiner",
+          "stage",
+          "links",
+          "owners",
+          "createdAt",
+          "lastPostAt"
+        ],
+        "example": {
+          "slug": "daftar",
+          "name": "دفتر",
+          "oneLiner": "دفترچهٔ کار برای تیم‌های کوچک",
+          "stage": "building",
+          "links": [
+            {
+              "label": "Website",
+              "url": "https://example.com"
+            }
+          ],
+          "owners": [
+            {
+              "handle": "sara",
+              "displayName": "سارا رحیمی"
+            }
+          ],
+          "createdAt": "2026-10-12T08:00:00.000Z",
+          "lastPostAt": "2026-10-27T10:00:00.000Z"
+        }
+      },
+      "PublicPostPage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PublicPost"
+            }
+          },
+          "nextCursor": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor"
+        ],
+        "example": {
+          "items": [
+            {
+              "id": "0199f1a2-7c3e-7a10-8000-000000000102",
+              "project": {
+                "slug": "daftar",
+                "name": "دفتر",
+                "isPublic": true
+              },
+              "author": {
+                "handle": "sara",
+                "displayName": "سارا رحیمی"
+              },
+              "kind": "update",
+              "body": "",
+              "feedbackWanted": [],
+              "selfCritique": null,
+              "whatChanged": "دکمهٔ شروع را بالای تصویر بردم و ورود با تلگرام را روی چند نفر دیگر امتحان می‌کنم.",
+              "rejectedAndWhy": "صفحهٔ اول را کوتاه نکردم؛ چند نفر از اولین کاربران همین مثال‌ها را خواستند.",
+              "oneNumber": "از بیست نفری که صفحه را دیدند، دوازده نفر تا اولین یادداشت رفتند.",
+              "createdAt": "2026-10-27T10:00:00.000Z",
+              "editedAt": null
+            },
+            {
+              "id": "0199f1a2-7c3e-7a10-8000-000000000101",
+              "project": {
+                "slug": "daftar",
+                "name": "دفتر",
+                "isPublic": true
+              },
+              "author": {
+                "handle": "sara",
+                "displayName": "سارا رحیمی"
+              },
+              "kind": "wip",
+              "body": "نسخهٔ اول صفحهٔ شروع دفتر آماده شد. هنوز تصویر نهایی ندارد، ولی جریان کار از ورود تا اولین یادداشت کامل است.",
+              "feedbackWanted": [
+                "آیا توضیح قیمت‌گذاری روشن است؟",
+                "کدام بخش صفحهٔ اول زیادی طولانی است؟",
+                "اگر کسی این را ببیند، اول چه کاری می‌کند؟"
+              ],
+              "selfCritique": "فکر می‌کنم متن قیمت‌گذاری بیش از اندازه طولانی شده و مخاطب را گم می‌کند.",
+              "whatChanged": null,
+              "rejectedAndWhy": null,
+              "oneNumber": null,
+              "createdAt": "2026-10-15T09:00:00.000Z",
+              "editedAt": null
+            }
+          ],
+          "nextCursor": null
+        }
+      },
+      "PublicPost": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "project": {
+            "$ref": "#/components/schemas/PublicProjectRef"
+          },
+          "author": {
+            "$ref": "#/components/schemas/MemberRef"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/PostKind"
+          },
+          "body": {
+            "type": "string"
+          },
+          "feedbackWanted": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "selfCritique": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "whatChanged": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rejectedAndWhy": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "oneNumber": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "editedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "project",
+          "author",
+          "kind",
+          "body",
+          "feedbackWanted",
+          "selfCritique",
+          "whatChanged",
+          "rejectedAndWhy",
+          "oneNumber",
+          "createdAt",
+          "editedAt"
+        ],
+        "example": {
+          "id": "0199f1a2-7c3e-7a10-8000-000000000102",
+          "project": {
+            "slug": "daftar",
+            "name": "دفتر",
+            "isPublic": true
+          },
+          "author": {
+            "handle": "sara",
+            "displayName": "سارا رحیمی"
+          },
+          "kind": "update",
+          "body": "",
+          "feedbackWanted": [],
+          "selfCritique": null,
+          "whatChanged": "دکمهٔ شروع را بالای تصویر بردم و ورود با تلگرام را روی چند نفر دیگر امتحان می‌کنم.",
+          "rejectedAndWhy": "صفحهٔ اول را کوتاه نکردم؛ چند نفر از اولین کاربران همین مثال‌ها را خواستند.",
+          "oneNumber": "از بیست نفری که صفحه را دیدند، دوازده نفر تا اولین یادداشت رفتند.",
+          "createdAt": "2026-10-27T10:00:00.000Z",
+          "editedAt": null
+        }
+      },
+      "PublicProjectRef": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "isPublic": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "slug",
+          "name",
+          "isPublic"
+        ],
+        "example": {
+          "slug": "daftar",
+          "name": "دفتر",
+          "isPublic": true
+        }
+      },
+      "Case": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "project": {
+            "$ref": "#/components/schemas/ProjectRef"
+          },
+          "author": {
+            "$ref": "#/components/schemas/MemberRef"
+          },
+          "title": {
+            "type": "string"
+          },
+          "feedbackStory": {
+            "type": "string"
+          },
+          "change": {
+            "type": "string"
+          },
+          "result": {
+            "type": "string"
+          },
+          "oneNumber": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "visibility": {
+            "$ref": "#/components/schemas/ItemVisibility"
+          },
+          "isPublic": {
+            "type": "boolean"
+          },
+          "feedback": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CaseFeedback"
+            }
+          },
+          "posts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              },
+              "required": [
+                "id",
+                "createdAt"
+              ]
+            }
+          },
+          "credits": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CaseCredit"
+            }
+          },
+          "myConsent": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "pending",
+              "given",
+              "declined",
+              null
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "editedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "project",
+          "author",
+          "title",
+          "feedbackStory",
+          "change",
+          "result",
+          "oneNumber",
+          "visibility",
+          "isPublic",
+          "feedback",
+          "posts",
+          "credits",
+          "myConsent",
+          "createdAt",
+          "editedAt"
+        ],
+        "example": {
+          "id": "0199f1a2-7c3e-7a10-8000-000000000601",
+          "project": {
+            "slug": "daftar",
+            "name": "دفتر",
+            "owners": [
+              {
+                "handle": "sara",
+                "displayName": "سارا رحیمی"
+              }
+            ]
+          },
+          "author": {
+            "handle": "sara",
+            "displayName": "سارا رحیمی"
+          },
+          "title": "دکمهٔ شروع بالاتر رفت و ورود سریع‌تر شد",
+          "feedbackStory": "آرش و نیلوفر گفتند دکمهٔ شروع زیر تصویر گم می‌شود و صفحهٔ اول زیادی طولانی است.",
+          "change": "دکمهٔ شروع را بالای تصویر بردم و ورود با تلگرام را روی چند نفر دیگر امتحان کردم.",
+          "result": "از بیست نفری که صفحه را دیدند، دوازده نفر تا اولین یادداشت رفتند.",
+          "oneNumber": "از بیست نفری که صفحه را دیدند، دوازده نفر تا اولین یادداشت رفتند.",
+          "visibility": "public",
+          "isPublic": true,
+          "feedback": [
+            {
+              "id": "0199f1a2-7c3e-7a10-8000-000000000203",
+              "postId": "0199f1a2-7c3e-7a10-8000-000000000101",
+              "excerpt": "دکمهٔ شروع زیر تصویر گم می‌شود؛ بالاتر ببرش.",
+              "author": {
+                "handle": "arash",
+                "displayName": "آرش کاظمی"
+              }
+            },
+            {
+              "id": "0199f1a2-7c3e-7a10-8000-000000000204",
+              "postId": "0199f1a2-7c3e-7a10-8000-000000000101",
+              "excerpt": "فکر می‌کنم صفحهٔ اول باید کوتاه‌تر شود و فقط یک مثال داشته باشد.",
+              "author": {
+                "handle": "niloufar",
+                "displayName": "نیلوفر صادقی"
+              }
+            }
+          ],
+          "posts": [
+            {
+              "id": "0199f1a2-7c3e-7a10-8000-000000000102",
+              "createdAt": "2026-10-27T10:00:00.000Z"
+            }
+          ],
+          "credits": [
+            {
+              "member": {
+                "handle": "arash",
+                "displayName": "آرش کاظمی"
+              }
+            },
+            {
+              "member": null
+            }
+          ],
+          "myConsent": null,
+          "createdAt": "2026-11-02T09:00:00.000Z",
+          "editedAt": null
+        }
+      },
+      "CaseFeedback": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "postId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "excerpt": {
+            "type": "string"
+          },
+          "author": {
+            "$ref": "#/components/schemas/MemberRef"
+          }
+        },
+        "required": [
+          "id",
+          "postId",
+          "excerpt",
+          "author"
+        ],
+        "example": {
+          "id": "0199f1a2-7c3e-7a10-8000-000000000203",
+          "postId": "0199f1a2-7c3e-7a10-8000-000000000101",
+          "excerpt": "دکمهٔ شروع زیر تصویر گم می‌شود؛ بالاتر ببرش.",
+          "author": {
+            "handle": "arash",
+            "displayName": "آرش کاظمی"
+          }
+        }
+      },
+      "CaseCredit": {
+        "type": "object",
+        "properties": {
+          "member": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "handle": {
+                "type": "string"
+              },
+              "displayName": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "handle",
+              "displayName"
+            ]
+          }
+        },
+        "required": [
+          "member"
+        ],
+        "example": {
+          "member": {
+            "handle": "arash",
+            "displayName": "آرش کاظمی"
+          }
+        }
+      },
+      "CreateCaseRequest": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "feedbackStory": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 3000
+          },
+          "change": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 3000
+          },
+          "result": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 3000
+          },
+          "oneNumber": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 200
+          },
+          "visibility": {
+            "$ref": "#/components/schemas/ItemVisibility"
+          },
+          "feedbackIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "minItems": 1,
+            "maxItems": 10
+          },
+          "postIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "maxItems": 10,
+            "default": []
+          }
+        },
+        "required": [
+          "title",
+          "feedbackStory",
+          "change",
+          "result",
+          "feedbackIds"
+        ]
+      },
+      "CasePage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Case"
+            }
+          },
+          "nextCursor": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor"
+        ],
+        "example": {
+          "items": [
+            {
+              "id": "0199f1a2-7c3e-7a10-8000-000000000601",
+              "project": {
+                "slug": "daftar",
+                "name": "دفتر",
+                "owners": [
+                  {
+                    "handle": "sara",
+                    "displayName": "سارا رحیمی"
+                  }
+                ]
+              },
+              "author": {
+                "handle": "sara",
+                "displayName": "سارا رحیمی"
+              },
+              "title": "دکمهٔ شروع بالاتر رفت و ورود سریع‌تر شد",
+              "feedbackStory": "آرش و نیلوفر گفتند دکمهٔ شروع زیر تصویر گم می‌شود و صفحهٔ اول زیادی طولانی است.",
+              "change": "دکمهٔ شروع را بالای تصویر بردم و ورود با تلگرام را روی چند نفر دیگر امتحان کردم.",
+              "result": "از بیست نفری که صفحه را دیدند، دوازده نفر تا اولین یادداشت رفتند.",
+              "oneNumber": "از بیست نفری که صفحه را دیدند، دوازده نفر تا اولین یادداشت رفتند.",
+              "visibility": "public",
+              "isPublic": true,
+              "feedback": [
+                {
+                  "id": "0199f1a2-7c3e-7a10-8000-000000000203",
+                  "postId": "0199f1a2-7c3e-7a10-8000-000000000101",
+                  "excerpt": "دکمهٔ شروع زیر تصویر گم می‌شود؛ بالاتر ببرش.",
+                  "author": {
+                    "handle": "arash",
+                    "displayName": "آرش کاظمی"
+                  }
+                },
+                {
+                  "id": "0199f1a2-7c3e-7a10-8000-000000000204",
+                  "postId": "0199f1a2-7c3e-7a10-8000-000000000101",
+                  "excerpt": "فکر می‌کنم صفحهٔ اول باید کوتاه‌تر شود و فقط یک مثال داشته باشد.",
+                  "author": {
+                    "handle": "niloufar",
+                    "displayName": "نیلوفر صادقی"
+                  }
+                }
+              ],
+              "posts": [
+                {
+                  "id": "0199f1a2-7c3e-7a10-8000-000000000102",
+                  "createdAt": "2026-10-27T10:00:00.000Z"
+                }
+              ],
+              "credits": [
+                {
+                  "member": {
+                    "handle": "arash",
+                    "displayName": "آرش کاظمی"
+                  }
+                },
+                {
+                  "member": null
+                }
+              ],
+              "myConsent": null,
+              "createdAt": "2026-11-02T09:00:00.000Z",
+              "editedAt": null
+            }
+          ],
+          "nextCursor": null
+        }
+      },
+      "UpdateCaseRequest": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "feedbackStory": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 3000
+          },
+          "change": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 3000
+          },
+          "result": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 3000
+          },
+          "oneNumber": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 200
+          },
+          "visibility": {
+            "$ref": "#/components/schemas/ItemVisibility"
+          },
+          "feedbackIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "minItems": 1,
+            "maxItems": 10
+          },
+          "postIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "maxItems": 10
+          }
+        }
+      },
+      "SetCreditRequest": {
+        "type": "object",
+        "properties": {
+          "consent": {
+            "type": "string",
+            "enum": [
+              "given",
+              "declined"
+            ]
+          }
+        },
+        "required": [
+          "consent"
+        ]
+      },
+      "PublicCasePage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PublicCase"
+            }
+          },
+          "nextCursor": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor"
+        ],
+        "example": {
+          "items": [
+            {
+              "id": "0199f1a2-7c3e-7a10-8000-000000000601",
+              "project": {
+                "slug": "daftar",
+                "name": "دفتر",
+                "isPublic": true
+              },
+              "author": {
+                "handle": "sara",
+                "displayName": "سارا رحیمی"
+              },
+              "title": "دکمهٔ شروع بالاتر رفت و ورود سریع‌تر شد",
+              "feedbackStory": "آرش و نیلوفر گفتند دکمهٔ شروع زیر تصویر گم می‌شود و صفحهٔ اول زیادی طولانی است.",
+              "change": "دکمهٔ شروع را بالای تصویر بردم و ورود با تلگرام را روی چند نفر دیگر امتحان کردم.",
+              "result": "از بیست نفری که صفحه را دیدند، دوازده نفر تا اولین یادداشت رفتند.",
+              "oneNumber": "از بیست نفری که صفحه را دیدند، دوازده نفر تا اولین یادداشت رفتند.",
+              "credits": [
+                {
+                  "member": {
+                    "handle": "arash",
+                    "displayName": "آرش کاظمی"
+                  }
+                },
+                {
+                  "member": null
+                }
+              ],
+              "posts": [
+                {
+                  "id": "0199f1a2-7c3e-7a10-8000-000000000102",
+                  "createdAt": "2026-10-27T10:00:00.000Z"
+                }
+              ],
+              "createdAt": "2026-11-02T09:00:00.000Z",
+              "editedAt": null
+            }
+          ],
+          "nextCursor": null
+        }
+      },
+      "PublicCase": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "project": {
+            "$ref": "#/components/schemas/PublicProjectRef"
+          },
+          "author": {
+            "$ref": "#/components/schemas/MemberRef"
+          },
+          "title": {
+            "type": "string"
+          },
+          "feedbackStory": {
+            "type": "string"
+          },
+          "change": {
+            "type": "string"
+          },
+          "result": {
+            "type": "string"
+          },
+          "oneNumber": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "credits": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CaseCredit"
+            }
+          },
+          "posts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              },
+              "required": [
+                "id",
+                "createdAt"
+              ]
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "editedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "project",
+          "author",
+          "title",
+          "feedbackStory",
+          "change",
+          "result",
+          "oneNumber",
+          "credits",
+          "posts",
+          "createdAt",
+          "editedAt"
+        ],
+        "example": {
+          "id": "0199f1a2-7c3e-7a10-8000-000000000601",
+          "project": {
+            "slug": "daftar",
+            "name": "دفتر",
+            "isPublic": true
+          },
+          "author": {
+            "handle": "sara",
+            "displayName": "سارا رحیمی"
+          },
+          "title": "دکمهٔ شروع بالاتر رفت و ورود سریع‌تر شد",
+          "feedbackStory": "آرش و نیلوفر گفتند دکمهٔ شروع زیر تصویر گم می‌شود و صفحهٔ اول زیادی طولانی است.",
+          "change": "دکمهٔ شروع را بالای تصویر بردم و ورود با تلگرام را روی چند نفر دیگر امتحان کردم.",
+          "result": "از بیست نفری که صفحه را دیدند، دوازده نفر تا اولین یادداشت رفتند.",
+          "oneNumber": "از بیست نفری که صفحه را دیدند، دوازده نفر تا اولین یادداشت رفتند.",
+          "credits": [
+            {
+              "member": {
+                "handle": "arash",
+                "displayName": "آرش کاظمی"
+              }
+            },
+            {
+              "member": null
+            }
+          ],
+          "posts": [
+            {
+              "id": "0199f1a2-7c3e-7a10-8000-000000000102",
+              "createdAt": "2026-10-27T10:00:00.000Z"
+            }
+          ],
+          "createdAt": "2026-11-02T09:00:00.000Z",
+          "editedAt": null
+        }
+      },
+      "PracticePage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PracticeSnapshot"
+            }
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "example": {
+          "items": [
+            {
+              "month": "2026-10",
+              "rulesVersion": 1,
+              "numbers": {
+                "members": 12,
+                "membersPostingWip": 5,
+                "projectsWithPublicChangelog": 1,
+                "feedbackAnsweredInWindow": {
+                  "due": 9,
+                  "answered": 7
+                },
+                "casesWritten": 1
+              },
+              "answeredSharePercent": 77,
+              "computedAt": "2026-11-01T00:01:00.000Z"
+            },
+            {
+              "month": "2026-09",
+              "rulesVersion": 1,
+              "numbers": {
+                "members": 3,
+                "membersPostingWip": 1,
+                "projectsWithPublicChangelog": 0,
+                "feedbackAnsweredInWindow": {
+                  "due": 0,
+                  "answered": 0
+                },
+                "casesWritten": 0
+              },
+              "answeredSharePercent": null,
+              "computedAt": "2026-11-01T00:01:00.000Z"
+            }
+          ]
+        }
+      },
+      "PracticeSnapshot": {
+        "type": "object",
+        "properties": {
+          "month": {
+            "type": "string",
+            "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$",
+            "example": "2026-10"
+          },
+          "rulesVersion": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "numbers": {
+            "$ref": "#/components/schemas/PracticeNumbers"
+          },
+          "answeredSharePercent": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 100,
+            "description": "Whole percent of due feedback answered in time, rounded down; null when nothing was due. Computed by the platform; clients render it and never recompute it."
+          },
+          "computedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "month",
+          "rulesVersion",
+          "numbers",
+          "answeredSharePercent",
+          "computedAt"
+        ],
+        "example": {
+          "month": "2026-10",
+          "rulesVersion": 1,
+          "numbers": {
+            "members": 12,
+            "membersPostingWip": 5,
+            "projectsWithPublicChangelog": 1,
+            "feedbackAnsweredInWindow": {
+              "due": 9,
+              "answered": 7
+            },
+            "casesWritten": 1
+          },
+          "answeredSharePercent": 77,
+          "computedAt": "2026-11-01T00:01:00.000Z"
+        }
+      },
+      "PracticeNumbers": {
+        "type": "object",
+        "properties": {
+          "members": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "membersPostingWip": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "projectsWithPublicChangelog": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "feedbackAnsweredInWindow": {
+            "type": "object",
+            "properties": {
+              "due": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "answered": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "due",
+              "answered"
+            ]
+          },
+          "casesWritten": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "members",
+          "membersPostingWip",
+          "projectsWithPublicChangelog",
+          "feedbackAnsweredInWindow",
+          "casesWritten"
+        ],
+        "example": {
+          "members": 12,
+          "membersPostingWip": 5,
+          "projectsWithPublicChangelog": 1,
+          "feedbackAnsweredInWindow": {
+            "due": 9,
+            "answered": 7
+          },
+          "casesWritten": 1
+        }
+      },
+      "MemberExport": {
+        "type": "object",
+        "properties": {
+          "formatVersion": {
+            "type": "number",
+            "enum": [
+              1
+            ]
+          },
+          "exportedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "member": {
+            "$ref": "#/components/schemas/ExportedMember"
+          },
+          "projects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExportedProject"
+            }
+          },
+          "posts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExportedPost"
+            }
+          },
+          "feedback": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExportedFeedback"
+            }
+          },
+          "responses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExportedResponse"
+            }
+          },
+          "replies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExportedReply"
+            }
+          },
+          "cases": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExportedCase"
+            }
+          },
+          "credits": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExportedCredit"
+            }
+          },
+          "invitesCreated": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExportedInvite"
+            }
+          }
+        },
+        "required": [
+          "formatVersion",
+          "exportedAt",
+          "member",
+          "projects",
+          "posts",
+          "feedback",
+          "responses",
+          "replies",
+          "cases",
+          "credits",
+          "invitesCreated"
+        ],
+        "example": {
+          "formatVersion": 1,
+          "exportedAt": "2026-11-16T10:00:00.000Z",
+          "member": {
+            "id": "0199f1a2-7c3e-7a10-8000-000000000011",
+            "handle": "sara",
+            "displayName": "سارا رحیمی",
+            "bio": "برنامه‌نویس و سازندهٔ دفتر",
+            "links": [
+              {
+                "label": "Website",
+                "url": "https://example.com"
+              }
+            ],
+            "status": "active",
+            "joinedAt": "2026-10-20T10:00:00.000Z",
+            "botStartedAt": null,
+            "invitedBy": "reza"
+          },
+          "projects": [
+            {
+              "id": "0199f1a2-7c3e-7a10-8000-000000000021",
+              "slug": "daftar",
+              "name": "دفتر",
+              "oneLiner": "دفترچهٔ کار برای تیم‌های کوچک",
+              "stage": "building",
+              "links": [
+                {
+                  "label": "Website",
+                  "url": "https://example.com"
+                }
+              ],
+              "visibility": "members",
+              "createdAt": "2026-10-20T10:00:00.000Z",
+              "updatedAt": "2026-10-20T10:00:00.000Z",
+              "lastPostAt": "2026-10-27T10:00:00.000Z",
+              "coOwners": []
+            }
+          ],
+          "posts": [
+            {
+              "id": "0199f1a2-7c3e-7a10-8000-000000000102",
+              "projectId": "0199f1a2-7c3e-7a10-8000-000000000021",
+              "projectSlug": "daftar",
+              "kind": "update",
+              "body": "",
+              "feedbackWanted": [],
+              "selfCritique": null,
+              "whatChanged": "دکمهٔ شروع را بالای تصویر بردم و ورود با تلگرام را روی چند نفر دیگر امتحان می‌کنم.",
+              "rejectedAndWhy": "صفحهٔ اول را کوتاه نکردم؛ چند نفر از اولین کاربران همین مثال‌ها را خواستند.",
+              "oneNumber": "از بیست نفری که صفحه را دیدند، دوازده نفر تا اولین یادداشت رفتند.",
+              "visibility": "inherit",
+              "actedOnFeedbackIds": [
+                "0199f1a2-7c3e-7a10-8000-000000000203",
+                "0199f1a2-7c3e-7a10-8000-000000000205"
+              ],
+              "createdAt": "2026-10-27T10:00:00.000Z",
+              "editedAt": null
+            }
+          ],
+          "feedback": [
+            {
+              "id": "0199f1a2-7c3e-7a10-8000-000000000206",
+              "postId": "0199f1a2-7c3e-7a10-8000-000000000103",
+              "questionIndex": null,
+              "body": "مثال دوم را بیشتر توضیح بده؛ برای من روشن نبود.",
+              "createdAt": "2026-10-25T14:00:00.000Z",
+              "editedAt": null
+            }
+          ],
+          "responses": [
+            {
+              "id": "0199f1a2-7c3e-7a10-8000-000000000301",
+              "feedbackId": "0199f1a2-7c3e-7a10-8000-000000000203",
+              "status": "accepted",
+              "reason": "درست است؛ دکمه را بالای تصویر گذاشتم.",
+              "recheckOn": null,
+              "createdAt": "2026-10-20T15:00:00.000Z",
+              "editedAt": null
+            }
+          ],
+          "replies": [
+            {
+              "id": "0199f1a2-7c3e-7a10-8000-000000000402",
+              "feedbackId": "0199f1a2-7c3e-7a10-8000-000000000204",
+              "body": "ممنون از توضیحت؛ مثال دوم را نگه داشتم.",
+              "createdAt": "2026-10-23T12:00:00.000Z",
+              "editedAt": null
+            }
+          ],
+          "cases": [
+            {
+              "id": "0199f1a2-7c3e-7a10-8000-000000000601",
+              "projectId": "0199f1a2-7c3e-7a10-8000-000000000021",
+              "title": "دکمهٔ شروع بالاتر رفت و ورود سریع‌تر شد",
+              "feedbackStory": "آرش و نیلوفر گفتند دکمهٔ شروع زیر تصویر گم می‌شود و صفحهٔ اول زیادی طولانی است.",
+              "change": "دکمهٔ شروع را بالای تصویر بردم و ورود با تلگرام را روی چند نفر دیگر امتحان کردم.",
+              "result": "از بیست نفری که صفحه را دیدند، دوازده نفر تا اولین یادداشت رفتند.",
+              "oneNumber": "از بیست نفری که صفحه را دیدند، دوازده نفر تا اولین یادداشت رفتند.",
+              "visibility": "public",
+              "feedbackIds": [
+                "0199f1a2-7c3e-7a10-8000-000000000203",
+                "0199f1a2-7c3e-7a10-8000-000000000204"
+              ],
+              "postIds": [
+                "0199f1a2-7c3e-7a10-8000-000000000102"
+              ],
+              "createdAt": "2026-11-02T09:00:00.000Z",
+              "editedAt": null
+            }
+          ],
+          "credits": [
+            {
+              "caseId": "0199f1a2-7c3e-7a10-8000-000000000602",
+              "consent": "given",
+              "decidedAt": "2026-11-05T12:00:00.000Z"
+            }
+          ],
+          "invitesCreated": [
+            {
+              "id": "0199f1a2-7c3e-7a10-8000-000000000801",
+              "note": "برای آرش، همکار سابق",
+              "createdAt": "2026-10-21T08:00:00.000Z",
+              "expiresAt": "2026-11-21T08:00:00.000Z",
+              "redeemedAt": "2026-10-22T09:30:00.000Z",
+              "redeemedBy": "arash"
+            }
+          ]
+        }
+      },
+      "ExportedMember": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "handle": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "bio": {
+            "type": "string"
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Link"
+            },
+            "maxItems": 5
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "paused",
+              "left"
+            ]
+          },
+          "joinedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "botStartedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "invitedBy": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "handle",
+          "displayName",
+          "bio",
+          "links",
+          "status",
+          "joinedAt",
+          "botStartedAt",
+          "invitedBy"
+        ]
+      },
+      "ExportedProject": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "oneLiner": {
+            "type": "string"
+          },
+          "stage": {
+            "$ref": "#/components/schemas/ProjectStage"
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Link"
+            },
+            "maxItems": 5
+          },
+          "visibility": {
+            "$ref": "#/components/schemas/Visibility"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastPostAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "coOwners": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "name",
+          "oneLiner",
+          "stage",
+          "links",
+          "visibility",
+          "createdAt",
+          "updatedAt",
+          "lastPostAt",
+          "coOwners"
+        ]
+      },
+      "ExportedPost": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "projectSlug": {
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/PostKind"
+          },
+          "body": {
+            "type": "string"
+          },
+          "feedbackWanted": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "selfCritique": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "whatChanged": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rejectedAndWhy": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "oneNumber": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "visibility": {
+            "$ref": "#/components/schemas/ItemVisibility"
+          },
+          "actedOnFeedbackIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "editedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "projectId",
+          "projectSlug",
+          "kind",
+          "body",
+          "feedbackWanted",
+          "selfCritique",
+          "whatChanged",
+          "rejectedAndWhy",
+          "oneNumber",
+          "visibility",
+          "actedOnFeedbackIds",
+          "createdAt",
+          "editedAt"
+        ]
+      },
+      "ExportedFeedback": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "postId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "questionIndex": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 4
+          },
+          "body": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "editedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "postId",
+          "questionIndex",
+          "body",
+          "createdAt",
+          "editedAt"
+        ]
+      },
+      "ExportedResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "feedbackId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ResponseStatus"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "recheckOn": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "editedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "feedbackId",
+          "status",
+          "reason",
+          "recheckOn",
+          "createdAt",
+          "editedAt"
+        ]
+      },
+      "ExportedReply": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "feedbackId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "body": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "editedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "feedbackId",
+          "body",
+          "createdAt",
+          "editedAt"
+        ]
+      },
+      "ExportedCase": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string"
+          },
+          "feedbackStory": {
+            "type": "string"
+          },
+          "change": {
+            "type": "string"
+          },
+          "result": {
+            "type": "string"
+          },
+          "oneNumber": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "visibility": {
+            "$ref": "#/components/schemas/ItemVisibility"
+          },
+          "feedbackIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "postIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "editedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "projectId",
+          "title",
+          "feedbackStory",
+          "change",
+          "result",
+          "oneNumber",
+          "visibility",
+          "feedbackIds",
+          "postIds",
+          "createdAt",
+          "editedAt"
+        ]
+      },
+      "ExportedCredit": {
+        "type": "object",
+        "properties": {
+          "caseId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "consent": {
+            "$ref": "#/components/schemas/CaseConsent"
+          },
+          "decidedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "caseId",
+          "consent",
+          "decidedAt"
+        ]
+      },
+      "CaseConsent": {
+        "type": "string",
+        "enum": [
+          "pending",
+          "given",
+          "declined"
+        ],
+        "example": "given"
+      },
+      "ExportedInvite": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "note": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "redeemedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "redeemedBy": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "note",
+          "createdAt",
+          "expiresAt",
+          "redeemedAt",
+          "redeemedBy"
         ]
       }
     },
@@ -3123,11 +5034,19 @@
             "required": false,
             "name": "limit",
             "in": "query"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/PostKind"
+            },
+            "required": false,
+            "name": "kind",
+            "in": "query"
           }
         ],
         "responses": {
           "200": {
-            "description": "One page of the project's posts, newest first",
+            "description": "One page of the project's posts, newest first; kind=update is its changelog",
             "content": {
               "application/json": {
                 "schema": {
@@ -4232,6 +6151,948 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401: storefront_key_invalid, session_required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/posts/{id}/visibility": {
+      "put": {
+        "tags": [
+          "posts"
+        ],
+        "security": [
+          {
+            "storefrontKey": [],
+            "memberSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "0199f1a2-7c3e-7a10-8000-000000000001"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetVisibilityRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The post with its new visibility",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Post"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400: validation_failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401: storefront_key_invalid, session_required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "403: not_project_owner",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404: not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/public/projects/{slug}": {
+      "get": {
+        "tags": [
+          "public"
+        ],
+        "security": [
+          {
+            "storefrontKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 60,
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+              "example": "daftar"
+            },
+            "required": true,
+            "name": "slug",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A public project",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicProject"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400: validation_failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401: storefront_key_invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404: not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/public/projects/{slug}/posts": {
+      "get": {
+        "tags": [
+          "public"
+        ],
+        "security": [
+          {
+            "storefrontKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 60,
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+              "example": "daftar"
+            },
+            "required": true,
+            "name": "slug",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "name": "cursor",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            },
+            "required": false,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/PostKind"
+            },
+            "required": false,
+            "name": "kind",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "One page of a public project's public posts, newest first; kind=update is its changelog",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicPostPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400: validation_failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401: storefront_key_invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404: not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/public/posts/{id}": {
+      "get": {
+        "tags": [
+          "public"
+        ],
+        "security": [
+          {
+            "storefrontKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "0199f1a2-7c3e-7a10-8000-000000000001"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A public post: the owner's own words, without feedback",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicPost"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400: validation_failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401: storefront_key_invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404: not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/projects/{slug}/cases": {
+      "post": {
+        "tags": [
+          "cases"
+        ],
+        "security": [
+          {
+            "storefrontKey": [],
+            "memberSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 60,
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+              "example": "daftar"
+            },
+            "required": true,
+            "name": "slug",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCaseRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The case was written; each credited giver is asked for consent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Case"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400: validation_failed, case_feedback_invalid, case_post_invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401: storefront_key_invalid, session_required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "403: not_project_owner",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404: not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "cases"
+        ],
+        "security": [
+          {
+            "storefrontKey": [],
+            "memberSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 60,
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+              "example": "daftar"
+            },
+            "required": true,
+            "name": "slug",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "name": "cursor",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            },
+            "required": false,
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "One page of the project's cases, newest first",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CasePage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400: validation_failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401: storefront_key_invalid, session_required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404: not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/cases/{id}": {
+      "get": {
+        "tags": [
+          "cases"
+        ],
+        "security": [
+          {
+            "storefrontKey": [],
+            "memberSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "0199f1a2-7c3e-7a10-8000-000000000001"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A case, as the signed-in member sees it",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Case"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400: validation_failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401: storefront_key_invalid, session_required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404: not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "cases"
+        ],
+        "security": [
+          {
+            "storefrontKey": [],
+            "memberSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "0199f1a2-7c3e-7a10-8000-000000000001"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCaseRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The case, edited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Case"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400: validation_failed, case_feedback_invalid, case_post_invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401: storefront_key_invalid, session_required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "403: not_project_owner",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404: not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/cases/{id}/credit": {
+      "put": {
+        "tags": [
+          "cases"
+        ],
+        "security": [
+          {
+            "storefrontKey": [],
+            "memberSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "0199f1a2-7c3e-7a10-8000-000000000001"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetCreditRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The case after the caller decided on their own credit",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Case"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400: validation_failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401: storefront_key_invalid, session_required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404: not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/public/projects/{slug}/cases": {
+      "get": {
+        "tags": [
+          "public"
+        ],
+        "security": [
+          {
+            "storefrontKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 60,
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+              "example": "daftar"
+            },
+            "required": true,
+            "name": "slug",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "name": "cursor",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            },
+            "required": false,
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "One page of the public project's public cases, newest first",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicCasePage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400: validation_failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401: storefront_key_invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404: not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/public/cases/{id}": {
+      "get": {
+        "tags": [
+          "public"
+        ],
+        "security": [
+          {
+            "storefrontKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "0199f1a2-7c3e-7a10-8000-000000000001"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A public case: the owner's own words, without the feedback behind it",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicCase"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400: validation_failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401: storefront_key_invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404: not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/public/practice": {
+      "get": {
+        "tags": [
+          "public"
+        ],
+        "security": [
+          {
+            "storefrontKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Every stored month's community practice numbers, newest first",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PracticePage"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401: storefront_key_invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/me/export": {
+      "get": {
+        "tags": [
+          "members"
+        ],
+        "security": [
+          {
+            "storefrontKey": [],
+            "memberSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Everything the signed-in member created, with raw ids and ISO times; each list oldest first by creation time, then id (credits by case id)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemberExport"
                 }
               }
             }

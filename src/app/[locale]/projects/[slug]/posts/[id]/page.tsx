@@ -1,4 +1,5 @@
-import type { ReactNode } from "react";
+import { cache, type ReactNode } from "react";
+import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -15,15 +16,23 @@ import {
 import { ReplyForm } from "@/components/feedback/reply-form";
 import { ResponseControl } from "@/components/feedback/response-control";
 import { Post } from "@/components/post/post";
+import { PublicPost } from "@/components/post/public-post";
+import { VisibilityForm } from "@/components/post/visibility-form";
 import { StateMessage } from "@/components/ui/state-message";
 import { Link } from "@/i18n/navigation";
-import { routing } from "@/i18n/routing";
+import { routing, type Locale } from "@/i18n/routing";
 import { getPlatformClient } from "@/lib/api/client";
 import { platformCall } from "@/lib/api/errors";
 import type { components } from "@/lib/api/schema";
 import { formatDate } from "@/lib/format";
 import { recheckChoices } from "@/lib/recheck";
-import { expiredPath, localePath, requireMember } from "@/lib/session";
+import {
+  expiredPath,
+  getCurrentMember,
+  getViewer,
+  localePath,
+  signInPath,
+} from "@/lib/session";
 import { LIMITS } from "@/lib/validation";
 import {
   editFeedback,
@@ -32,9 +41,11 @@ import {
   giveFeedback,
   reply,
   respond,
+  setPostVisibility,
 } from "./actions";
 
 type PostThread = components["schemas"]["PostThread"];
+type PublicPostData = components["schemas"]["PublicPost"];
 type FeedbackItemData = components["schemas"]["FeedbackItem"];
 type Owner = NonNullable<components["schemas"]["MemberRef"]>;
 
@@ -49,6 +60,108 @@ const ASIDE_HEADING = "m-0 text-label font-bold text-ink-muted";
 // A search param is a string, a list of them, or absent.
 function firstOf(value: string | string[] | undefined): string | undefined {
   return Array.isArray(value) ? value[0] : value;
+}
+
+// One platform call per request, shared by the page and its metadata.
+const loadPublicPost = cache(async (id: string) =>
+  platformCall<PublicPostData>(async () =>
+    (await getPlatformClient()).GET("/v1/public/posts/{id}", {
+      params: { path: { id } },
+      signal: AbortSignal.timeout(THREAD_TIMEOUT_MS),
+    }),
+  ),
+);
+
+// Only a visitor gets a title of their own; members' pages keep the layout's.
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; slug: string; id: string }>;
+}): Promise<Metadata> {
+  const { locale, id: rawId } = await params;
+  const id = rawId.toLowerCase();
+  if (!hasLocale(routing.locales, locale) || !UUID.test(id)) return {};
+  if ((await getCurrentMember()).state !== "signed-out") return {};
+
+  const result = await loadPublicPost(id);
+  if (!result.ok) return {};
+  const t = await getTranslations({ locale, namespace: "PublicPages" });
+
+  return { title: t("postMetaTitle", { project: result.data.project.name }) };
+}
+
+// What a visitor (no session cookie at all) sees: the owner's public post and
+// nothing around it. Every refusal reads as sign-in, so a members-only address
+// reveals nothing.
+async function PublicPostView({
+  locale,
+  slug,
+  id,
+  here,
+}: {
+  locale: Locale;
+  slug: string;
+  id: string;
+  here: string;
+}) {
+  const t = await getTranslations("Feedback");
+  const tPosts = await getTranslations("Posts");
+  const tPublic = await getTranslations("PublicPages");
+
+  const result = await loadPublicPost(id);
+  if (!result.ok) {
+    if (result.status === 404) redirect(signInPath(locale, { next: here }));
+    if (result.code === "unreachable") return <StateMessage kind="unreachable" />;
+    throw new Error("platform error: " + result.code);
+  }
+
+  const post = result.data;
+  // The post's own address names its project.
+  if (post.project.slug !== slug) {
+    redirect(
+      localePath(
+        locale,
+        `/projects/${encodeURIComponent(post.project.slug)}/posts/${encodeURIComponent(post.id)}`,
+      ),
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-6">
+      <nav aria-label={t("breadcrumbs")}>
+        <ol className="m-0 flex list-none flex-wrap items-center gap-2 p-0 text-small text-ink-muted">
+          <li>
+            {post.project.isPublic ? (
+              <Link
+                href={`/projects/${encodeURIComponent(post.project.slug)}`}
+                className="text-ink-muted no-underline hover:underline"
+              >
+                <bdi>{post.project.name}</bdi>
+              </Link>
+            ) : (
+              <bdi>{post.project.name}</bdi>
+            )}
+          </li>
+          <li aria-hidden="true">/</li>
+          <li aria-current="page">
+            {post.kind === "wip" ? tPosts("wip") : tPosts("update")} ·{" "}
+            {formatDate(post.createdAt, locale)}
+          </li>
+        </ol>
+      </nav>
+      <h1 className="m-0 text-title-2 text-ink">
+        {tPublic.rich("postOn", {
+          project: post.project.name,
+          n: (chunks) => <bdi>{chunks}</bdi>,
+        })}
+      </h1>
+      {post.project.isPublic ? null : (
+        <p className="m-0 text-small text-ink-muted">{tPublic("projectMembersOnly")}</p>
+      )}
+      <PublicPost post={post} variant="full" />
+      <StateMessage kind="members-only" title={tPublic("feedbackMembersOnly")} />
+    </div>
+  );
 }
 
 export default async function PostThreadPage({
@@ -72,7 +185,11 @@ export default async function PostThreadPage({
   const id = rawId.toLowerCase();
   if (!UUID.test(id)) notFound();
   const here = localePath(locale, `/projects/${slug}/posts/${id}`);
-  const me = await requireMember(locale, here);
+  const viewer = await getViewer(locale, here);
+  if (viewer.kind === "visitor") {
+    return <PublicPostView locale={locale} slug={slug} id={id} here={here} />;
+  }
+  const me = viewer.member;
   const t = await getTranslations("Feedback");
   const tPosts = await getTranslations("Posts");
 
@@ -238,10 +355,18 @@ export default async function PostThreadPage({
         </div>
         <aside className="flex min-w-0 flex-col gap-6">
           {isOwner ? (
-            <section className="flex flex-col gap-2">
-              <h2 className={ASIDE_HEADING}>{t("ruleTitle")}</h2>
-              <p className="m-0">{t("ruleBody")}</p>
-            </section>
+            <>
+              <section className="flex flex-col gap-2">
+                <h2 className={ASIDE_HEADING}>{t("ruleTitle")}</h2>
+                <p className="m-0">{t("ruleBody")}</p>
+              </section>
+              <VisibilityForm
+                action={setPostVisibility.bind(null, locale, slug, id)}
+                visibility={post.visibility}
+                isPublic={post.isPublic}
+                postKind={post.kind}
+              />
+            </>
           ) : (
             <>
               <section className="flex flex-col gap-2">

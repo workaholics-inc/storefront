@@ -33,13 +33,16 @@ async function markRead(
 
 // The bound ids and slug come back from the browser, so they are untrusted,
 // and the target is built only from the parts that passed. `feedbackId` is ""
-// when the notification belongs to the post and not to one item.
+// when the notification belongs to the post and not to one item; `caseId` is ""
+// for every kind but a credit request, which opens the case, where the member
+// decides.
 export async function openNotification(
   locale: string,
   id: string,
   slug: string,
   postId: string,
   feedbackId: string,
+  caseId: string,
   form: FormData,
 ): Promise<void> {
   const lang = resolveLocale(locale);
@@ -47,10 +50,14 @@ export async function openNotification(
     UUID.test(id) &&
     LIMITS.slugPattern.test(slug) &&
     UUID.test(postId) &&
-    (feedbackId === "" || UUID.test(feedbackId));
+    (feedbackId === "" || UUID.test(feedbackId)) &&
+    (caseId === "" || UUID.test(caseId));
   if (!valid) redirect(localePath(lang, PAGE));
 
   await markRead({ ids: [id] }, form, lang);
+  if (caseId !== "") {
+    redirect(localePath(lang, `/projects/${slug}/cases/${caseId}`));
+  }
   const target = localePath(lang, `/projects/${slug}/posts/${postId}`);
 
   redirect(feedbackId === "" ? target : `${target}#feedback-${feedbackId}`);
