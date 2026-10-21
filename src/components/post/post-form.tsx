@@ -12,6 +12,7 @@ import { Button } from "../ui/button";
 import { TextAreaField, TextField } from "../ui/form-field";
 import { Icon } from "../ui/icon";
 import { StateMessage } from "../ui/state-message";
+import { VisibilityField } from "../ui/visibility-field";
 
 type Post = components["schemas"]["Post"];
 type Kind = Post["kind"];
@@ -69,6 +70,7 @@ export function PostForm({
   const tForms = useTranslations("Forms");
   const tErrors = useTranslations("Forms.errors");
   const tMessages = useTranslations("Errors");
+  const tVisibility = useTranslations("Visibility");
   const [state, formAction, pending] = useActionState(action, initialFormState);
 
   const submitted = Object.keys(state.values).length > 0;
@@ -245,6 +247,18 @@ export function PostForm({
           />
         </>
       )}
+
+      {creating ? (
+        <VisibilityField
+          name="visibility"
+          kind="post"
+          value={value("visibility", "inherit")}
+          error={message(state.errors.visibility)}
+        />
+      ) : null}
+      {creating && kind === "update" ? (
+        <p className={HINT}>{tVisibility("channelNote")}</p>
+      ) : null}
 
       <div>
         <Button

@@ -18,6 +18,8 @@ type UpdateMeRequest = Schemas["UpdateMeRequest"];
 type CreateProjectRequest = Schemas["CreateProjectRequest"];
 type UpdateProjectRequest = Schemas["UpdateProjectRequest"];
 type CreatePostRequest = Schemas["CreatePostRequest"];
+type ItemVisibility = Schemas["ItemVisibility"];
+type SetVisibilityRequest = Schemas["SetVisibilityRequest"];
 type GiveFeedbackRequest = Schemas["GiveFeedbackRequest"];
 type EditFeedbackRequest = Schemas["EditFeedbackRequest"];
 type RespondRequest = Schemas["RespondRequest"];
@@ -102,6 +104,7 @@ type Errors = Record<string, FieldError>;
 
 const STAGES = ["idea", "building", "launched"] as const;
 const VISIBILITIES = ["members", "public"] as const;
+const ITEM_VISIBILITIES = ["inherit", "members", "public"] as const satisfies readonly ItemVisibility[];
 
 function text(form: FormData, name: string): string {
   const value = form.get(name);
@@ -282,6 +285,24 @@ export function readInviteCode(value: unknown): string | undefined | null {
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
+// "" (absent or empty) is no choice; anything but the three settings is an error.
+function readVisibility(form: FormData): { visibility?: ItemVisibility; error?: FieldError } {
+  const visibility = text(form, "visibility");
+  if (visibility === "") return {};
+  const chosen = ITEM_VISIBILITIES.find((option) => option === visibility);
+
+  return chosen ? { visibility: chosen } : { error: { key: "chooseOne" } };
+}
+
+export function validateVisibility(form: FormData): ValidationResult<SetVisibilityRequest> {
+  const { visibility } = readVisibility(form);
+  if (visibility === undefined) {
+    return failure(form, { visibility: { key: "chooseOne" } });
+  }
+
+  return { ok: true, body: { visibility } };
+}
+
 // The same body serves creating a post and editing it.
 export function validatePost(
   form: FormData,
@@ -289,6 +310,8 @@ export function validatePost(
 ): ValidationResult<CreatePostRequest> {
   const errors: Errors = {};
   const body = text(form, "body");
+  const { visibility, error: visibilityError } = readVisibility(form);
+  if (visibilityError) errors.visibility = visibilityError;
 
   if (kind === "wip") {
     checkLength(errors, "body", body, LIMITS.postBodyMax, true);
@@ -316,6 +339,7 @@ export function validatePost(
         body,
         feedbackWanted,
         ...(selfCritique === "" ? {} : { selfCritique }),
+        ...(visibility === undefined ? {} : { visibility }),
       },
     };
   }
@@ -349,6 +373,7 @@ export function validatePost(
       actedOn,
       oneNumber,
       ...(rejectedAndWhy === "" ? {} : { rejectedAndWhy }),
+      ...(visibility === undefined ? {} : { visibility }),
     },
   };
 }
