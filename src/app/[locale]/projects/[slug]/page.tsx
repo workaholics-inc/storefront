@@ -6,6 +6,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Post } from "@/components/post/post";
 import { PublicPost } from "@/components/post/public-post";
 import { BadgeSnippet } from "@/components/project/badge-snippet";
+import { ProjectNav } from "@/components/project/project-nav";
 import { buttonClasses } from "@/components/ui/button";
 import { Icon, type IconName } from "@/components/ui/icon";
 import { PublicBadge } from "@/components/ui/public-badge";
@@ -227,6 +228,7 @@ async function PublicProjectView({
           </ul>
         ) : null}
       </div>
+      <ProjectNav slug={project.slug} current="timeline" />
       <section aria-labelledby="timeline-title" className="flex flex-col gap-4">
         <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
           <h2 id="timeline-title" className="m-0 text-title-2 text-ink">
@@ -450,6 +452,7 @@ export default async function ProjectPage({
           </div>
         ) : null}
       </div>
+      <ProjectNav slug={project.slug} current="timeline" />
       <section aria-labelledby="timeline-title" className="flex flex-col gap-4">
         <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
           <h2 id="timeline-title" className="m-0 text-title-2 text-ink">
