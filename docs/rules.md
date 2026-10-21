@@ -79,4 +79,36 @@ The transparency page shows five numbers for the whole community, one set per mo
 - **Cases written:** cases created that month.
 - A month's numbers are computed once, at the start of the next month, and never changed afterwards. Each set records the version of these rules it was computed with.
 
-More rules (invitations, moderation) are added here as each part of the platform ships.
+- From M4, hidden items (see Moderation) are not counted. Months stored before then keep their numbers and their rules version.
+
+## Invitations
+
+- Membership is by invitation. A member can create an invite, which is shown once as a code and a link, and can revoke an invite nobody has used yet. Each member can hold a limited number of open invites at a time.
+- Every profile shows, to members, who invited that member and whom they invited. There are no counts.
+
+## New members
+
+- A new member can post work, give feedback, answer and reply from the first day.
+- Making a project, a post or a case public, and inviting others, wait until both of these hold: 30 days have passed since joining, and the member has given feedback 3 times. The site shows the date and whether the feedback part is done, never a count.
+- Members who joined before these rules were founding members and are not affected.
+
+## Moderation
+
+- Any member can report a post, a piece of feedback or a reply, with a reason. A report never hides anything by itself.
+- A moderator can hide an item, always with a written reason, and can restore it. Hiding never deletes anything. Members see "hidden by moderation" with the reason and the role in its place; visitors see nothing.
+- The moderation log, open to every member, lists every hide, restore and change of an admin or moderator: what, when, why, and which role. It never names the moderator.
+- Adding or removing an admin takes a second admin's confirmation, and there are always at least two admins.
+
+## Signing in
+
+- Members sign in with Telegram. A member can also add an email address, confirmed with a six-digit code, and then sign in with a code sent to it. Email never lets a new person join.
+- Asking for a code always gets the same answer, so the site never reveals whether an address belongs to a member.
+
+## Leaving
+
+- A member can delete their account. The site points to the data download first and asks them to type their handle.
+- Their name, profile, sign-in methods and personal settings are erased, and they appear everywhere as "a former member".
+- What others engaged with stays, as "a former member": a post someone gave feedback on or cited in a case, feedback that was answered, replied to or cited, and every answer and reply. Their own posts and feedback that nobody touched are deleted.
+- A project they own alone that others gave feedback on must be handed to another owner or deleted first.
+
+More rules are added here as each part of the platform ships.

@@ -39,6 +39,17 @@ Browser ──▶ storefront server (Next.js) ──▶ platform /v1 API
 - Every page except the home page, sign-in, the transparency page and the public views below requires a session. After sign-in, the site returns only to same-site paths.
 - Server-only variables: `SITE_URL` (the site's public origin), `TELEGRAM_CLIENT_ID`, and optionally `TELEGRAM_AUTHORIZE_URL` and `TELEGRAM_BOT_USERNAME` (the same bot, written without the `@`; the notifications page links to it so members can turn on Telegram messages). Mock mode runs a stand-in for Telegram's authorization page, so the whole flow works locally.
 
+- Email sign-in (M4): the sign-in page asks for the address, then the six-digit code, and on success stores the platform's session token in `wh_session` exactly as the Telegram callback does. The account page lists the member's sign-in methods (Telegram; email with their own address), adds an email with a code, and removes it.
+
+## Community pages (M4)
+
+- Invitations live on the member's own pages: create (the code and link shown once), list with status, revoke an open one. Profiles show "invited by" and "invited" to members.
+- A report form sits on posts, feedback and replies for members. The moderation log is a members-only page.
+- A hidden item renders as a placeholder with the reason and the role and never its text. A former member (an empty `displayName` in a `MemberRef`) renders as the localized "a former member", with no profile link.
+- A member on probation sees the public options disabled, with the date and whether the feedback part is done.
+- Account deletion is a page under the member's own pages: it links to the data download first, asks for the handle, lists any project that must be handed over, and signs out afterwards.
+- **No admin or moderator UI exists in this repository.** Moderation and administration happen in the platform's own console.
+
 ## The practice pages
 
 Added with milestone M2 (the feedback loop). Every page requires a session and follows `docs/design/`.
