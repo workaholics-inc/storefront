@@ -79,7 +79,7 @@ The transparency page shows five numbers for the whole community, one set per mo
 - **Cases written:** cases created that month.
 - A month's numbers are computed once, at the start of the next month, and never changed afterwards. Each set records the version of these rules it was computed with.
 
-- From M4, hidden items (see Moderation) are not counted. Months stored before then keep their numbers and their rules version.
+- From M4, hidden items (see Moderation) are not counted, and neither is a member who deleted their account before the month began. Months stored before then keep their numbers and their rules version.
 
 ## Invitations
 
