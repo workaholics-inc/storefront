@@ -84,3 +84,22 @@ export async function requireMember(
       throw new Error("platform unavailable: " + current.code);
   }
 }
+
+export type Viewer = { kind: "member"; member: Member } | { kind: "visitor" };
+
+// For pages that serve members and visitors at one address. A visitor is
+// someone with no session cookie at all; an expired session is not a visitor,
+// so a member never sees the public view of their own members-only work.
+export async function getViewer(locale: Locale, next: string): Promise<Viewer> {
+  const current = await getCurrentMember();
+  switch (current.state) {
+    case "member":
+      return { kind: "member", member: current.member };
+    case "signed-out":
+      return { kind: "visitor" };
+    case "expired":
+      return redirect(expiredPath(locale, next));
+    case "unavailable":
+      throw new Error("platform unavailable: " + current.code);
+  }
+}
