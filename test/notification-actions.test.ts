@@ -189,6 +189,84 @@ describe("openNotification", () => {
   });
 });
 
+describe("openNotification with a case", () => {
+  const CASE = "0199f1a2-7c3e-7a10-8000-000000000601";
+  const CASE_PAGE = `/projects/daftar/cases/${CASE}`;
+
+  it.each([
+    ["fa", CASE_PAGE],
+    ["en", `/en${CASE_PAGE}`],
+  ])("marks it read and opens the case, not the thread, in %s", async (locale, path) => {
+    const target = await redirectedTo(
+      openNotification(locale, NOTIFICATION, "daftar", POST_ID, FEEDBACK, CASE, form),
+    );
+
+    expect(target).toBe(path);
+    expect(target).not.toContain("#");
+    expect(h.calls).toHaveLength(1);
+    expect(h.calls[0]).toMatchObject({
+      method: "POST",
+      path: "/v1/me/notifications/read",
+    });
+    expect(bodyOf()).toEqual({ ids: [NOTIFICATION] });
+  });
+
+  it.each([
+    ["fa", CASE_PAGE],
+    ["en", `/en${CASE_PAGE}`],
+  ])("opens the same case page when there is no item in %s", async (locale, path) => {
+    const target = await redirectedTo(
+      openNotification(locale, NOTIFICATION, "daftar", POST_ID, "", CASE, form),
+    );
+
+    expect(target).toBe(path);
+  });
+
+  it.each([
+    ["a server error", fail(500, "internal_error")],
+    ["a key the platform rejects", fail(401, "storefront_key_invalid")],
+    ["an unreachable platform", new Error("connect ECONNREFUSED")],
+  ])("still opens the case after %s", async (_name, answer) => {
+    h.answer = answer;
+
+    const target = await redirectedTo(
+      openNotification("fa", NOTIFICATION, "daftar", POST_ID, FEEDBACK, CASE, form),
+    );
+
+    expect(target).toBe(CASE_PAGE);
+    expect(h.deleted).toEqual([]);
+  });
+
+  it("deletes the session cookie and redirects to sign-in on session_required", async () => {
+    h.answer = fail(401, "session_required");
+
+    const target = await redirectedTo(
+      openNotification("fa", NOTIFICATION, "daftar", POST_ID, FEEDBACK, CASE, form),
+    );
+
+    expect(target).toBe("/sign-in?error=session_required&next=%2Fme%2Fnotifications");
+    expect(h.deleted).toEqual(["wh_session"]);
+  });
+
+  it.each([
+    ["a case id that is not a UUID", "nope"],
+    ["a case id with a path in it", `${CASE}/../x`],
+    ["a case id with a hash in it", `${CASE}#x`],
+  ])("goes to the notifications page and sends nothing for %s", async (_name, caseId) => {
+    expect(
+      await redirectedTo(
+        openNotification("fa", NOTIFICATION, "daftar", POST_ID, FEEDBACK, caseId, form),
+      ),
+    ).toBe("/me/notifications");
+    expect(
+      await redirectedTo(
+        openNotification("en", NOTIFICATION, "daftar", POST_ID, FEEDBACK, caseId, form),
+      ),
+    ).toBe("/en/me/notifications");
+    expect(h.calls).toHaveLength(0);
+  });
+});
+
 describe("markAllRead", () => {
   it.each([
     ["fa", "/me/notifications"],

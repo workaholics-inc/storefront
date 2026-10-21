@@ -87,6 +87,62 @@ describe("SiteHeader", () => {
     expect(inMenu[0]?.[0]).toContain('href="/rules"');
   });
 
+  describe("practice link", () => {
+    const prefixes = { fa: "", en: "/en" } as const;
+    const anchors = (html: string) => [...html.matchAll(/<a[^>]*>[\s\S]*?<\/a>/g)].map((m) => m[0]);
+
+    it("is in the desktop nav and in the phone sheet, signed out and signed in", () => {
+      for (const locale of ["fa", "en"] as const) {
+        for (const member of [undefined, { displayName: "سارا مقدم" }]) {
+          const html = render(locale, { member });
+          const nav = /<nav[\s\S]*?<\/nav>/.exec(html)?.[0] ?? "";
+          const rest = html.replace(nav, "");
+          const href = `href="${prefixes[locale]}/practice"`;
+          const inNav = anchors(nav).filter((tag) => tag.includes(href));
+          const inRest = anchors(rest).filter((tag) => tag.includes(href));
+
+          expect(inNav).toHaveLength(1);
+          expect(inRest).toHaveLength(1);
+          for (const tag of [...inNav, ...inRest]) {
+            expect(visibleText(tag).trim()).toBe(messages[locale].Nav.practice);
+          }
+        }
+      }
+    });
+
+    it("sits between the rules and the manifesto in the desktop nav", () => {
+      for (const locale of ["fa", "en"] as const) {
+        const prefix = prefixes[locale];
+        const html = render(locale);
+        const nav = /<nav[\s\S]*?<\/nav>/.exec(html)?.[0] ?? "";
+        const hrefs = [...nav.matchAll(/<a[^>]*\shref="([^"]*)"/g)].map((m) => m[1]);
+
+        expect(hrefs).toEqual([
+          `${prefix}/projects`,
+          `${prefix}/rules`,
+          `${prefix}/practice`,
+          `${prefix}/manifesto`,
+        ]);
+      }
+    });
+
+    it("is marked as the current section in the nav and in the phone menu", () => {
+      for (const locale of ["fa", "en"] as const) {
+        const html = render(locale, { current: "practice" });
+        const nav = /<nav[\s\S]*?<\/nav>/.exec(html)?.[0] ?? "";
+        const rest = html.replace(nav, "");
+        const mark = /<a[^>]*aria-current="page"[^>]*>/g;
+        const inNav = [...nav.matchAll(mark)];
+        const inMenu = [...rest.matchAll(mark)];
+
+        expect(inNav).toHaveLength(1);
+        expect(inMenu).toHaveLength(1);
+        expect(inNav[0]?.[0]).toContain(`href="${prefixes[locale]}/practice"`);
+        expect(inMenu[0]?.[0]).toContain(`href="${prefixes[locale]}/practice"`);
+      }
+    });
+  });
+
   it("names the other language in its own script", () => {
     const html = render("en");
 
