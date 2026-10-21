@@ -49,7 +49,8 @@
     "signOut": "Sign out",
     "otherLanguage": "فارسی",
     "awaiting": "Awaiting my answer",
-    "notifications": "Notifications"
+    "notifications": "Notifications",
+    "practice": "Practice numbers"
   },
   "Auth": {
     "signInTitle": "Sign in to Workaholics",
@@ -87,7 +88,9 @@
     "edit_window_closed": "The 15-minute editing window has closed.",
     "not_current_response": "This is no longer the current answer. Reload the page.",
     "recheck_required": "For “Test it”, say when you'll report back.",
-    "acted_on_invalid": "You can only pick answered feedback on this project."
+    "acted_on_invalid": "You can only pick answered feedback on this project.",
+    "case_feedback_invalid": "You can only pick answered feedback on this project's posts.",
+    "case_post_invalid": "You can only pick this project's updates."
   },
   "Forms": {
     "save": "Save",
@@ -171,7 +174,8 @@
     "timelineEmpty": "There are no posts on this project yet.",
     "timelineEmptyOwner": "Write the first post: show your work in progress and say what feedback you want.",
     "created": "Project created · {date}",
-    "olderPosts": "Older posts"
+    "olderPosts": "Older posts",
+    "sections": "Project sections"
   },
   "Posts": {
     "wip": "Work in progress",
@@ -283,12 +287,144 @@
     "telegramTitle": "Notifications in Telegram",
     "telegramBody": "To get these notifications and the weekly summary in Telegram, open the Workaholics bot and press Start. Send /stop any time to turn it off.",
     "telegramLink": "Open the bot in Telegram",
-    "telegramOn": "These notifications also go to your Telegram. Send /stop to the bot to turn that off."
+    "telegramOn": "These notifications also go to your Telegram. Send /stop to the bot to turn that off.",
+    "credit_requested": "<n>{actor}</n> linked your feedback in a case on <n>{project}</n> and asks whether you want to be named."
   },
   "Awaiting": {
     "title": "Awaiting my answer",
     "intro": "Feedback on your projects that hasn't been answered yet, oldest first.",
     "empty": "No feedback is waiting for your answer.",
     "more": "More"
+  },
+  "Visibility": {
+    "postLabel": "Who can see this post",
+    "caseLabel": "Who can see this case",
+    "inherit": "Same as the project",
+    "members": "Members only",
+    "public": "Public",
+    "inheritHint": "Public when the project is public; otherwise only members see it.",
+    "membersHint": "Only members see it, even when the project is public.",
+    "publicHint": "Anyone with the link can read it without signing in, even when the project is members-only.",
+    "feedbackNote": "Feedback, answers and replies are never public.",
+    "channelNote": "A public update is also announced in the public Telegram channel once its 15-minute editing window closes.",
+    "changeAnyTime": "Any owner of the project can change this at any time; it doesn't count as an edit.",
+    "effectivePublic": "Right now anyone with the link can see this.",
+    "effectiveMembers": "Right now only members can see this.",
+    "saved": "Your change is saved."
+  },
+  "PublicPages": {
+    "projectNote": "This is the public page of a project on Workaholics. It shows only what the project's owners made public.",
+    "timelineEmpty": "There are no public posts on this project yet.",
+    "postOn": "A post on <n>{project}</n>",
+    "projectMembersOnly": "The project's own page is visible only to members.",
+    "feedbackMembersOnly": "Feedback on this post, and the owners' answers to it, are visible only to members.",
+    "projectMetaTitle": "{project} · Workaholics",
+    "postMetaTitle": "A post on {project} · Workaholics"
+  },
+  "Changelog": {
+    "title": "Changelog",
+    "intro": "This project's updates, newest first: what changed, which feedback it came from, and what was rejected and why.",
+    "introPublic": "This project's public updates, newest first: what changed, and what was rejected and why.",
+    "empty": "There are no updates on this project yet.",
+    "emptyPublic": "There are no public updates on this project yet.",
+    "emptyOwner": "When you post an update, it shows here: say what changed and what you did with the feedback.",
+    "older": "Older updates",
+    "metaTitle": "Changelog · {project} · Workaholics"
+  },
+  "Cases": {
+    "title": "Cases",
+    "intro": "Feedback → change → result: short stories the project's owners write about what a piece of feedback changed and what happened next.",
+    "empty": "No cases have been written for this project yet.",
+    "emptyPublic": "There are no public cases on this project yet.",
+    "emptyOwner": "Write the first case: pick answered feedback, then say what you changed and what happened.",
+    "new": "Write a case",
+    "newTitle": "New case",
+    "edit": "Edit",
+    "editTitle": "Edit case",
+    "older": "Older cases",
+    "by": "Written by <n>{name}</n> · {date}",
+    "edited": "edited",
+    "caseTitle": "Title",
+    "caseTitleHint": "One line about what changed, for example “Sign-up got shorter”.",
+    "feedbackStory": "The feedback",
+    "feedbackStoryHint": "What feedback did you get, and about which part of the work?",
+    "change": "What changed",
+    "changeHint": "What did you change because of it?",
+    "result": "What happened",
+    "resultHint": "What happened after the change? Write it down even if it didn't work.",
+    "oneNumber": "One number",
+    "oneNumberHint": "One sentence with one number, in your own words, for example “Sign-up went from 5 minutes to 2”.",
+    "feedbackLinked": "The feedback it started from",
+    "feedbackLinkedHint": "At least one, at most ten pieces of answered feedback on this project.",
+    "feedbackLinkedEmpty": "There is no answered feedback on this project yet. A case starts from answered feedback.",
+    "creditNote": "Everyone whose feedback you pick is asked whether they want to be named. Until they say yes, the case says “a member” instead of their name.",
+    "postsLinked": "Related updates",
+    "postsLinkedHint": "Up to ten of this project's updates that show the change.",
+    "postsLinkedEmpty": "This project has no updates yet.",
+    "update": "Update · {date}",
+    "save": "Save case",
+    "saving": "Saving…",
+    "saved": "The case is saved.",
+    "onlyOwners": "Only the project's owners write cases here.",
+    "editNote": "The project's owners can edit a case at any time; it then shows as edited. A case can't be deleted.",
+    "backToCase": "Back to the case",
+    "allCases": "All cases",
+    "metaTitle": "{title} · Workaholics",
+    "listMetaTitle": "Cases · {project} · Workaholics"
+  },
+  "Credits": {
+    "title": "Feedback from",
+    "aMember": "a member",
+    "consentTitle": "Your name in this case",
+    "consentBody": "This case links your feedback. Choose whether your name is shown with it. Until you say yes, the case says “a member” instead of your name.",
+    "statePending": "You haven't chosen yet; the case says “a member”.",
+    "stateGiven": "Your name is shown in this case.",
+    "stateDeclined": "Your name isn't shown; the case says “a member”.",
+    "give": "Show my name",
+    "decline": "Don't show my name",
+    "changeAnyTime": "You can change this at any time.",
+    "saved": "Your choice is saved."
+  },
+  "Practice": {
+    "title": "Monthly practice numbers",
+    "intro": "Five numbers for the whole community, one set per month. They are never shown per member, per project or per owner.",
+    "months": "Month by month, newest first",
+    "month": "Month",
+    "members": "Members",
+    "membersPostingWip": "Members posting work in progress",
+    "projectsWithPublicChangelog": "Products with a public changelog",
+    "feedbackAnsweredInWindow": "Feedback answered within 7 days",
+    "casesWritten": "Cases written",
+    "share": "{percent, number}%",
+    "shareOf": "{answered, number} of {due, number}",
+    "noShare": "—",
+    "noShareLabel": "No feedback was due this month",
+    "empty": "No month has been computed yet. Each month's numbers appear at the start of the next month.",
+    "computedAt": "Computed on {date}",
+    "rulesVersion": "Rules version {version, number}",
+    "rulesTitle": "How each number is computed",
+    "ruleMonths": "Months are calendar months (Gregorian) in UTC.",
+    "ruleMembers": "Members: active members who joined before the month ended.",
+    "ruleMembersPostingWip": "Members posting work in progress: members who posted at least one work-in-progress post that month.",
+    "ruleProjectsWithPublicChangelog": "Products with a public changelog: projects that were public when the month's numbers were computed and had at least one public update before the month ended.",
+    "ruleFeedbackAnsweredInWindow": "Feedback answered within 7 days: a piece of feedback counts in the month its 7-day window closes, at the moment it would show as overdue (8 whole days after it was given). Of those, the share whose first answer came before that moment, as a whole percent rounded down. When no feedback was due, the page shows a dash.",
+    "ruleCasesWritten": "Cases written: cases created that month.",
+    "ruleOnce": "A month's numbers are computed once, at the start of the next month, and never changed afterwards. Each set records the version of these rules it was computed with.",
+    "rulesLink": "All the rules the platform computes",
+    "metaTitle": "Monthly practice numbers · Workaholics"
+  },
+  "Badge": {
+    "text": "Building in public at Workaholics",
+    "snippetTitle": "A badge for your site",
+    "snippetHint": "Put this code on your own site or README: it shows the badge and links to this project's public page. The badge shows no number.",
+    "snippetLabel": "Badge code",
+    "copy": "Copy code",
+    "copied": "Copied"
+  },
+  "Export": {
+    "title": "Your data",
+    "body": "Download everything you created here as one JSON file: your profile, projects, posts, feedback, answers, replies, cases, credits and the invites you made.",
+    "download": "Download my data",
+    "failed": "The file couldn't be prepared. Try again in a few minutes."
   }
 }
