@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getPlatformClient } from "@/lib/api/client";
 import { platformCall, type PlatformResult } from "@/lib/api/errors";
@@ -18,9 +19,11 @@ import {
   validateFeedback,
   validateReply,
   validateResponse,
+  validateVisibility,
 } from "@/lib/validation";
 
 type FeedbackItem = components["schemas"]["FeedbackItem"];
+type Post = components["schemas"]["Post"];
 
 // What the thread shows once the member is back on it.
 type Saved = "feedback" | "answer" | "reply" | "edit";
@@ -212,4 +215,33 @@ export async function editReply(
   );
 
   return finish(result, form, lang, thread, "edit", feedbackId);
+}
+
+// Who can see a post is not an edit: no window, no edited mark, and the page
+// shows its confirmation from the returned state instead of redirecting.
+export async function setPostVisibility(
+  locale: string,
+  slug: string,
+  postId: string,
+  _prev: FormState,
+  form: FormData,
+): Promise<FormState> {
+  const lang = resolveLocale(locale);
+  if (!bound(slug, postId)) return formFailure(form, "not_found");
+  const thread = `/projects/${slug}/posts/${postId}`;
+  const checked = validateVisibility(form);
+  if (!checked.ok) return checked.state;
+
+  const result = await platformCall<Post>(async () =>
+    (await getPlatformClient()).PUT("/v1/posts/{id}/visibility", {
+      params: { path: { id: postId } },
+      body: checked.body,
+    }),
+  );
+  if (!result.ok) return failureState(result, form, lang, thread);
+
+  revalidatePath("/[locale]/projects/[slug]/posts/[id]", "page");
+  revalidatePath("/[locale]/projects/[slug]", "page");
+
+  return { errors: {}, values: { visibility: checked.body.visibility } };
 }
