@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { CaseCard } from "@/components/case/case-card";
+import { ProjectNav } from "@/components/project/project-nav";
 import { buttonClasses } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { StateMessage } from "@/components/ui/state-message";
@@ -115,12 +116,14 @@ async function CaseList({
   slug,
   name,
   isOwner,
+  nav,
   body,
 }: {
   members: boolean;
   slug: string;
   name: string;
   isOwner: boolean;
+  nav: ReactNode;
   body: ReactNode;
 }) {
   const t = await getTranslations("Cases");
@@ -135,6 +138,7 @@ async function CaseList({
         </div>
         <p className="m-0 max-w-read text-ink-muted">{t("intro")}</p>
       </div>
+      {nav}
       {body}
     </div>
   );
@@ -238,6 +242,7 @@ async function PublicCases({
       slug={result.data.slug}
       name={result.data.name}
       isOwner={false}
+      nav={<ProjectNav slug={result.data.slug} current="cases" />}
       body={body}
     />
   );
@@ -343,6 +348,7 @@ export default async function CasesPage({
       slug={project.slug}
       name={project.name}
       isOwner={isOwner}
+      nav={<ProjectNav slug={project.slug} current="cases" />}
       body={body}
     />
   );

@@ -5,6 +5,7 @@ import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Post } from "@/components/post/post";
 import { PublicPost } from "@/components/post/public-post";
+import { ProjectNav } from "@/components/project/project-nav";
 import { buttonClasses } from "@/components/ui/button";
 import { StateMessage } from "@/components/ui/state-message";
 import { Link } from "@/i18n/navigation";
@@ -101,12 +102,14 @@ async function Changelog({
   slug,
   name,
   intro,
+  nav,
   body,
 }: {
   members: boolean;
   slug: string;
   name: string;
   intro: string;
+  nav: ReactNode;
   body: ReactNode;
 }) {
   const t = await getTranslations("Changelog");
@@ -118,6 +121,7 @@ async function Changelog({
         <h1 className="m-0 text-title-1 text-ink">{t("title")}</h1>
         <p className="m-0 max-w-read text-ink-muted">{intro}</p>
       </div>
+      {nav}
       {body}
     </div>
   );
@@ -222,6 +226,7 @@ async function PublicChangelog({
       slug={result.data.slug}
       name={result.data.name}
       intro={t("introPublic")}
+      nav={<ProjectNav slug={result.data.slug} current="changelog" />}
       body={body}
     />
   );
@@ -341,6 +346,7 @@ export default async function ChangelogPage({
       slug={project.slug}
       name={project.name}
       intro={t("intro")}
+      nav={<ProjectNav slug={project.slug} current="changelog" />}
       body={body}
     />
   );
