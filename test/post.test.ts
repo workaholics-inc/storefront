@@ -242,6 +242,7 @@ describe("Post: update", () => {
           excerpt: "Shorter, please.",
           status: "rejected",
           recheckOn: null,
+          hidden: null,
         },
       ],
     };
@@ -261,6 +262,7 @@ describe("Post: update", () => {
           excerpt: "Try it on more people.",
           status: "testing",
           recheckOn: null,
+          hidden: null,
         },
       ],
     };

@@ -203,7 +203,64 @@ export interface paths {
         };
         put?: never;
         post?: never;
-        delete?: never;
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["DeleteMeRequest"];
+                };
+            };
+            responses: {
+                /** @description The account was deleted; this session no longer works */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 400: validation_failed, confirm_mismatch */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 401: storefront_key_invalid, session_required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 404: not_found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 409: sole_owner, last_admins */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["DeleteMeConflict"];
+                    };
+                };
+            };
+        };
         options?: never;
         head?: never;
         patch: {
@@ -403,6 +460,15 @@ export interface paths {
                         "application/json": components["schemas"]["ErrorBody"];
                     };
                 };
+                /** @description 403: on_probation */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
                 /** @description 409: slug_taken */
                 409: {
                     headers: {
@@ -514,7 +580,7 @@ export interface paths {
                         "application/json": components["schemas"]["ErrorBody"];
                     };
                 };
-                /** @description 403: not_project_owner */
+                /** @description 403: not_project_owner, on_probation */
                 403: {
                     headers: {
                         [name: string]: unknown;
@@ -790,7 +856,7 @@ export interface paths {
                         "application/json": components["schemas"]["ErrorBody"];
                     };
                 };
-                /** @description 403: not_project_owner */
+                /** @description 403: not_project_owner, on_probation */
                 403: {
                     headers: {
                         [name: string]: unknown;
@@ -914,7 +980,7 @@ export interface paths {
                         "application/json": components["schemas"]["ErrorBody"];
                     };
                 };
-                /** @description 403: not_author */
+                /** @description 403: not_author, on_probation */
                 403: {
                     headers: {
                         [name: string]: unknown;
@@ -1791,7 +1857,7 @@ export interface paths {
                         "application/json": components["schemas"]["ErrorBody"];
                     };
                 };
-                /** @description 403: not_project_owner */
+                /** @description 403: not_project_owner, on_probation */
                 403: {
                     headers: {
                         [name: string]: unknown;
@@ -2116,7 +2182,7 @@ export interface paths {
                         "application/json": components["schemas"]["ErrorBody"];
                     };
                 };
-                /** @description 403: not_project_owner */
+                /** @description 403: not_project_owner, on_probation */
                 403: {
                     headers: {
                         [name: string]: unknown;
@@ -2245,7 +2311,7 @@ export interface paths {
                         "application/json": components["schemas"]["ErrorBody"];
                     };
                 };
-                /** @description 403: not_project_owner */
+                /** @description 403: not_project_owner, on_probation */
                 403: {
                     headers: {
                         [name: string]: unknown;
@@ -2554,6 +2620,700 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/reports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["FileReportRequest"];
+                };
+            };
+            responses: {
+                /** @description The report was filed for the moderators */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["FiledReport"];
+                    };
+                };
+                /** @description 400: validation_failed */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 401: storefront_key_invalid, session_required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 404: not_found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 409: already_reported */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 429: rate_limited */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/invites": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description The invite was created; its code is shown only in this answer */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CreatedInvite"];
+                    };
+                };
+                /** @description 401: storefront_key_invalid, session_required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 403: on_probation */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 409: invite_limit_reached */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/me/invites": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description The caller's invites, newest first */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["MyInviteList"];
+                    };
+                };
+                /** @description 401: storefront_key_invalid, session_required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/invites/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description The invite was revoked */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 400: validation_failed */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 401: storefront_key_invalid, session_required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 404: not_found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 409: invite_not_open */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/moderation/log": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    cursor?: string;
+                    limit?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description One page of the moderation log, newest first */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ModerationLogPage"];
+                    };
+                };
+                /** @description 400: validation_failed */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 401: storefront_key_invalid, session_required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/me/identities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description The sign-in methods connected to the caller's account */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["IdentityList"];
+                    };
+                };
+                /** @description 401: storefront_key_invalid, session_required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/me/identities/email": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["EmailAddressRequest"];
+                };
+            };
+            responses: {
+                /** @description A code was sent to the address */
+                202: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 400: validation_failed */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 401: storefront_key_invalid, session_required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 409: identity_in_use, identity_already_connected */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 429: rate_limited */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 503: sign_in_method_unavailable */
+                503: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+            };
+        };
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description The email address was removed; the caller's remaining sign-in methods */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["IdentityList"];
+                    };
+                };
+                /** @description 401: storefront_key_invalid, session_required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 404: not_found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 409: last_identity */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/me/identities/email/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["EmailCodeRequest"];
+                };
+            };
+            responses: {
+                /** @description The address is connected; the caller's sign-in methods */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["IdentityList"];
+                    };
+                };
+                /** @description 400: validation_failed, email_code_invalid */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 401: storefront_key_invalid, session_required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 409: identity_in_use, identity_already_connected */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/auth/email/start": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["EmailAddressRequest"];
+                };
+            };
+            responses: {
+                /** @description If a member has this address, a code was sent to it; the answer is the same either way */
+                202: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 400: validation_failed */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 401: storefront_key_invalid */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 429: rate_limited */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 503: sign_in_method_unavailable */
+                503: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/auth/email/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["EmailSignInVerifyRequest"];
+                };
+            };
+            responses: {
+                /** @description Signed in; `joined` is always false, because email sign-in never creates an account */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SignInResponse"];
+                    };
+                };
+                /** @description 400: validation_failed, email_code_invalid */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 401: storefront_key_invalid */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+                /** @description 503: sign_in_method_unavailable */
+                503: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorBody"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -2652,6 +3412,7 @@ export interface components {
             url: string;
         };
         /**
+         * @description `displayName` is empty only for a former member; show the localized phrase and no link
          * @example {
          *       "handle": "sara",
          *       "displayName": "سارا رحیمی"
@@ -2692,11 +3453,18 @@ export interface components {
          *         "displayName": "رضا احمدی"
          *       },
          *       "joinedAt": "2026-10-20T10:00:00.000Z",
-         *       "telegramDmEnabled": false
+         *       "telegramDmEnabled": false,
+         *       "probation": null
          *     }
          */
         Me: components["schemas"]["Member"] & {
             telegramDmEnabled: boolean;
+            /** @description Set while the member is new: until `until` has passed and `feedbackDone` is true, nothing they write can be made public. Null otherwise. */
+            probation: {
+                /** Format: date-time */
+                until: string;
+                feedbackDone: boolean;
+            } | null;
         };
         UpdateMeRequest: {
             handle?: string;
@@ -2744,11 +3512,19 @@ export interface components {
          *           "createdAt": "2026-10-20T10:00:00.000Z",
          *           "updatedAt": "2026-10-20T10:00:00.000Z"
          *         }
+         *       ],
+         *       "invitees": [
+         *         {
+         *           "handle": "arash",
+         *           "displayName": "آرش کاظمی"
+         *         }
          *       ]
          *     }
          */
         MemberProfile: components["schemas"]["Member"] & {
             projects: components["schemas"]["Project"][];
+            /** @description The members this member invited, oldest first. A former member appears with an empty `displayName`. */
+            invitees: components["schemas"]["MemberRef"][];
         };
         /**
          * @example {
@@ -2901,7 +3677,8 @@ export interface components {
          *       "isPublic": false,
          *       "createdAt": "2026-10-15T09:00:00.000Z",
          *       "editedAt": null,
-         *       "editableUntil": null
+         *       "editableUntil": null,
+         *       "hidden": null
          *     }
          */
         Post: {
@@ -2926,6 +3703,13 @@ export interface components {
             editedAt: string | null;
             /** Format: date-time */
             editableUntil: string | null;
+            /** @description Set when moderation hid this post: the reason, the role that acted and when. While set, `body` is empty, `feedbackWanted` and `actedOn` are empty lists, and `selfCritique`, `whatChanged`, `rejectedAndWhy` and `oneNumber` are null. */
+            hidden: {
+                reason: string;
+                role: components["schemas"]["ModerationRole"];
+                /** Format: date-time */
+                at: string;
+            } | null;
         };
         /**
          * @example {
@@ -2955,7 +3739,8 @@ export interface components {
          *       },
          *       "excerpt": "دکمهٔ شروع زیر تصویر گم می‌شود؛ بالاتر ببرش.",
          *       "status": "accepted",
-         *       "recheckOn": null
+         *       "recheckOn": null,
+         *       "hidden": null
          *     }
          */
         ActedOnItem: {
@@ -2965,6 +3750,13 @@ export interface components {
             excerpt: string;
             status: components["schemas"]["ResponseStatus"];
             recheckOn: components["schemas"]["DateOnly"] | null;
+            /** @description Set when moderation hid the feedback this item points to: the reason, the role that acted and when. While set, `excerpt` is empty. */
+            hidden: {
+                reason: string;
+                role: components["schemas"]["ModerationRole"];
+                /** Format: date-time */
+                at: string;
+            } | null;
         };
         /** @enum {string} */
         ResponseStatus: "accepted" | "rejected" | "testing";
@@ -2973,6 +3765,8 @@ export interface components {
          * @example 2026-10-27
          */
         DateOnly: string;
+        /** @enum {string} */
+        ModerationRole: "admin" | "moderator";
         /** @enum {string} */
         ItemVisibility: "inherit" | "members" | "public";
         CreatePostRequest: components["schemas"]["CreateWipPostRequest"] | components["schemas"]["CreateUpdatePostRequest"];
@@ -3035,7 +3829,8 @@ export interface components {
          *               },
          *               "excerpt": "دکمهٔ شروع زیر تصویر گم می‌شود؛ بالاتر ببرش.",
          *               "status": "accepted",
-         *               "recheckOn": null
+         *               "recheckOn": null,
+         *               "hidden": null
          *             },
          *             {
          *               "feedbackId": "0199f1a2-7c3e-7a10-8000-000000000205",
@@ -3045,7 +3840,8 @@ export interface components {
          *               },
          *               "excerpt": "ورود با تلگرام را امتحان کردم و دو بار از من کد خواست.",
          *               "status": "testing",
-         *               "recheckOn": "2026-11-15"
+         *               "recheckOn": "2026-11-15",
+         *               "hidden": null
          *             }
          *           ],
          *           "rejectedAndWhy": "صفحهٔ اول را کوتاه نکردم؛ چند نفر از اولین کاربران همین مثال‌ها را خواستند.",
@@ -3055,7 +3851,8 @@ export interface components {
          *           "isPublic": true,
          *           "createdAt": "2026-10-27T10:00:00.000Z",
          *           "editedAt": null,
-         *           "editableUntil": null
+         *           "editableUntil": null,
+         *           "hidden": null
          *         },
          *         {
          *           "id": "0199f1a2-7c3e-7a10-8000-000000000101",
@@ -3090,7 +3887,8 @@ export interface components {
          *           "isPublic": false,
          *           "createdAt": "2026-10-15T09:00:00.000Z",
          *           "editedAt": null,
-         *           "editableUntil": null
+         *           "editableUntil": null,
+         *           "hidden": null
          *         }
          *       ],
          *       "nextCursor": null
@@ -3135,7 +3933,8 @@ export interface components {
          *         "isPublic": false,
          *         "createdAt": "2026-10-15T09:00:00.000Z",
          *         "editedAt": null,
-         *         "editableUntil": null
+         *         "editableUntil": null,
+         *         "hidden": null
          *       },
          *       "feedback": [
          *         {
@@ -3172,7 +3971,8 @@ export interface components {
          *             "answeredInDays": null
          *           },
          *           "response": null,
-         *           "replies": []
+         *           "replies": [],
+         *           "hidden": null
          *         },
          *         {
          *           "id": "0199f1a2-7c3e-7a10-8000-000000000201",
@@ -3208,7 +4008,8 @@ export interface components {
          *             "answeredInDays": null
          *           },
          *           "response": null,
-         *           "replies": []
+         *           "replies": [],
+         *           "hidden": null
          *         },
          *         {
          *           "id": "0199f1a2-7c3e-7a10-8000-000000000203",
@@ -3256,7 +4057,8 @@ export interface components {
          *             "editedAt": null,
          *             "editableUntil": null
          *           },
-         *           "replies": []
+         *           "replies": [],
+         *           "hidden": null
          *         },
          *         {
          *           "id": "0199f1a2-7c3e-7a10-8000-000000000204",
@@ -3314,9 +4116,11 @@ export interface components {
          *               "body": "ممنونم که توضیح دادی؛ دلیلت برایم روشن است.",
          *               "createdAt": "2026-10-23T12:00:00.000Z",
          *               "editedAt": null,
-         *               "editableUntil": null
+         *               "editableUntil": null,
+         *               "hidden": null
          *             }
-         *           ]
+         *           ],
+         *           "hidden": null
          *         },
          *         {
          *           "id": "0199f1a2-7c3e-7a10-8000-000000000205",
@@ -3364,7 +4168,8 @@ export interface components {
          *             "editedAt": null,
          *             "editableUntil": null
          *           },
-         *           "replies": []
+         *           "replies": [],
+         *           "hidden": null
          *         }
          *       ]
          *     }
@@ -3430,9 +4235,11 @@ export interface components {
          *           "body": "ممنونم که توضیح دادی؛ دلیلت برایم روشن است.",
          *           "createdAt": "2026-10-23T12:00:00.000Z",
          *           "editedAt": null,
-         *           "editableUntil": null
+         *           "editableUntil": null,
+         *           "hidden": null
          *         }
-         *       ]
+         *       ],
+         *       "hidden": null
          *     }
          */
         FeedbackItem: {
@@ -3453,6 +4260,13 @@ export interface components {
             responseState: components["schemas"]["ResponseState"];
             response: components["schemas"]["Response"] | null;
             replies: components["schemas"]["Reply"][];
+            /** @description Set when moderation hid this feedback: the reason, the role that acted and when. While set, `body` is empty. The owner's `response` stays, and each reply carries its own mark. */
+            hidden: {
+                reason: string;
+                role: components["schemas"]["ModerationRole"];
+                /** Format: date-time */
+                at: string;
+            } | null;
         };
         /**
          * @example {
@@ -3521,7 +4335,8 @@ export interface components {
          *       "body": "ممنونم که توضیح دادی؛ دلیلت برایم روشن است.",
          *       "createdAt": "2026-10-23T12:00:00.000Z",
          *       "editedAt": null,
-         *       "editableUntil": null
+         *       "editableUntil": null,
+         *       "hidden": null
          *     }
          */
         Reply: {
@@ -3535,6 +4350,13 @@ export interface components {
             editedAt: string | null;
             /** Format: date-time */
             editableUntil: string | null;
+            /** @description Set when moderation hid this reply: the reason, the role that acted and when. While set, `body` is empty. */
+            hidden: {
+                reason: string;
+                role: components["schemas"]["ModerationRole"];
+                /** Format: date-time */
+                at: string;
+            } | null;
         };
         EditPostRequest: components["schemas"]["EditWipPostRequest"] | components["schemas"]["EditUpdatePostRequest"];
         EditWipPostRequest: {
@@ -3617,7 +4439,8 @@ export interface components {
          *             "answeredInDays": null
          *           },
          *           "response": null,
-         *           "replies": []
+         *           "replies": [],
+         *           "hidden": null
          *         },
          *         {
          *           "id": "0199f1a2-7c3e-7a10-8000-000000000202",
@@ -3653,7 +4476,8 @@ export interface components {
          *             "answeredInDays": null
          *           },
          *           "response": null,
-         *           "replies": []
+         *           "replies": [],
+         *           "hidden": null
          *         },
          *         {
          *           "id": "0199f1a2-7c3e-7a10-8000-000000000203",
@@ -3701,7 +4525,8 @@ export interface components {
          *             "editedAt": null,
          *             "editableUntil": null
          *           },
-         *           "replies": []
+         *           "replies": [],
+         *           "hidden": null
          *         },
          *         {
          *           "id": "0199f1a2-7c3e-7a10-8000-000000000204",
@@ -3759,9 +4584,11 @@ export interface components {
          *               "body": "ممنونم که توضیح دادی؛ دلیلت برایم روشن است.",
          *               "createdAt": "2026-10-23T12:00:00.000Z",
          *               "editedAt": null,
-         *               "editableUntil": null
+         *               "editableUntil": null,
+         *               "hidden": null
          *             }
-         *           ]
+         *           ],
+         *           "hidden": null
          *         },
          *         {
          *           "id": "0199f1a2-7c3e-7a10-8000-000000000205",
@@ -3809,7 +4636,8 @@ export interface components {
          *             "editedAt": null,
          *             "editableUntil": null
          *           },
-         *           "replies": []
+         *           "replies": [],
+         *           "hidden": null
          *         }
          *       ],
          *       "nextCursor": null
@@ -4159,7 +4987,8 @@ export interface components {
          *           "author": {
          *             "handle": "arash",
          *             "displayName": "آرش کاظمی"
-         *           }
+         *           },
+         *           "hidden": null
          *         },
          *         {
          *           "id": "0199f1a2-7c3e-7a10-8000-000000000204",
@@ -4168,7 +4997,8 @@ export interface components {
          *           "author": {
          *             "handle": "niloufar",
          *             "displayName": "نیلوفر صادقی"
-         *           }
+         *           },
+         *           "hidden": null
          *         }
          *       ],
          *       "posts": [
@@ -4228,7 +5058,8 @@ export interface components {
          *       "author": {
          *         "handle": "arash",
          *         "displayName": "آرش کاظمی"
-         *       }
+         *       },
+         *       "hidden": null
          *     }
          */
         CaseFeedback: {
@@ -4238,6 +5069,13 @@ export interface components {
             postId: string;
             excerpt: string;
             author: components["schemas"]["MemberRef"];
+            /** @description Set when moderation hid this feedback: the reason, the role that acted and when. While set, `excerpt` is empty. */
+            hidden: {
+                reason: string;
+                role: components["schemas"]["ModerationRole"];
+                /** Format: date-time */
+                at: string;
+            } | null;
         };
         /**
          * @example {
@@ -4298,7 +5136,8 @@ export interface components {
          *               "author": {
          *                 "handle": "arash",
          *                 "displayName": "آرش کاظمی"
-         *               }
+         *               },
+         *               "hidden": null
          *             },
          *             {
          *               "id": "0199f1a2-7c3e-7a10-8000-000000000204",
@@ -4307,7 +5146,8 @@ export interface components {
          *               "author": {
          *                 "handle": "niloufar",
          *                 "displayName": "نیلوفر صادقی"
-         *               }
+         *               },
+         *               "hidden": null
          *             }
          *           ],
          *           "posts": [
@@ -4827,6 +5667,291 @@ export interface components {
             /** Format: date-time */
             redeemedAt: string | null;
             redeemedBy: string | null;
+        };
+        /**
+         * @example {
+         *       "error": {
+         *         "code": "sole_owner",
+         *         "message": "Add another owner to these projects or delete them first",
+         *         "details": {
+         *           "projects": [
+         *             "daftar"
+         *           ]
+         *         }
+         *       }
+         *     }
+         */
+        DeleteMeConflict: {
+            error: {
+                code: string;
+                message: string;
+                /** @description Only for `sole_owner`: the slugs of the projects this member owns alone that hold work by another member, in ascending order. */
+                details?: {
+                    projects: string[];
+                };
+            };
+        };
+        /**
+         * @example {
+         *       "confirm": "sara"
+         *     }
+         */
+        DeleteMeRequest: {
+            /** @description The member's own handle, typed to confirm the deletion */
+            confirm: string;
+        };
+        /**
+         * @example {
+         *       "id": "0199f1a2-7c3e-7a10-8000-000000000901"
+         *     }
+         */
+        FiledReport: {
+            /** Format: uuid */
+            id: string;
+        };
+        /**
+         * @example {
+         *       "targetKind": "feedback",
+         *       "targetId": "0199f1a2-7c3e-7a10-8000-000000000203",
+         *       "reason": "این پیام به جای نقد، به شخص حمله می‌کند."
+         *     }
+         */
+        FileReportRequest: {
+            targetKind: components["schemas"]["ReportTargetKind"];
+            /** Format: uuid */
+            targetId: string;
+            reason: string;
+        };
+        /**
+         * @example feedback
+         * @enum {string}
+         */
+        ReportTargetKind: "post" | "feedback" | "reply";
+        /**
+         * @example {
+         *       "id": "0199f1a2-7c3e-7a10-8000-000000000801",
+         *       "code": "example-invite-code-not-real",
+         *       "expiresAt": "2026-11-27T10:00:00.000Z"
+         *     }
+         */
+        CreatedInvite: {
+            /** Format: uuid */
+            id: string;
+            code: string;
+            /** Format: date-time */
+            expiresAt: string;
+        };
+        /**
+         * @example {
+         *       "items": [
+         *         {
+         *           "id": "0199f1a2-7c3e-7a10-8000-000000000802",
+         *           "createdAt": "2026-10-28T10:00:00.000Z",
+         *           "expiresAt": "2026-11-27T10:00:00.000Z",
+         *           "status": "redeemed",
+         *           "invitee": {
+         *             "handle": "arash",
+         *             "displayName": "آرش کاظمی"
+         *           }
+         *         },
+         *         {
+         *           "id": "0199f1a2-7c3e-7a10-8000-000000000801",
+         *           "createdAt": "2026-10-20T10:00:00.000Z",
+         *           "expiresAt": "2026-11-19T10:00:00.000Z",
+         *           "status": "open",
+         *           "invitee": null
+         *         }
+         *       ]
+         *     }
+         */
+        MyInviteList: {
+            /** @description The member's invites, newest first. */
+            items: components["schemas"]["MyInvite"][];
+        };
+        /**
+         * @example {
+         *       "id": "0199f1a2-7c3e-7a10-8000-000000000801",
+         *       "createdAt": "2026-10-28T10:00:00.000Z",
+         *       "expiresAt": "2026-11-27T10:00:00.000Z",
+         *       "status": "open",
+         *       "invitee": null
+         *     }
+         */
+        MyInvite: {
+            /** Format: uuid */
+            id: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            expiresAt: string;
+            status: components["schemas"]["InviteStatus"];
+            /** @description The member who joined with this invite; set only when `status` is `redeemed`. */
+            invitee: {
+                handle: string;
+                displayName: string;
+            } | null;
+        };
+        /**
+         * @description `redeemed` once someone joined with it; otherwise `revoked` if the member revoked it; otherwise `expired` once `expiresAt` has passed; otherwise `open`.
+         * @example open
+         * @enum {string}
+         */
+        InviteStatus: "open" | "redeemed" | "expired" | "revoked";
+        /**
+         * @example {
+         *       "items": [
+         *         {
+         *           "id": "0199f1a2-7c3e-7a10-8000-000000000701",
+         *           "action": "hidden",
+         *           "targetKind": "feedback",
+         *           "project": {
+         *             "slug": "daftar",
+         *             "name": "دفتر",
+         *             "owners": [
+         *               {
+         *                 "handle": "sara",
+         *                 "displayName": "سارا رحیمی"
+         *               }
+         *             ]
+         *           },
+         *           "reason": "این پیام به جای نقد، به شخص حمله می‌کند.",
+         *           "role": "moderator",
+         *           "at": "2026-10-29T09:00:00.000Z"
+         *         },
+         *         {
+         *           "id": "0199f1a2-7c3e-7a10-8000-000000000702",
+         *           "action": "role_granted",
+         *           "targetKind": "role",
+         *           "project": null,
+         *           "reason": "برای مدیریت گزارش‌ها",
+         *           "role": "moderator",
+         *           "at": "2026-10-28T09:00:00.000Z"
+         *         }
+         *       ],
+         *       "nextCursor": null
+         *     }
+         */
+        ModerationLogPage: {
+            items: components["schemas"]["ModerationLogEntry"][];
+            nextCursor: string | null;
+        };
+        /**
+         * @description The community's moderation log. It never names who acted. For `hidden` and `restored`, `role` is the acting role; for role events it is the role granted or revoked.
+         * @example {
+         *       "id": "0199f1a2-7c3e-7a10-8000-000000000701",
+         *       "action": "hidden",
+         *       "targetKind": "feedback",
+         *       "project": {
+         *         "slug": "daftar",
+         *         "name": "دفتر",
+         *         "owners": [
+         *           {
+         *             "handle": "sara",
+         *             "displayName": "سارا رحیمی"
+         *           }
+         *         ]
+         *       },
+         *       "reason": "این پیام به جای نقد، به شخص حمله می‌کند.",
+         *       "role": "moderator",
+         *       "at": "2026-10-29T09:00:00.000Z"
+         *     }
+         */
+        ModerationLogEntry: {
+            /** Format: uuid */
+            id: string;
+            action: components["schemas"]["ModerationAction"];
+            targetKind: components["schemas"]["ModerationTargetKind"];
+            /** @description The project the item belongs to; null for role events. */
+            project: {
+                slug: string;
+                name: string;
+                owners: components["schemas"]["MemberRef"][];
+            } | null;
+            reason: string;
+            role: components["schemas"]["ModerationRole"];
+            /** Format: date-time */
+            at: string;
+        };
+        /**
+         * @example hidden
+         * @enum {string}
+         */
+        ModerationAction: "hidden" | "restored" | "role_granted" | "role_revoked";
+        /**
+         * @example feedback
+         * @enum {string}
+         */
+        ModerationTargetKind: "post" | "feedback" | "reply" | "role";
+        /**
+         * @example {
+         *       "items": [
+         *         {
+         *           "provider": "telegram",
+         *           "connectedAt": "2026-10-20T10:00:00.000Z",
+         *           "lastUsedAt": "2026-12-07T09:00:00.000Z",
+         *           "address": null
+         *         },
+         *         {
+         *           "provider": "email",
+         *           "connectedAt": "2026-11-02T10:00:00.000Z",
+         *           "lastUsedAt": "2026-11-02T10:00:00.000Z",
+         *           "address": "sara@example.test"
+         *         }
+         *       ]
+         *     }
+         */
+        IdentityList: {
+            items: components["schemas"]["IdentitySummary"][];
+        };
+        /**
+         * @description `address` is the email address for `email` and null for `telegram`.
+         * @example {
+         *       "provider": "email",
+         *       "connectedAt": "2026-11-02T10:00:00.000Z",
+         *       "lastUsedAt": "2026-11-02T10:00:00.000Z",
+         *       "address": "sara@example.test"
+         *     }
+         */
+        IdentitySummary: {
+            provider: components["schemas"]["IdentityProvider"];
+            /** Format: date-time */
+            connectedAt: string;
+            /** Format: date-time */
+            lastUsedAt: string;
+            address: string | null;
+        };
+        /**
+         * @example email
+         * @enum {string}
+         */
+        IdentityProvider: "telegram" | "email";
+        /**
+         * @example {
+         *       "address": "sara@example.test"
+         *     }
+         */
+        EmailAddressRequest: {
+            /** Format: email */
+            address: string;
+        };
+        /**
+         * @example {
+         *       "code": "123456"
+         *     }
+         */
+        EmailCodeRequest: {
+            code: string;
+        };
+        /**
+         * @example {
+         *       "address": "sara@example.test",
+         *       "code": "123456"
+         *     }
+         */
+        EmailSignInVerifyRequest: {
+            /** Format: email */
+            address: string;
+            code: string;
         };
     };
     responses: never;
