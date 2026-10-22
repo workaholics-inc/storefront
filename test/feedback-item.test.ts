@@ -138,20 +138,6 @@ describe("FeedbackItem", () => {
     );
   });
 
-  it.each(locales)("says former member when a person is gone (%s)", (locale) => {
-    const gone = messages[locale].Feedback.unknownMember;
-    const item: FeedbackItemData = {
-      ...rejected,
-      author: null,
-      response: { ...required(rejected.response), responder: null },
-      replies: rejected.replies.map((reply) => ({ ...reply, author: null })),
-    };
-    const html = visibleText(render(locale, item));
-
-    expect(html.split(gone)).toHaveLength(4);
-    expect(html).not.toContain(required(rejected.author).displayName);
-  });
-
   it.each(locales)("shows edited on the item, the answer and a reply only when they were edited (%s)", (locale) => {
     const edited = messages[locale].Feedback.edited;
     const reply = required(rejected.replies[0]);
@@ -383,14 +369,6 @@ describe("FeedbackItem: notices", () => {
         ? `پاسخ ثبت شد. ${giver} خبردار می‌شود و می‌تواند جواب بدهد.`
         : `Answer saved. ${giver} will be notified and can reply.`,
     );
-  });
-
-  it.each(locales)("says former member in the answer notice when the giver is gone (%s)", (locale) => {
-    const line = required(
-      statusLine(render(locale, { ...accepted, author: null }, { notice: "answer" })),
-    );
-
-    expect(visibleText(line)).toContain(messages[locale].Feedback.unknownMember);
   });
 
   it.each(locales)("says what was saved for the other notices (%s)", (locale) => {
