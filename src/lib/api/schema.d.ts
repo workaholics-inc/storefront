@@ -2636,7 +2636,7 @@ export interface components {
             displayName: string;
             bio: string;
             links: components["schemas"]["Link"][];
-            invitedBy: components["schemas"]["MemberRef"];
+            invitedBy: components["schemas"]["MemberRef"] | null;
             /** Format: date-time */
             joinedAt: string;
         };
@@ -2660,7 +2660,7 @@ export interface components {
         MemberRef: {
             handle: string;
             displayName: string;
-        } | null;
+        };
         /**
          * @example {
          *       "code": "4f8a1c2e9b7d",
@@ -2964,7 +2964,7 @@ export interface components {
             author: components["schemas"]["MemberRef"];
             excerpt: string;
             status: components["schemas"]["ResponseStatus"];
-            recheckOn: components["schemas"]["DateOnly"];
+            recheckOn: components["schemas"]["DateOnly"] | null;
         };
         /** @enum {string} */
         ResponseStatus: "accepted" | "rejected" | "testing";
@@ -2972,7 +2972,7 @@ export interface components {
          * Format: date
          * @example 2026-10-27
          */
-        DateOnly: string | null;
+        DateOnly: string;
         /** @enum {string} */
         ItemVisibility: "inherit" | "members" | "public";
         CreatePostRequest: components["schemas"]["CreateWipPostRequest"] | components["schemas"]["CreateUpdatePostRequest"];
@@ -3451,7 +3451,7 @@ export interface components {
             /** Format: date-time */
             editableUntil: string | null;
             responseState: components["schemas"]["ResponseState"];
-            response: components["schemas"]["Response"];
+            response: components["schemas"]["Response"] | null;
             replies: components["schemas"]["Reply"][];
         };
         /**
@@ -3502,7 +3502,7 @@ export interface components {
             id: string;
             status: components["schemas"]["ResponseStatus"];
             reason: string;
-            recheckOn: components["schemas"]["DateOnly"];
+            recheckOn: components["schemas"]["DateOnly"] | null;
             responder: components["schemas"]["MemberRef"];
             /** Format: date-time */
             createdAt: string;
@@ -3510,7 +3510,7 @@ export interface components {
             editedAt: string | null;
             /** Format: date-time */
             editableUntil: string | null;
-        } | null;
+        };
         /**
          * @example {
          *       "id": "0199f1a2-7c3e-7a10-8000-000000000404",
@@ -3955,7 +3955,7 @@ export interface components {
             /** Format: uuid */
             id: string;
             kind: components["schemas"]["NotificationKind"];
-            actor: components["schemas"]["MemberRef"];
+            actor: components["schemas"]["MemberRef"] | null;
             project: {
                 slug: string;
                 name: string;

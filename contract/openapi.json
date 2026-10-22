@@ -149,7 +149,14 @@
             "maxItems": 5
           },
           "invitedBy": {
-            "$ref": "#/components/schemas/MemberRef"
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MemberRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "joinedAt": {
             "type": "string",
@@ -205,10 +212,7 @@
         }
       },
       "MemberRef": {
-        "type": [
-          "object",
-          "null"
-        ],
+        "type": "object",
         "properties": {
           "handle": {
             "type": "string"
@@ -826,7 +830,14 @@
             "$ref": "#/components/schemas/ResponseStatus"
           },
           "recheckOn": {
-            "$ref": "#/components/schemas/DateOnly"
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DateOnly"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
@@ -856,10 +867,7 @@
         ]
       },
       "DateOnly": {
-        "type": [
-          "string",
-          "null"
-        ],
+        "type": "string",
         "format": "date",
         "example": "2026-10-27"
       },
@@ -1429,7 +1437,14 @@
             "$ref": "#/components/schemas/ResponseState"
           },
           "response": {
-            "$ref": "#/components/schemas/Response"
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Response"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "replies": {
             "type": "array",
@@ -1579,10 +1594,7 @@
         }
       },
       "Response": {
-        "type": [
-          "object",
-          "null"
-        ],
+        "type": "object",
         "properties": {
           "id": {
             "type": "string",
@@ -1595,7 +1607,14 @@
             "type": "string"
           },
           "recheckOn": {
-            "$ref": "#/components/schemas/DateOnly"
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DateOnly"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "responder": {
             "$ref": "#/components/schemas/MemberRef"
@@ -2273,7 +2292,14 @@
             "$ref": "#/components/schemas/NotificationKind"
           },
           "actor": {
-            "$ref": "#/components/schemas/MemberRef"
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MemberRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "project": {
             "type": "object",
