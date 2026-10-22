@@ -1,4 +1,5 @@
 import { useTranslations } from "next-intl";
+import type { ReactNode } from "react";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import type { components } from "@/lib/api/schema";
@@ -14,6 +15,7 @@ import { PublicBadge, itemBadge } from "../ui/public-badge";
 type PostData = components["schemas"]["Post"];
 
 const SECTION_HEADING = "m-0 text-label font-bold text-ink-muted";
+const QUIET_SUMMARY = `${buttonClasses({ variant: "quiet", size: "sm" })} list-none [&::-webkit-details-marker]:hidden`;
 
 // One post on a project: work in progress asks for feedback, an update says
 // what changed because of it. The page decides how much of it to show.
@@ -25,6 +27,7 @@ export function Post({
   canGiveFeedback,
   now,
   projectPublic,
+  report,
 }: {
   post: PostData;
   locale: Locale;
@@ -33,9 +36,11 @@ export function Post({
   canGiveFeedback: boolean;
   now: Date;
   projectPublic?: boolean;
+  report?: ReactNode;
 }) {
   const t = useTranslations("Posts");
   const f = useTranslations("Feedback");
+  const tReports = useTranslations("Reports");
   const projectPath = `/projects/${encodeURIComponent(post.project.slug)}`;
   const threadPath = `${projectPath}/posts/${encodeURIComponent(post.id)}`;
   const hidden = post.hidden;
@@ -195,6 +200,12 @@ export function Post({
             </Link>
           ) : null}
         </div>
+      ) : null}
+      {report && hidden === null ? (
+        <details className="flex flex-col gap-3">
+          <summary className={QUIET_SUMMARY}>{tReports("link")}</summary>
+          {report}
+        </details>
       ) : null}
     </article>
   );

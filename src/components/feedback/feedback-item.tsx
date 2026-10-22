@@ -19,6 +19,8 @@ export type FeedbackControls = {
   reply?: ReactNode;
   edit?: ReactNode;
   editReplies?: Record<string, ReactNode>;
+  report?: ReactNode;
+  reportReplies?: Record<string, ReactNode>;
 };
 
 const NOTICE_KEY = {
@@ -64,6 +66,7 @@ export function FeedbackItem({
   controls?: FeedbackControls;
 }) {
   const t = useTranslations("Feedback");
+  const tReports = useTranslations("Reports");
   const bdi = (chunks: ReactNode) => <bdi>{chunks}</bdi>;
   const nameOf = (member: { displayName: string } | null, position: "inline" | "start") =>
     memberName(member, t, position);
@@ -114,6 +117,11 @@ export function FeedbackItem({
       {controls.edit && hidden === null ? (
         <Disclosure summary={t("edit")} summaryClasses={QUIET_SUMMARY}>
           {controls.edit}
+        </Disclosure>
+      ) : null}
+      {controls.report && hidden === null ? (
+        <Disclosure summary={tReports("link")} summaryClasses={QUIET_SUMMARY}>
+          {controls.report}
         </Disclosure>
       ) : null}
 
@@ -173,6 +181,11 @@ export function FeedbackItem({
             {controls.editReplies?.[reply.id] && reply.hidden === null ? (
               <Disclosure summary={t("edit")} summaryClasses={QUIET_SUMMARY}>
                 {controls.editReplies[reply.id]}
+              </Disclosure>
+            ) : null}
+            {controls.reportReplies?.[reply.id] && reply.hidden === null ? (
+              <Disclosure summary={tReports("link")} summaryClasses={QUIET_SUMMARY}>
+                {controls.reportReplies[reply.id]}
               </Disclosure>
             ) : null}
           </div>

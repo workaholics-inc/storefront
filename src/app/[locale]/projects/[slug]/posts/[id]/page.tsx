@@ -16,6 +16,7 @@ import {
 import { ReplyForm } from "@/components/feedback/reply-form";
 import { ResponseControl } from "@/components/feedback/response-control";
 import { memberName } from "@/components/member/member-name";
+import { ReportForm, type ReportKind } from "@/components/moderation/report-form";
 import { Post } from "@/components/post/post";
 import { PublicPost } from "@/components/post/public-post";
 import { VisibilityForm } from "@/components/post/visibility-form";
@@ -39,6 +40,7 @@ import {
   editFeedback,
   editReply,
   editResponse,
+  fileReport,
   giveFeedback,
   reply,
   respond,
@@ -238,6 +240,15 @@ export default async function PostThreadPage({
   const choices = recheckChoices(now, locale);
   const threadPath = `/projects/${encodeURIComponent(post.project.slug)}/posts/${encodeURIComponent(post.id)}`;
 
+  const reportForm = (kind: ReportKind, targetId: string) => (
+    <ReportForm
+      idPrefix={`report-${kind}-${targetId}`}
+      action={fileReport.bind(null, locale, slug, id, kind, targetId)}
+      kind={kind}
+      reasonMax={LIMITS.reportReasonMax}
+    />
+  );
+
   const renderItem = (item: FeedbackItemData) => {
     const response = item.response;
     const giverName = memberName(item.author, t);
@@ -305,6 +316,15 @@ export default async function PostThreadPage({
       );
     }
     if (Object.keys(editReplies).length > 0) controls.editReplies = editReplies;
+    if (item.hidden === null && !isGiver(item)) {
+      controls.report = reportForm("feedback", item.id);
+    }
+    const reportReplies: Record<string, ReactNode> = {};
+    for (const entry of item.replies) {
+      if (entry.hidden !== null || entry.author?.handle === me.handle) continue;
+      reportReplies[entry.id] = reportForm("reply", entry.id);
+    }
+    if (Object.keys(reportReplies).length > 0) controls.reportReplies = reportReplies;
 
     return (
       <FeedbackItem
@@ -344,6 +364,11 @@ export default async function PostThreadPage({
             showThreadLink={false}
             canGiveFeedback={!isOwner && post.hidden === null}
             now={now}
+            report={
+              post.hidden === null && post.author?.handle !== me.handle
+                ? reportForm("post", post.id)
+                : undefined
+            }
           />
           <FeedbackThread
             items={feedback}
