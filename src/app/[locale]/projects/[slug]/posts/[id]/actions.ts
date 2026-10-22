@@ -18,6 +18,7 @@ import {
   LIMITS,
   validateFeedback,
   validateReply,
+  validateReport,
   validateResponse,
   validateVisibility,
 } from "@/lib/validation";
@@ -27,6 +28,12 @@ type Post = components["schemas"]["Post"];
 
 // What the thread shows once the member is back on it.
 type Saved = "feedback" | "answer" | "reply" | "edit";
+
+const REPORT_KINDS = ["post", "feedback", "reply"] as const satisfies readonly components["schemas"]["ReportTargetKind"][];
+
+function isReportKind(value: string): value is (typeof REPORT_KINDS)[number] {
+  return (REPORT_KINDS as readonly string[]).includes(value);
+}
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -244,4 +251,32 @@ export async function setPostVisibility(
   revalidatePath("/[locale]/projects/[slug]", "page");
 
   return { errors: {}, values: { visibility: checked.body.visibility } };
+}
+
+export async function fileReport(
+  locale: string,
+  slug: string,
+  postId: string,
+  targetKind: string,
+  targetId: string,
+  _prev: FormState,
+  form: FormData,
+): Promise<FormState> {
+  const lang = resolveLocale(locale);
+  if (!bound(slug, postId, targetId) || !isReportKind(targetKind)) {
+    return formFailure(form, "not_found");
+  }
+  const checked = validateReport(form);
+  if (!checked.ok) return checked.state;
+
+  const result = await platformCall<components["schemas"]["FiledReport"]>(async () =>
+    (await getPlatformClient()).POST("/v1/reports", {
+      body: { targetKind, targetId, reason: checked.body.reason },
+    }),
+  );
+  if (!result.ok) {
+    return failureState(result, form, lang, `/projects/${slug}/posts/${postId}`);
+  }
+
+  return { errors: {}, values: { report: "sent" } };
 }

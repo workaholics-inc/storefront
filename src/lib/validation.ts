@@ -104,6 +104,7 @@ export const LIMITS = {
   caseFeedbackMin: limit("CreateCaseRequest", "properties", "feedbackIds", "minItems"),
   caseFeedbackMax: limit("CreateCaseRequest", "properties", "feedbackIds", "maxItems"),
   casePostsMax: limit("CreateCaseRequest", "properties", "postIds", "maxItems"),
+  reportReasonMax: limit("FileReportRequest", "properties", "reason", "maxLength"),
 } as const;
 
 export type ValidationResult<T> =
@@ -575,4 +576,15 @@ export function validateReply(form: FormData): ValidationResult<ReplyRequest> {
   if (Object.keys(errors).length > 0) return failure(form, errors);
 
   return { ok: true, body: { body } };
+}
+
+export function validateReport(form: FormData): ValidationResult<{ reason: string }> {
+  const errors: Errors = {};
+
+  const reason = text(form, "reason");
+  checkLength(errors, "reason", reason, LIMITS.reportReasonMax, true);
+
+  if (Object.keys(errors).length > 0) return failure(form, errors);
+
+  return { ok: true, body: { reason } };
 }
