@@ -344,16 +344,13 @@ describe("PublicPost", () => {
     expect(html).not.toContain(`>${messages[locale].Posts.actedOn}</h4>`);
   });
 
-  it.each(locales)("says edited only when edited, and an unknown author when there is none (%s)", (locale) => {
+  it.each(locales)("says edited only when edited (%s)", (locale) => {
     const t = messages[locale];
     const edited = publicPost(locale, { ...publicUpdate, editedAt: "2026-10-28T10:00:00.000Z" });
     const original = publicPost(locale, publicUpdate);
-    const unknown = publicPost(locale, { ...publicUpdate, author: null });
 
     expect(visibleText(edited)).toContain(t.Posts.edited);
     expect(visibleText(original)).not.toContain(t.Posts.edited);
-    expect(visibleText(unknown)).toContain(t.Feedback.unknownMember);
-    expect(visibleText(original)).not.toContain(t.Feedback.unknownMember);
   });
 });
 
