@@ -5,7 +5,9 @@ import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { CreditConsent } from "@/components/case/credit-consent";
 import { CreditList } from "@/components/case/credit-list";
+import { memberName } from "@/components/member/member-name";
 import { buttonClasses } from "@/components/ui/button";
+import { HiddenPlaceholder } from "@/components/ui/hidden-placeholder";
 import { PublicBadge } from "@/components/ui/public-badge";
 import { StateMessage } from "@/components/ui/state-message";
 import { Link } from "@/i18n/navigation";
@@ -88,7 +90,7 @@ async function Byline({ kase, locale }: { kase: CaseText; locale: Locale }) {
     <p className="m-0 flex flex-wrap gap-x-2 text-small text-ink-muted">
       <span>
         {t.rich("by", {
-          name: kase.author ? kase.author.displayName : tFeedback("unknownMember"),
+          name: memberName(kase.author, tFeedback),
           date: formatDate(kase.createdAt, locale),
           n: (chunks) => <bdi>{chunks}</bdi>,
         })}
@@ -384,7 +386,11 @@ export default async function CasePage({
                 <Link
                   href={`${projectPath}/posts/${encodeURIComponent(item.postId)}#feedback-${encodeURIComponent(item.id)}`}
                 >
-                  <bdi>{item.excerpt}</bdi>
+                  {item.hidden !== null ? (
+                    <HiddenPlaceholder hidden={item.hidden} locale={locale} variant="inline" />
+                  ) : (
+                    <bdi>{item.excerpt}</bdi>
+                  )}
                 </Link>
               </li>
             ))}

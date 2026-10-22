@@ -15,6 +15,7 @@ import {
 } from "@/components/feedback/feedback-thread";
 import { ReplyForm } from "@/components/feedback/reply-form";
 import { ResponseControl } from "@/components/feedback/response-control";
+import { memberName } from "@/components/member/member-name";
 import { Post } from "@/components/post/post";
 import { PublicPost } from "@/components/post/public-post";
 import { VisibilityForm } from "@/components/post/visibility-form";
@@ -239,7 +240,7 @@ export default async function PostThreadPage({
 
   const renderItem = (item: FeedbackItemData) => {
     const response = item.response;
-    const giverName = item.author?.displayName ?? t("unknownMember");
+    const giverName = memberName(item.author, t);
     const controls: FeedbackControls = {};
 
     // The owner answers, and reports back on a testing answer with a new one.
@@ -341,7 +342,7 @@ export default async function PostThreadPage({
             locale={locale}
             variant="full"
             showThreadLink={false}
-            canGiveFeedback={!isOwner}
+            canGiveFeedback={!isOwner && post.hidden === null}
             now={now}
           />
           <FeedbackThread
@@ -373,17 +374,19 @@ export default async function PostThreadPage({
                 <h2 className={ASIDE_HEADING}>{t("goodTitle")}</h2>
                 <p className="m-0">{t("goodBody")}</p>
               </section>
-              <section className="flex flex-col gap-3">
-                <h2 className={ASIDE_HEADING}>{t("composerTitle")}</h2>
-                <p className="m-0 text-small text-ink-muted">{t("composerHint")}</p>
-                <FeedbackForm
-                  idPrefix="give"
-                  action={giveFeedback.bind(null, locale, slug, id)}
-                  questions={post.feedbackWanted}
-                  bodyMax={LIMITS.feedbackBodyMax}
-                  mode="give"
-                />
-              </section>
+              {post.hidden === null ? (
+                <section className="flex flex-col gap-3">
+                  <h2 className={ASIDE_HEADING}>{t("composerTitle")}</h2>
+                  <p className="m-0 text-small text-ink-muted">{t("composerHint")}</p>
+                  <FeedbackForm
+                    idPrefix="give"
+                    action={giveFeedback.bind(null, locale, slug, id)}
+                    questions={post.feedbackWanted}
+                    bodyMax={LIMITS.feedbackBodyMax}
+                    mode="give"
+                  />
+                </section>
+              ) : null}
             </>
           )}
         </aside>
