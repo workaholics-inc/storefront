@@ -12,6 +12,7 @@ import type { ActedOnOption } from "../post/post-form";
 import { Button } from "../ui/button";
 import { TextAreaField, TextField } from "../ui/form-field";
 import { Icon } from "../ui/icon";
+import type { ProbationView } from "../ui/probation-notice";
 import { StateMessage } from "../ui/state-message";
 import { VisibilityField } from "../ui/visibility-field";
 
@@ -53,6 +54,7 @@ export function CaseForm({
   feedbackOptions,
   postOptions,
   initial,
+  probation,
 }: {
   action: (state: FormState, form: FormData) => Promise<FormState>;
   mode: "create" | "edit";
@@ -60,6 +62,7 @@ export function CaseForm({
   feedbackOptions: ActedOnOption[];
   postOptions: CasePostOption[];
   initial?: Case;
+  probation?: ProbationView | null;
 }) {
   const t = useTranslations("Cases");
   const tForms = useTranslations("Forms");
@@ -241,6 +244,7 @@ export function CaseForm({
         kind="case"
         value={value("visibility", initial?.visibility ?? "inherit")}
         error={message(state.errors.visibility)}
+        probation={probation ?? null}
       />
 
       <div>

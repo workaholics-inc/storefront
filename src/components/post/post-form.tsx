@@ -11,6 +11,7 @@ import {
 import { Button } from "../ui/button";
 import { TextAreaField, TextField } from "../ui/form-field";
 import { Icon } from "../ui/icon";
+import type { ProbationView } from "../ui/probation-notice";
 import { StateMessage } from "../ui/state-message";
 import { VisibilityField } from "../ui/visibility-field";
 
@@ -59,12 +60,14 @@ export function PostForm({
   limits,
   actedOnOptions,
   initial,
+  probation,
 }: {
   action: (state: FormState, form: FormData) => Promise<FormState>;
   mode: "create" | "edit";
   limits: PostFormLimits;
   actedOnOptions: ActedOnOption[];
   initial?: Post;
+  probation?: ProbationView | null;
 }) {
   const t = useTranslations("Posts");
   const tForms = useTranslations("Forms");
@@ -260,6 +263,7 @@ export function PostForm({
           kind="post"
           value={value("visibility", "inherit")}
           error={message(state.errors.visibility)}
+          probation={probation ?? null}
         />
       ) : null}
       {creating && kind === "update" ? (
