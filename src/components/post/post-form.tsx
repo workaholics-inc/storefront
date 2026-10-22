@@ -71,6 +71,8 @@ export function PostForm({
   const tErrors = useTranslations("Forms.errors");
   const tMessages = useTranslations("Errors");
   const tVisibility = useTranslations("Visibility");
+  const f = useTranslations("Feedback");
+  const tHidden = useTranslations("Hidden");
   const [state, formAction, pending] = useActionState(action, initialFormState);
 
   const submitted = Object.keys(state.values).length > 0;
@@ -207,10 +209,14 @@ export function PostForm({
                     />
                     <span className="flex min-w-0 flex-col gap-1">
                       <span className="text-body text-ink">
-                        <bdi>{option.excerpt}</bdi>
+                        {option.excerpt === "" ? tHidden("title") : <bdi>{option.excerpt}</bdi>}
                       </span>
                       <span className="text-small text-ink-muted">
-                        <bdi>{option.authorName}</bdi>
+                        {option.authorName === "" ? (
+                          f("formerMemberStart")
+                        ) : (
+                          <bdi>{option.authorName}</bdi>
+                        )}
                       </span>
                     </span>
                   </label>
