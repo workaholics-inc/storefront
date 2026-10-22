@@ -3,6 +3,7 @@ import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import type { components } from "@/lib/api/schema";
 import { formatDate } from "@/lib/format";
+import { isFormerMember, memberName } from "../member/member-name";
 import { Icon } from "../ui/icon";
 
 type PublicPostData = components["schemas"]["PublicPost"];
@@ -40,7 +41,11 @@ export function PublicPost({
           {isWip ? t("wip") : t("update")}
         </span>
         <span className="text-small text-ink-muted">
-          {post.author ? <bdi>{post.author.displayName}</bdi> : f("unknownMember")}
+          {post.author && !isFormerMember(post.author) ? (
+            <bdi>{post.author.displayName}</bdi>
+          ) : (
+            memberName(post.author, f, "start")
+          )}
         </span>
         {href ? (
           <Link

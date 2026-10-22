@@ -3,6 +3,7 @@ import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import type { components } from "@/lib/api/schema";
 import { formatDate } from "@/lib/format";
+import { memberName } from "../member/member-name";
 import { PublicBadge, itemBadge } from "../ui/public-badge";
 import { CreditList } from "./credit-list";
 
@@ -54,7 +55,7 @@ export function CaseCard({
       <p className="m-0 flex flex-wrap gap-x-2 text-small text-ink-muted">
         <span>
           {t.rich("by", {
-            name: kase.author ? kase.author.displayName : f("unknownMember"),
+            name: memberName(kase.author, f),
             date: formatDate(kase.createdAt, locale),
             n: (chunks) => <bdi>{chunks}</bdi>,
           })}
