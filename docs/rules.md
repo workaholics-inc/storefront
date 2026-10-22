@@ -89,7 +89,7 @@ The transparency page shows five numbers for the whole community, one set per mo
 ## New members
 
 - A new member can post work, give feedback, answer and reply from the first day.
-- Making a project, a post or a case public, and inviting others, wait until both of these hold: 30 days have passed since joining, and the member has given feedback 3 times. The site shows the date and whether the feedback part is done, never a count.
+- Making a project, a post or a case public, changing work that is already public, and inviting others, wait until both of these hold: 30 days have passed since joining, and the member has given feedback 3 times. The site shows the date and whether the feedback part is done, never a count.
 - Members who joined before these rules were founding members and are not affected.
 
 ## Moderation
