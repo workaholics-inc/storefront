@@ -11,6 +11,7 @@ import {
 import { Button } from "../ui/button";
 import { SelectField, TextField } from "../ui/form-field";
 import { LinksField, type LinkRow } from "../ui/links-field";
+import { ProbationNotice, type ProbationView } from "../ui/probation-notice";
 import { StateMessage } from "../ui/state-message";
 
 type Project = components["schemas"]["Project"];
@@ -30,11 +31,13 @@ export function ProjectForm({
   project,
   linksMax,
   action,
+  probation,
 }: {
   mode: "create" | "update";
   project?: Project;
   linksMax: number;
   action: (state: FormState, form: FormData) => Promise<FormState>;
+  probation?: ProbationView | null;
 }) {
   const t = useTranslations("Projects");
   const tForms = useTranslations("Forms");
@@ -51,6 +54,7 @@ export function ProjectForm({
     ? linksFromValues(state.values, linksMax)
     : (project?.links ?? []);
   const creating = mode === "create";
+  const visibilityValue = value("visibility", project?.visibility ?? "members");
 
   return (
     <form action={formAction} noValidate className="flex max-w-read flex-col gap-6">
@@ -109,13 +113,19 @@ export function ProjectForm({
         hint={t("visibilityHint")}
         defaultValue={value("visibility", project?.visibility ?? "members")}
         error={message(state.errors.visibility)}
+        aria-describedby={probation ? "project-visibility-probation" : undefined}
       >
         {VISIBILITIES.map((visibility) => (
-          <option key={visibility} value={visibility}>
+          // A selected option that is disabled is never submitted, so a project that
+          // is already public keeps its value.
+          <option key={visibility} value={visibility} disabled={probation && visibility === "public" && visibilityValue !== "public" ? true : undefined}>
             {tBadge(visibility)}
           </option>
         ))}
       </SelectField>
+      {probation ? (
+        <ProbationNotice id="project-visibility-probation" probation={probation} />
+      ) : null}
       <LinksField
         links={links}
         errors={state.errors}
