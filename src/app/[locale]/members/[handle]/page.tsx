@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { FeedbackSummary } from "@/components/feedback/feedback-summary";
+import { InviteeList } from "@/components/member/invitee-list";
 import { MemberHead } from "@/components/member/member-head";
 import { ProjectCard } from "@/components/project/project-card";
 import { buttonClasses } from "@/components/ui/button";
@@ -177,6 +178,7 @@ export default async function MemberPage({
         </div>
         <aside>
           <p className="m-0 text-small text-ink-muted">{t("noScores")}</p>
+          <InviteeList invitees={profile.invitees} isSelf={isSelf} />
           {isSelf ? (
             <section
               id="export"
