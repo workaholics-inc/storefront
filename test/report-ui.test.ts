@@ -276,4 +276,19 @@ describe("FeedbackItem: report", () => {
     expect(html).not.toContain("data-report");
     expect(html).not.toContain("<summary");
   });
+
+  it.each(locales)("keeps a visible reply's report form under a hidden item (%s)", (locale) => {
+    // The report follows the reply's own mark, not the item's: the item's form
+    // is gone, the second reply (still visible) keeps its own, after its body.
+    const html = renderItem(
+      locale,
+      { ...item, body: "", hidden },
+      { report: reportControl("feedback"), reportReplies: { [second.id]: reportControl("reply") } },
+    );
+
+    expect(reportFormsIn(html)).toEqual(["reply"]);
+    expect(summaries(html)).toEqual([messages[locale].Reports.link]);
+    expect(html.indexOf('data-report="reply"')).toBeGreaterThan(html.indexOf(second.body));
+    expect(html).not.toContain('data-report="feedback"');
+  });
 });
