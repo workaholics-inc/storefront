@@ -8,6 +8,7 @@ import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { safeNextPath } from "@/lib/cookies";
 import { getCurrentMember, localePath } from "@/lib/session";
+import { readInviteCode } from "@/lib/validation";
 
 const SIGN_IN_ERRORS = [
   "invite_required",
@@ -32,7 +33,11 @@ export default async function SignInPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ next?: string | string[]; error?: string | string[] }>;
+  searchParams: Promise<{
+    next?: string | string[];
+    error?: string | string[];
+    invite?: string | string[];
+  }>;
 }) {
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) {
@@ -43,6 +48,7 @@ export default async function SignInPage({
   const query = await searchParams;
   const next = safeNextPath(query.next);
   const error = signInError(query.error);
+  const invite = readInviteCode(Array.isArray(query.invite) ? query.invite[0] : query.invite);
 
   const current = await getCurrentMember();
   if (current.state === "member") {
@@ -93,6 +99,7 @@ export default async function SignInPage({
           dir="ltr"
           autoComplete="off"
           spellCheck={false}
+          defaultValue={typeof invite === "string" ? invite : undefined}
           className="max-w-xs"
         />
         <Button type="submit" variant="secondary">
