@@ -26,6 +26,8 @@ type GiveFeedbackRequest = Schemas["GiveFeedbackRequest"];
 type EditFeedbackRequest = Schemas["EditFeedbackRequest"];
 type RespondRequest = Schemas["RespondRequest"];
 type ReplyRequest = Schemas["ReplyRequest"];
+type EmailAddressRequest = Schemas["EmailAddressRequest"];
+type EmailCodeRequest = Schemas["EmailCodeRequest"];
 
 function fromContract(...path: string[]): unknown {
   let node: unknown = contract.components.schemas;
@@ -105,6 +107,8 @@ export const LIMITS = {
   caseFeedbackMax: limit("CreateCaseRequest", "properties", "feedbackIds", "maxItems"),
   casePostsMax: limit("CreateCaseRequest", "properties", "postIds", "maxItems"),
   reportReasonMax: limit("FileReportRequest", "properties", "reason", "maxLength"),
+  emailAddressMax: limit("EmailAddressRequest", "properties", "address", "maxLength"),
+  emailCodePattern: pattern("EmailCodeRequest", "properties", "code", "pattern"),
 } as const;
 
 export type ValidationResult<T> =
@@ -587,4 +591,38 @@ export function validateReport(form: FormData): ValidationResult<{ reason: strin
   if (Object.keys(errors).length > 0) return failure(form, errors);
 
   return { ok: true, body: { reason } };
+}
+
+// A light check: one `@`, no whitespace, and a dot after the `@`. The platform
+// checks the format fully and answers 400 for an address it refuses.
+const EMAIL_SHAPE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+export function validateEmailAddress(form: FormData): ValidationResult<EmailAddressRequest> {
+  const address = text(form, "address").toLowerCase();
+
+  const error: FieldError | undefined =
+    address === ""
+      ? { key: "required" }
+      : address.length > LIMITS.emailAddressMax
+        ? { key: "tooLong", max: LIMITS.emailAddressMax }
+        : !EMAIL_SHAPE.test(address)
+          ? { key: "emailInvalid" }
+          : undefined;
+  if (error) return failure(form, { address: error });
+
+  return { ok: true, body: { address } };
+}
+
+export function validateEmailCode(form: FormData): ValidationResult<EmailCodeRequest> {
+  const code = normalizeDigits(text(form, "code"));
+
+  const error: FieldError | undefined =
+    code === ""
+      ? { key: "required" }
+      : !LIMITS.emailCodePattern.test(code)
+        ? { key: "codePattern" }
+        : undefined;
+  if (error) return failure(form, { code: error });
+
+  return { ok: true, body: { code } };
 }
