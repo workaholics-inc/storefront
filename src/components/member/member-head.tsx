@@ -27,6 +27,7 @@ export function MemberHead({
 }) {
   const t = useTranslations("Profile");
   const f = useTranslations("Feedback");
+  const tNav = useTranslations("Nav");
   const initial = Array.from(member.displayName.trim())[0] ?? "";
   const inviter = member.invitedBy;
   const name = inviter ? memberName(inviter, f) : "";
@@ -85,12 +86,24 @@ export function MemberHead({
           </ul>
         ) : null}
         {isSelf ? (
-          <div>
+          <div className="flex flex-wrap gap-2">
             <Link
               href="/me/edit"
               className={buttonClasses({ variant: "secondary", size: "sm" })}
             >
               {t("edit")}
+            </Link>
+            <Link
+              href="/me/invites"
+              className={buttonClasses({ variant: "secondary", size: "sm" })}
+            >
+              {tNav("invites")}
+            </Link>
+            <Link
+              href="/me/account"
+              className={buttonClasses({ variant: "secondary", size: "sm" })}
+            >
+              {tNav("account")}
             </Link>
           </div>
         ) : null}
