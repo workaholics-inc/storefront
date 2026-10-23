@@ -20,6 +20,7 @@ import { ReportForm, type ReportKind } from "@/components/moderation/report-form
 import { Post } from "@/components/post/post";
 import { PublicPost } from "@/components/post/public-post";
 import { VisibilityForm } from "@/components/post/visibility-form";
+import { probationView } from "@/components/ui/probation-notice";
 import { StateMessage } from "@/components/ui/state-message";
 import { Link } from "@/i18n/navigation";
 import { routing, type Locale } from "@/i18n/routing";
@@ -391,6 +392,7 @@ export default async function PostThreadPage({
                 visibility={post.visibility}
                 isPublic={post.isPublic}
                 postKind={post.kind}
+                probation={probationView(me.probation, locale)}
               />
             </>
           ) : (

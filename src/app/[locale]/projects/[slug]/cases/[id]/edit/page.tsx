@@ -7,6 +7,7 @@ import {
 } from "@/components/case/case-form";
 import type { ActedOnOption } from "@/components/post/post-form";
 import { buttonClasses } from "@/components/ui/button";
+import { probationView } from "@/components/ui/probation-notice";
 import { StateMessage } from "@/components/ui/state-message";
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
@@ -182,6 +183,7 @@ export default async function EditCasePage({
         feedbackOptions={feedbackOptions}
         postOptions={postOptions}
         initial={kase}
+        probation={probationView(me.probation, locale)}
       />
     </div>
   );
