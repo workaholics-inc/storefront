@@ -3,6 +3,7 @@ import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { PostForm } from "@/components/post/post-form";
 import { buttonClasses } from "@/components/ui/button";
+import { probationView } from "@/components/ui/probation-notice";
 import { StateMessage } from "@/components/ui/state-message";
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
@@ -114,6 +115,7 @@ export default async function NewPostPage({
           excerpt: Array.from(item.body).slice(0, EXCERPT_LENGTH).join(""),
           authorName: item.author?.displayName ?? tFeedback("unknownMember"),
         }))}
+        probation={probationView(me.probation, locale)}
       />
     </div>
   );
