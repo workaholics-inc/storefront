@@ -4,6 +4,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ProjectForm } from "@/components/project/project-form";
 import { OwnerManager } from "@/components/project/owner-manager";
 import { buttonClasses } from "@/components/ui/button";
+import { probationView } from "@/components/ui/probation-notice";
 import { StateMessage } from "@/components/ui/state-message";
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
@@ -81,6 +82,7 @@ export default async function EditProjectPage({
           project={project}
           linksMax={LIMITS.linksMax}
           action={updateProject.bind(null, locale, slug)}
+          probation={probationView(me.probation, locale)}
         />
       </div>
       <OwnerManager

@@ -121,6 +121,15 @@ export function SiteHeader({
                 <Link href="/me/notifications" className={`${MENU_ITEM} hover:bg-sunken`}>
                   {t("notifications")}
                 </Link>
+                <Link href="/me/invites" className={`${MENU_ITEM} hover:bg-sunken`}>
+                  {t("invites")}
+                </Link>
+                <Link href="/moderation" className={`${MENU_ITEM} hover:bg-sunken`}>
+                  {t("moderationLog")}
+                </Link>
+                <Link href="/me/account" className={`${MENU_ITEM} hover:bg-sunken`}>
+                  {t("account")}
+                </Link>
                 <SignOutForm
                   label={t("signOut")}
                   className={`${MENU_ITEM} hover:bg-sunken`}
@@ -166,6 +175,15 @@ export function SiteHeader({
                   </Link>
                   <Link href="/me/notifications" className={MENU_ITEM}>
                     {t("notifications")}
+                  </Link>
+                  <Link href="/me/invites" className={MENU_ITEM}>
+                    {t("invites")}
+                  </Link>
+                  <Link href="/moderation" className={MENU_ITEM}>
+                    {t("moderationLog")}
+                  </Link>
+                  <Link href="/me/account" className={MENU_ITEM}>
+                    {t("account")}
                   </Link>
                   <SignOutForm label={t("signOut")} className={MENU_ITEM} />
                 </>

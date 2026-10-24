@@ -9,6 +9,7 @@ import {
   type FormState,
 } from "@/lib/form-state";
 import { Button } from "../ui/button";
+import type { ProbationView } from "../ui/probation-notice";
 import { PublicBadge } from "../ui/public-badge";
 import { StateMessage } from "../ui/state-message";
 import { VisibilityField } from "../ui/visibility-field";
@@ -22,11 +23,13 @@ export function VisibilityForm({
   visibility,
   isPublic,
   postKind,
+  probation,
 }: {
   action: (state: FormState, form: FormData) => Promise<FormState>;
   visibility: ItemVisibility;
   isPublic: boolean;
   postKind: "wip" | "update";
+  probation?: ProbationView | null;
 }) {
   const t = useTranslations("Visibility");
   const tForms = useTranslations("Forms");
@@ -73,6 +76,7 @@ export function VisibilityForm({
           kind="post"
           value={state.values.visibility ?? visibility}
           error={message(state.errors.visibility)}
+          probation={probation ?? null}
         />
         <p className="m-0 text-small text-ink-muted">{t("changeAnyTime")}</p>
         {postKind === "update" ? (

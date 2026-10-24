@@ -50,7 +50,10 @@
     "otherLanguage": "فارسی",
     "awaiting": "Awaiting my answer",
     "notifications": "Notifications",
-    "practice": "Practice numbers"
+    "practice": "Practice numbers",
+    "invites": "Invites",
+    "account": "Account",
+    "moderationLog": "Moderation log"
   },
   "Auth": {
     "signInTitle": "Sign in to Workaholics",
@@ -62,7 +65,19 @@
     "continue": "Continue",
     "notMember": "Not a member yet? Membership is by invitation.",
     "readManifesto": "Read the manifesto",
-    "welcome": "Welcome! Complete your handle and bio so others know who you are."
+    "welcome": "Welcome! Complete your handle and bio so others know who you are.",
+    "orEmail": "Or sign in with email",
+    "emailHint": "If you connected an email address to your account, you can sign in with it too. Email can't be used to join; membership is by invitation.",
+    "emailLabel": "Email address",
+    "emailSend": "Send a code",
+    "emailSending": "Sending…",
+    "emailSent": "If this address belongs to a member, a six-digit code is on its way. Enter it here.",
+    "emailFor": "Address: <n>{address}</n>",
+    "codeLabel": "Six-digit code",
+    "codeSubmit": "Sign in",
+    "codeSubmitting": "Signing in…",
+    "emailOther": "Use a different address",
+    "emailUnavailable": "Email sign-in isn't available right now. Sign in with Telegram, or try again later."
   },
   "Errors": {
     "invite_required": "You need an invite code to join. If you are already a member, sign in with the Telegram account you joined with.",
@@ -90,7 +105,19 @@
     "recheck_required": "For “Test it”, say when you'll report back.",
     "acted_on_invalid": "You can only pick answered feedback on this project.",
     "case_feedback_invalid": "You can only pick answered feedback on this project's posts.",
-    "case_post_invalid": "You can only pick this project's updates."
+    "case_post_invalid": "You can only pick this project's updates.",
+    "on_probation": "Until your new-member period is over, you can't make anything public, change public work or invite anyone.",
+    "invite_limit_reached": "You can't create a new invite right now. Once one of your open invites is used, revoked or expires, you can create another.",
+    "invite_not_open": "This invite is no longer open: it was used, it expired or it was already revoked.",
+    "already_reported": "You already reported this, and the moderators have your report.",
+    "confirm_mismatch": "What you typed doesn't match your handle. Type your handle exactly as shown.",
+    "sole_owner": "Your account wasn't deleted: you are the only owner of a project others gave feedback on. Add another owner to it first.",
+    "last_admins": "Your account wasn't deleted: without you the community wouldn't have enough admins. Another admin has to be appointed first.",
+    "last_identity": "This is your only way to sign in, so it can't be removed.",
+    "identity_in_use": "This address is connected to another account. Use a different address.",
+    "identity_already_connected": "An email address is already connected to your account. To connect a different one, remove it first.",
+    "email_code_invalid": "This code is wrong or no longer valid. Ask for a new code and try again.",
+    "sign_in_method_unavailable": "Email isn't available right now. Please try again later."
   },
   "Forms": {
     "save": "Save",
@@ -110,7 +137,9 @@
       "memberNotFound": "No member has this handle.",
       "chooseOne": "Choose one.",
       "dateInvalid": "Pick a date from tomorrow up to six months ahead.",
-      "reasonRequired": "Write the reason. An answer without a reason isn't saved."
+      "reasonRequired": "Write the reason. An answer without a reason isn't saved.",
+      "emailInvalid": "Enter a valid email address.",
+      "codePattern": "The code has six digits."
     }
   },
   "Links": {
@@ -133,7 +162,12 @@
     "projects": "Projects",
     "noProjectsSelf": "You have no projects yet.",
     "noProjects": "No projects yet.",
-    "noScores": "There are no followers or scores here, only work and feedback."
+    "noScores": "There are no followers or scores here, only work and feedback.",
+    "invitedTitle": "Who they invited",
+    "invitedTitleSelf": "Who you invited",
+    "invitedOrder": "In the order they joined, earliest first",
+    "invitedEmpty": "No one has joined with their invite yet.",
+    "invitedEmptySelf": "No one has joined with your invite yet."
   },
   "Projects": {
     "title": "Projects",
@@ -251,7 +285,9 @@
     "givenTitleSelf": "Feedback you gave",
     "givenEmpty": "No feedback given yet.",
     "givenEmptySelf": "You haven't given any feedback yet.",
-    "more": "More"
+    "more": "More",
+    "formerMember": "a former member",
+    "formerMemberStart": "A former member"
   },
   "Answer": {
     "legend": "Your answer to this feedback",
@@ -426,5 +462,132 @@
     "body": "Download everything you created here as one JSON file: your profile, projects, posts, feedback, answers, replies, cases, credits and the invites you made.",
     "download": "Download my data",
     "failed": "The file couldn't be prepared. Try again in a few minutes."
+  },
+  "Hidden": {
+    "title": "Hidden by moderation",
+    "byAdmin": "An admin hid this on {date}.",
+    "byModerator": "A moderator hid this on {date}.",
+    "reason": "Reason: <n>{reason}</n>",
+    "note": "Its text is kept but not shown. Every moderation action is recorded in the moderation log.",
+    "logLink": "See the moderation log"
+  },
+  "Reports": {
+    "link": "Report",
+    "reasonPost": "Why are you reporting this post?",
+    "reasonFeedback": "Why are you reporting this feedback?",
+    "reasonReply": "Why are you reporting this reply?",
+    "reasonHint": "Say which rule it breaks, or what is wrong with it.",
+    "note": "Only moderators and admins see who reported. A report hides nothing by itself; if something is hidden, it appears in the moderation log.",
+    "send": "Send report",
+    "sending": "Sending…",
+    "sent": "Your report is in. The moderators will look at it."
+  },
+  "ModerationLog": {
+    "title": "Moderation log",
+    "intro": "Every time something is hidden or restored, or someone is given or loses the moderator or admin role, it is recorded here, newest first. It shows the role of whoever acted, never their name.",
+    "empty": "No moderation action has been recorded yet.",
+    "older": "Older entries",
+    "actorAdmin": "An admin",
+    "actorModerator": "A moderator",
+    "itemPost": "a post",
+    "itemFeedback": "a piece of feedback",
+    "itemReply": "a reply",
+    "hidden": "{actor} hid {item}.",
+    "restored": "{actor} restored {item}.",
+    "roleAdmin": "admin",
+    "roleModerator": "moderator",
+    "roleGranted": "A member was given the {role} role.",
+    "roleRevoked": "A member's {role} role was removed.",
+    "reason": "Reason: <n>{reason}</n>",
+    "onProject": "On <n>{project}</n>"
+  },
+  "Invites": {
+    "title": "Your invites",
+    "intro": "Membership in Workaholics is by invitation only. Invite someone who shows unfinished work and answers feedback. Their page will say you invited them.",
+    "create": "Create an invite",
+    "creating": "Creating…",
+    "limitNote": "Each member can hold only a few open invites at a time. An invite that is used, revoked or expires frees its place.",
+    "probationNote": "You can invite others once your new-member period is over.",
+    "createdTitle": "Your new invite is ready",
+    "createdOnce": "This code and link are shown only this once. Copy them now and send them to the person you're inviting.",
+    "codeLabel": "Invite code",
+    "linkLabel": "Invite link",
+    "copyCode": "Copy code",
+    "copyLink": "Copy link",
+    "copied": "Copied",
+    "validUntil": "Valid until {date}",
+    "listTitle": "Invites you created",
+    "listOrder": "Newest first",
+    "empty": "You haven't created any invites yet.",
+    "createdOn": "Created on {date}",
+    "status": {
+      "open": "Open",
+      "redeemed": "Used",
+      "expired": "Expired",
+      "revoked": "Revoked"
+    },
+    "joined": "<n>{name}</n> joined with this invite.",
+    "revoke": "Revoke",
+    "revoking": "Revoking…",
+    "revokeHint": "A revoked invite code stops working.",
+    "revoked": "The invite is revoked."
+  },
+  "Probation": {
+    "title": "Your new-member period",
+    "body": "During this period you can post, give feedback, answer feedback and write cases. Making work public, changing public work and inviting others become possible after it.",
+    "dateAhead": "It lasts at least until {date}.",
+    "dateMet": "The required time has passed.",
+    "feedbackPending": "You still need to give feedback on others' work.",
+    "feedbackMet": "You have given the feedback it asks for.",
+    "publicOption": "The “Public” option opens after your new-member period.",
+    "rulesLink": "Membership rules"
+  },
+  "Account": {
+    "title": "Account",
+    "intro": "Your sign-in methods, your data and account deletion.",
+    "deleteTitle": "Delete your account",
+    "deleteHint": "Your personal data is erased, and deletion can't be undone. Feedback and replies others responded to stay, shown as “a former member”.",
+    "deleteLink": "Go to account deletion"
+  },
+  "SignInMethods": {
+    "title": "Sign-in methods",
+    "intro": "You can sign in with any of these. Only you see your email address here.",
+    "telegram": "Telegram",
+    "email": "Email: <n>{address}</n>",
+    "connectedOn": "Connected on {date}",
+    "lastUsed": "Last used on {date}",
+    "telegramNote": "Telegram is the way you joined, and it can't be removed.",
+    "addTitle": "Add email sign-in",
+    "addHint": "If you can't reach Telegram, you can sign in with this address too. We send a six-digit code to it to make sure it's yours.",
+    "addressLabel": "Email address",
+    "sendCode": "Send code",
+    "sendingCode": "Sending…",
+    "codeSent": "We sent a six-digit code to <n>{address}</n>. Enter it here.",
+    "codeLabel": "Six-digit code",
+    "confirm": "Confirm",
+    "confirming": "Confirming…",
+    "otherAddress": "Use a different address",
+    "added": "Email sign-in is added.",
+    "remove": "Remove email sign-in",
+    "removing": "Removing…",
+    "removed": "Email sign-in is removed.",
+    "unavailable": "Adding an email isn't available right now. Please try again later."
+  },
+  "Deletion": {
+    "title": "Delete your account",
+    "intro": "Deleting your account erases your personal data, and you can no longer sign in. There is no way to bring the account back.",
+    "exportFirst": "Download your data before you delete; afterwards you can't.",
+    "keptTitle": "What stays",
+    "kept": "Feedback, answers and replies others responded to, posts others gave feedback on, and cases you wrote in projects that remain all stay, shown as “a former member”.",
+    "erasedTitle": "What is erased",
+    "erased": "Your name, bio, links, sign-in methods, notifications, open invites and your choices about being named in cases are erased, as is everything you wrote that nobody responded to, and the projects you alone own that nobody gave feedback on.",
+    "coOwned": "Projects you own with others just lose you as an owner.",
+    "confirmLabel": "Your handle",
+    "confirmHint": "To confirm, type <n>{handle}</n> exactly as shown.",
+    "submit": "Delete my account for good",
+    "submitting": "Deleting…",
+    "soleOwnerTitle": "These projects need another owner",
+    "soleOwnerBody": "You are the only owner of these projects, and others gave feedback on them. Add another owner to each, then try again.",
+    "done": "Your account has been deleted."
   }
 }

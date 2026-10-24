@@ -175,11 +175,6 @@ describe("Post: work in progress", () => {
     expect(english).toContain("15 Oct");
   });
 
-  it.each(locales)("says former member when the author is gone (%s)", (locale) => {
-    const html = render(locale, { ...wip, author: null });
-
-    expect(visibleText(html)).toContain(messages[locale].Feedback.unknownMember);
-  });
 });
 
 describe("Post: update", () => {
@@ -237,16 +232,17 @@ describe("Post: update", () => {
     );
   });
 
-  it("tags a rejected acted-on item, and says former member for a gone giver", () => {
+  it("tags a rejected acted-on item", () => {
     const rejected: PostData = {
       ...update,
       actedOn: [
         {
           feedbackId: "0199f1a2-7c3e-7a10-8000-000000000204",
-          author: null,
+          author: { handle: "sara", displayName: "Sara" },
           excerpt: "Shorter, please.",
           status: "rejected",
           recheckOn: null,
+          hidden: null,
         },
       ],
     };
@@ -254,7 +250,6 @@ describe("Post: update", () => {
 
     expect(text).toContain("Shorter, please.");
     expect(text).toContain("Rejected");
-    expect(text).toContain("Former member");
   });
 
   it("shows an acted-on testing item without a date with no tag", () => {
@@ -263,10 +258,11 @@ describe("Post: update", () => {
       actedOn: [
         {
           feedbackId: "0199f1a2-7c3e-7a10-8000-000000000205",
-          author: update.actedOn[0]?.author ?? null,
+          author: { handle: "sara", displayName: "Sara" },
           excerpt: "Try it on more people.",
           status: "testing",
           recheckOn: null,
+          hidden: null,
         },
       ],
     };

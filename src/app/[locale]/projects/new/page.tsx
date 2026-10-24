@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ProjectForm } from "@/components/project/project-form";
+import { probationView } from "@/components/ui/probation-notice";
 import { routing } from "@/i18n/routing";
 import { localePath, requireMember } from "@/lib/session";
 import { LIMITS } from "@/lib/validation";
@@ -18,7 +19,7 @@ export default async function NewProjectPage({
   }
   setRequestLocale(locale);
 
-  await requireMember(locale, localePath(locale, "/projects/new"));
+  const me = await requireMember(locale, localePath(locale, "/projects/new"));
   const t = await getTranslations("Projects");
 
   return (
@@ -28,6 +29,7 @@ export default async function NewProjectPage({
         mode="create"
         linksMax={LIMITS.linksMax}
         action={createProject.bind(null, locale)}
+        probation={probationView(me.probation, locale)}
       />
     </div>
   );

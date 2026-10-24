@@ -15,7 +15,9 @@ export type FieldError = {
     | "memberNotFound"
     | "chooseOne"
     | "dateInvalid"
-    | "reasonRequired";
+    | "reasonRequired"
+    | "emailInvalid"
+    | "codePattern";
   max?: number;
   min?: number;
 };
@@ -29,3 +31,15 @@ export type FormState = {
 };
 
 export const initialFormState: FormState = { errors: {}, values: {} };
+
+// The state after a code went out to `address`: the form shows its code step.
+export function codeSent(address: string): FormState {
+  return { errors: {}, values: { step: "code", address } };
+}
+
+// The address a code went out to, or null when the form is still on its first step.
+export function sentAddress(state: FormState): string | null {
+  const { step, address } = state.values;
+
+  return step === "code" && typeof address === "string" && address !== "" ? address : null;
+}

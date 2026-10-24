@@ -149,7 +149,14 @@
             "maxItems": 5
           },
           "invitedBy": {
-            "$ref": "#/components/schemas/MemberRef"
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MemberRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "joinedAt": {
             "type": "string",
@@ -205,10 +212,7 @@
         }
       },
       "MemberRef": {
-        "type": [
-          "object",
-          "null"
-        ],
+        "type": "object",
         "properties": {
           "handle": {
             "type": "string"
@@ -221,6 +225,7 @@
           "handle",
           "displayName"
         ],
+        "description": "`displayName` is empty only for a former member; show the localized phrase and no link",
         "example": {
           "handle": "sara",
           "displayName": "سارا رحیمی"
@@ -271,10 +276,31 @@
             "properties": {
               "telegramDmEnabled": {
                 "type": "boolean"
+              },
+              "probation": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "until": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "feedbackDone": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "until",
+                  "feedbackDone"
+                ],
+                "description": "Set while the member is new: until `until` has passed and `feedbackDone` is true, nothing they write can be made public. Null otherwise."
               }
             },
             "required": [
-              "telegramDmEnabled"
+              "telegramDmEnabled",
+              "probation"
             ]
           }
         ],
@@ -293,7 +319,8 @@
             "displayName": "رضا احمدی"
           },
           "joinedAt": "2026-10-20T10:00:00.000Z",
-          "telegramDmEnabled": false
+          "telegramDmEnabled": false,
+          "probation": null
         }
       },
       "UpdateMeRequest": {
@@ -334,10 +361,18 @@
                 "items": {
                   "$ref": "#/components/schemas/Project"
                 }
+              },
+              "invitees": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/MemberRef"
+                },
+                "description": "The members this member invited, oldest first. A former member appears with an empty `displayName`."
               }
             },
             "required": [
-              "projects"
+              "projects",
+              "invitees"
             ]
           }
         ],
@@ -379,6 +414,12 @@
               "hasUnansweredFeedback": true,
               "createdAt": "2026-10-20T10:00:00.000Z",
               "updatedAt": "2026-10-20T10:00:00.000Z"
+            }
+          ],
+          "invitees": [
+            {
+              "handle": "arash",
+              "displayName": "آرش کاظمی"
             }
           ]
         }
@@ -712,6 +753,30 @@
               "null"
             ],
             "format": "date-time"
+          },
+          "hidden": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "reason": {
+                "type": "string"
+              },
+              "role": {
+                "$ref": "#/components/schemas/ModerationRole"
+              },
+              "at": {
+                "type": "string",
+                "format": "date-time"
+              }
+            },
+            "required": [
+              "reason",
+              "role",
+              "at"
+            ],
+            "description": "Set when moderation hid this post: the reason, the role that acted and when. While set, `body` is empty, `feedbackWanted` and `actedOn` are empty lists, and `selfCritique`, `whatChanged`, `rejectedAndWhy` and `oneNumber` are null."
           }
         },
         "required": [
@@ -731,7 +796,8 @@
           "isPublic",
           "createdAt",
           "editedAt",
-          "editableUntil"
+          "editableUntil",
+          "hidden"
         ],
         "example": {
           "id": "0199f1a2-7c3e-7a10-8000-000000000101",
@@ -766,7 +832,8 @@
           "isPublic": false,
           "createdAt": "2026-10-15T09:00:00.000Z",
           "editedAt": null,
-          "editableUntil": null
+          "editableUntil": null,
+          "hidden": null
         }
       },
       "ProjectRef": {
@@ -826,7 +893,38 @@
             "$ref": "#/components/schemas/ResponseStatus"
           },
           "recheckOn": {
-            "$ref": "#/components/schemas/DateOnly"
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DateOnly"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "hidden": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "reason": {
+                "type": "string"
+              },
+              "role": {
+                "$ref": "#/components/schemas/ModerationRole"
+              },
+              "at": {
+                "type": "string",
+                "format": "date-time"
+              }
+            },
+            "required": [
+              "reason",
+              "role",
+              "at"
+            ],
+            "description": "Set when moderation hid the feedback this item points to: the reason, the role that acted and when. While set, `excerpt` is empty."
           }
         },
         "required": [
@@ -834,7 +932,8 @@
           "author",
           "excerpt",
           "status",
-          "recheckOn"
+          "recheckOn",
+          "hidden"
         ],
         "example": {
           "feedbackId": "0199f1a2-7c3e-7a10-8000-000000000203",
@@ -844,7 +943,8 @@
           },
           "excerpt": "دکمهٔ شروع زیر تصویر گم می‌شود؛ بالاتر ببرش.",
           "status": "accepted",
-          "recheckOn": null
+          "recheckOn": null,
+          "hidden": null
         }
       },
       "ResponseStatus": {
@@ -856,12 +956,16 @@
         ]
       },
       "DateOnly": {
-        "type": [
-          "string",
-          "null"
-        ],
+        "type": "string",
         "format": "date",
         "example": "2026-10-27"
+      },
+      "ModerationRole": {
+        "type": "string",
+        "enum": [
+          "admin",
+          "moderator"
+        ]
       },
       "ItemVisibility": {
         "type": "string",
@@ -1028,7 +1132,8 @@
                   },
                   "excerpt": "دکمهٔ شروع زیر تصویر گم می‌شود؛ بالاتر ببرش.",
                   "status": "accepted",
-                  "recheckOn": null
+                  "recheckOn": null,
+                  "hidden": null
                 },
                 {
                   "feedbackId": "0199f1a2-7c3e-7a10-8000-000000000205",
@@ -1038,7 +1143,8 @@
                   },
                   "excerpt": "ورود با تلگرام را امتحان کردم و دو بار از من کد خواست.",
                   "status": "testing",
-                  "recheckOn": "2026-11-15"
+                  "recheckOn": "2026-11-15",
+                  "hidden": null
                 }
               ],
               "rejectedAndWhy": "صفحهٔ اول را کوتاه نکردم؛ چند نفر از اولین کاربران همین مثال‌ها را خواستند.",
@@ -1048,7 +1154,8 @@
               "isPublic": true,
               "createdAt": "2026-10-27T10:00:00.000Z",
               "editedAt": null,
-              "editableUntil": null
+              "editableUntil": null,
+              "hidden": null
             },
             {
               "id": "0199f1a2-7c3e-7a10-8000-000000000101",
@@ -1083,7 +1190,8 @@
               "isPublic": false,
               "createdAt": "2026-10-15T09:00:00.000Z",
               "editedAt": null,
-              "editableUntil": null
+              "editableUntil": null,
+              "hidden": null
             }
           ],
           "nextCursor": null
@@ -1140,7 +1248,8 @@
             "isPublic": false,
             "createdAt": "2026-10-15T09:00:00.000Z",
             "editedAt": null,
-            "editableUntil": null
+            "editableUntil": null,
+            "hidden": null
           },
           "feedback": [
             {
@@ -1177,7 +1286,8 @@
                 "answeredInDays": null
               },
               "response": null,
-              "replies": []
+              "replies": [],
+              "hidden": null
             },
             {
               "id": "0199f1a2-7c3e-7a10-8000-000000000201",
@@ -1213,7 +1323,8 @@
                 "answeredInDays": null
               },
               "response": null,
-              "replies": []
+              "replies": [],
+              "hidden": null
             },
             {
               "id": "0199f1a2-7c3e-7a10-8000-000000000203",
@@ -1261,7 +1372,8 @@
                 "editedAt": null,
                 "editableUntil": null
               },
-              "replies": []
+              "replies": [],
+              "hidden": null
             },
             {
               "id": "0199f1a2-7c3e-7a10-8000-000000000204",
@@ -1319,9 +1431,11 @@
                   "body": "ممنونم که توضیح دادی؛ دلیلت برایم روشن است.",
                   "createdAt": "2026-10-23T12:00:00.000Z",
                   "editedAt": null,
-                  "editableUntil": null
+                  "editableUntil": null,
+                  "hidden": null
                 }
-              ]
+              ],
+              "hidden": null
             },
             {
               "id": "0199f1a2-7c3e-7a10-8000-000000000205",
@@ -1369,7 +1483,8 @@
                 "editedAt": null,
                 "editableUntil": null
               },
-              "replies": []
+              "replies": [],
+              "hidden": null
             }
           ]
         }
@@ -1429,13 +1544,44 @@
             "$ref": "#/components/schemas/ResponseState"
           },
           "response": {
-            "$ref": "#/components/schemas/Response"
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Response"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "replies": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Reply"
             }
+          },
+          "hidden": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "reason": {
+                "type": "string"
+              },
+              "role": {
+                "$ref": "#/components/schemas/ModerationRole"
+              },
+              "at": {
+                "type": "string",
+                "format": "date-time"
+              }
+            },
+            "required": [
+              "reason",
+              "role",
+              "at"
+            ],
+            "description": "Set when moderation hid this feedback: the reason, the role that acted and when. While set, `body` is empty. The owner's `response` stays, and each reply carries its own mark."
           }
         },
         "required": [
@@ -1451,7 +1597,8 @@
           "editableUntil",
           "responseState",
           "response",
-          "replies"
+          "replies",
+          "hidden"
         ],
         "example": {
           "id": "0199f1a2-7c3e-7a10-8000-000000000204",
@@ -1509,9 +1656,11 @@
               "body": "ممنونم که توضیح دادی؛ دلیلت برایم روشن است.",
               "createdAt": "2026-10-23T12:00:00.000Z",
               "editedAt": null,
-              "editableUntil": null
+              "editableUntil": null,
+              "hidden": null
             }
-          ]
+          ],
+          "hidden": null
         }
       },
       "PostRef": {
@@ -1579,10 +1728,7 @@
         }
       },
       "Response": {
-        "type": [
-          "object",
-          "null"
-        ],
+        "type": "object",
         "properties": {
           "id": {
             "type": "string",
@@ -1595,7 +1741,14 @@
             "type": "string"
           },
           "recheckOn": {
-            "$ref": "#/components/schemas/DateOnly"
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DateOnly"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "responder": {
             "$ref": "#/components/schemas/MemberRef"
@@ -1673,6 +1826,30 @@
               "null"
             ],
             "format": "date-time"
+          },
+          "hidden": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "reason": {
+                "type": "string"
+              },
+              "role": {
+                "$ref": "#/components/schemas/ModerationRole"
+              },
+              "at": {
+                "type": "string",
+                "format": "date-time"
+              }
+            },
+            "required": [
+              "reason",
+              "role",
+              "at"
+            ],
+            "description": "Set when moderation hid this reply: the reason, the role that acted and when. While set, `body` is empty."
           }
         },
         "required": [
@@ -1681,7 +1858,8 @@
           "body",
           "createdAt",
           "editedAt",
-          "editableUntil"
+          "editableUntil",
+          "hidden"
         ],
         "example": {
           "id": "0199f1a2-7c3e-7a10-8000-000000000404",
@@ -1692,7 +1870,8 @@
           "body": "ممنونم که توضیح دادی؛ دلیلت برایم روشن است.",
           "createdAt": "2026-10-23T12:00:00.000Z",
           "editedAt": null,
-          "editableUntil": null
+          "editableUntil": null,
+          "hidden": null
         }
       },
       "EditPostRequest": {
@@ -1936,7 +2115,8 @@
                 "answeredInDays": null
               },
               "response": null,
-              "replies": []
+              "replies": [],
+              "hidden": null
             },
             {
               "id": "0199f1a2-7c3e-7a10-8000-000000000202",
@@ -1972,7 +2152,8 @@
                 "answeredInDays": null
               },
               "response": null,
-              "replies": []
+              "replies": [],
+              "hidden": null
             },
             {
               "id": "0199f1a2-7c3e-7a10-8000-000000000203",
@@ -2020,7 +2201,8 @@
                 "editedAt": null,
                 "editableUntil": null
               },
-              "replies": []
+              "replies": [],
+              "hidden": null
             },
             {
               "id": "0199f1a2-7c3e-7a10-8000-000000000204",
@@ -2078,9 +2260,11 @@
                   "body": "ممنونم که توضیح دادی؛ دلیلت برایم روشن است.",
                   "createdAt": "2026-10-23T12:00:00.000Z",
                   "editedAt": null,
-                  "editableUntil": null
+                  "editableUntil": null,
+                  "hidden": null
                 }
-              ]
+              ],
+              "hidden": null
             },
             {
               "id": "0199f1a2-7c3e-7a10-8000-000000000205",
@@ -2128,7 +2312,8 @@
                 "editedAt": null,
                 "editableUntil": null
               },
-              "replies": []
+              "replies": [],
+              "hidden": null
             }
           ],
           "nextCursor": null
@@ -2273,7 +2458,14 @@
             "$ref": "#/components/schemas/NotificationKind"
           },
           "actor": {
-            "$ref": "#/components/schemas/MemberRef"
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MemberRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "project": {
             "type": "object",
@@ -2815,7 +3007,8 @@
               "author": {
                 "handle": "arash",
                 "displayName": "آرش کاظمی"
-              }
+              },
+              "hidden": null
             },
             {
               "id": "0199f1a2-7c3e-7a10-8000-000000000204",
@@ -2824,7 +3017,8 @@
               "author": {
                 "handle": "niloufar",
                 "displayName": "نیلوفر صادقی"
-              }
+              },
+              "hidden": null
             }
           ],
           "posts": [
@@ -2865,13 +3059,38 @@
           },
           "author": {
             "$ref": "#/components/schemas/MemberRef"
+          },
+          "hidden": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "reason": {
+                "type": "string"
+              },
+              "role": {
+                "$ref": "#/components/schemas/ModerationRole"
+              },
+              "at": {
+                "type": "string",
+                "format": "date-time"
+              }
+            },
+            "required": [
+              "reason",
+              "role",
+              "at"
+            ],
+            "description": "Set when moderation hid this feedback: the reason, the role that acted and when. While set, `excerpt` is empty."
           }
         },
         "required": [
           "id",
           "postId",
           "excerpt",
-          "author"
+          "author",
+          "hidden"
         ],
         "example": {
           "id": "0199f1a2-7c3e-7a10-8000-000000000203",
@@ -2880,7 +3099,8 @@
           "author": {
             "handle": "arash",
             "displayName": "آرش کاظمی"
-          }
+          },
+          "hidden": null
         }
       },
       "CaseCredit": {
@@ -3026,7 +3246,8 @@
                   "author": {
                     "handle": "arash",
                     "displayName": "آرش کاظمی"
-                  }
+                  },
+                  "hidden": null
                 },
                 {
                   "id": "0199f1a2-7c3e-7a10-8000-000000000204",
@@ -3035,7 +3256,8 @@
                   "author": {
                     "handle": "niloufar",
                     "displayName": "نیلوفر صادقی"
-                  }
+                  },
+                  "hidden": null
                 }
               ],
               "posts": [
@@ -4160,6 +4382,528 @@
           "redeemedAt",
           "redeemedBy"
         ]
+      },
+      "DeleteMeConflict": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "details": {
+                "type": "object",
+                "properties": {
+                  "projects": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "projects"
+                ],
+                "description": "Only for `sole_owner`: the slugs of the projects this member owns alone that hold work by another member, in ascending order."
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ]
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "example": {
+          "error": {
+            "code": "sole_owner",
+            "message": "Add another owner to these projects or delete them first",
+            "details": {
+              "projects": [
+                "daftar"
+              ]
+            }
+          }
+        }
+      },
+      "DeleteMeRequest": {
+        "type": "object",
+        "properties": {
+          "confirm": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 30,
+            "description": "The member's own handle, typed to confirm the deletion"
+          }
+        },
+        "required": [
+          "confirm"
+        ],
+        "example": {
+          "confirm": "sara"
+        }
+      },
+      "FiledReport": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "example": {
+          "id": "0199f1a2-7c3e-7a10-8000-000000000901"
+        }
+      },
+      "FileReportRequest": {
+        "type": "object",
+        "properties": {
+          "targetKind": {
+            "$ref": "#/components/schemas/ReportTargetKind"
+          },
+          "targetId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "targetKind",
+          "targetId",
+          "reason"
+        ],
+        "example": {
+          "targetKind": "feedback",
+          "targetId": "0199f1a2-7c3e-7a10-8000-000000000203",
+          "reason": "این پیام به جای نقد، به شخص حمله می‌کند."
+        }
+      },
+      "ReportTargetKind": {
+        "type": "string",
+        "enum": [
+          "post",
+          "feedback",
+          "reply"
+        ],
+        "example": "feedback"
+      },
+      "CreatedInvite": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "expiresAt"
+        ],
+        "example": {
+          "id": "0199f1a2-7c3e-7a10-8000-000000000801",
+          "code": "example-invite-code-not-real",
+          "expiresAt": "2026-11-27T10:00:00.000Z"
+        }
+      },
+      "MyInviteList": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MyInvite"
+            },
+            "description": "The member's invites, newest first."
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "example": {
+          "items": [
+            {
+              "id": "0199f1a2-7c3e-7a10-8000-000000000802",
+              "createdAt": "2026-10-28T10:00:00.000Z",
+              "expiresAt": "2026-11-27T10:00:00.000Z",
+              "status": "redeemed",
+              "invitee": {
+                "handle": "arash",
+                "displayName": "آرش کاظمی"
+              }
+            },
+            {
+              "id": "0199f1a2-7c3e-7a10-8000-000000000801",
+              "createdAt": "2026-10-20T10:00:00.000Z",
+              "expiresAt": "2026-11-19T10:00:00.000Z",
+              "status": "open",
+              "invitee": null
+            }
+          ]
+        }
+      },
+      "MyInvite": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "$ref": "#/components/schemas/InviteStatus"
+          },
+          "invitee": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "handle": {
+                "type": "string"
+              },
+              "displayName": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "handle",
+              "displayName"
+            ],
+            "description": "The member who joined with this invite; set only when `status` is `redeemed`."
+          }
+        },
+        "required": [
+          "id",
+          "createdAt",
+          "expiresAt",
+          "status",
+          "invitee"
+        ],
+        "example": {
+          "id": "0199f1a2-7c3e-7a10-8000-000000000801",
+          "createdAt": "2026-10-28T10:00:00.000Z",
+          "expiresAt": "2026-11-27T10:00:00.000Z",
+          "status": "open",
+          "invitee": null
+        }
+      },
+      "InviteStatus": {
+        "type": "string",
+        "enum": [
+          "open",
+          "redeemed",
+          "expired",
+          "revoked"
+        ],
+        "description": "`redeemed` once someone joined with it; otherwise `revoked` if the member revoked it; otherwise `expired` once `expiresAt` has passed; otherwise `open`.",
+        "example": "open"
+      },
+      "ModerationLogPage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ModerationLogEntry"
+            }
+          },
+          "nextCursor": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor"
+        ],
+        "example": {
+          "items": [
+            {
+              "id": "0199f1a2-7c3e-7a10-8000-000000000701",
+              "action": "hidden",
+              "targetKind": "feedback",
+              "project": {
+                "slug": "daftar",
+                "name": "دفتر",
+                "owners": [
+                  {
+                    "handle": "sara",
+                    "displayName": "سارا رحیمی"
+                  }
+                ]
+              },
+              "reason": "این پیام به جای نقد، به شخص حمله می‌کند.",
+              "role": "moderator",
+              "at": "2026-10-29T09:00:00.000Z"
+            },
+            {
+              "id": "0199f1a2-7c3e-7a10-8000-000000000702",
+              "action": "role_granted",
+              "targetKind": "role",
+              "project": null,
+              "reason": "برای مدیریت گزارش‌ها",
+              "role": "moderator",
+              "at": "2026-10-28T09:00:00.000Z"
+            }
+          ],
+          "nextCursor": null
+        }
+      },
+      "ModerationLogEntry": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "action": {
+            "$ref": "#/components/schemas/ModerationAction"
+          },
+          "targetKind": {
+            "$ref": "#/components/schemas/ModerationTargetKind"
+          },
+          "project": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "slug": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "owners": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/MemberRef"
+                },
+                "minItems": 1
+              }
+            },
+            "required": [
+              "slug",
+              "name",
+              "owners"
+            ],
+            "description": "The project the item belongs to; null for role events."
+          },
+          "reason": {
+            "type": "string"
+          },
+          "role": {
+            "$ref": "#/components/schemas/ModerationRole"
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "action",
+          "targetKind",
+          "project",
+          "reason",
+          "role",
+          "at"
+        ],
+        "description": "The community's moderation log. It never names who acted. For `hidden` and `restored`, `role` is the acting role; for role events it is the role granted or revoked.",
+        "example": {
+          "id": "0199f1a2-7c3e-7a10-8000-000000000701",
+          "action": "hidden",
+          "targetKind": "feedback",
+          "project": {
+            "slug": "daftar",
+            "name": "دفتر",
+            "owners": [
+              {
+                "handle": "sara",
+                "displayName": "سارا رحیمی"
+              }
+            ]
+          },
+          "reason": "این پیام به جای نقد، به شخص حمله می‌کند.",
+          "role": "moderator",
+          "at": "2026-10-29T09:00:00.000Z"
+        }
+      },
+      "ModerationAction": {
+        "type": "string",
+        "enum": [
+          "hidden",
+          "restored",
+          "role_granted",
+          "role_revoked"
+        ],
+        "example": "hidden"
+      },
+      "ModerationTargetKind": {
+        "type": "string",
+        "enum": [
+          "post",
+          "feedback",
+          "reply",
+          "role"
+        ],
+        "example": "feedback"
+      },
+      "IdentityList": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IdentitySummary"
+            }
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "example": {
+          "items": [
+            {
+              "provider": "telegram",
+              "connectedAt": "2026-10-20T10:00:00.000Z",
+              "lastUsedAt": "2026-12-07T09:00:00.000Z",
+              "address": null
+            },
+            {
+              "provider": "email",
+              "connectedAt": "2026-11-02T10:00:00.000Z",
+              "lastUsedAt": "2026-11-02T10:00:00.000Z",
+              "address": "sara@example.test"
+            }
+          ]
+        }
+      },
+      "IdentitySummary": {
+        "type": "object",
+        "properties": {
+          "provider": {
+            "$ref": "#/components/schemas/IdentityProvider"
+          },
+          "connectedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastUsedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "address": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "provider",
+          "connectedAt",
+          "lastUsedAt",
+          "address"
+        ],
+        "description": "`address` is the email address for `email` and null for `telegram`.",
+        "example": {
+          "provider": "email",
+          "connectedAt": "2026-11-02T10:00:00.000Z",
+          "lastUsedAt": "2026-11-02T10:00:00.000Z",
+          "address": "sara@example.test"
+        }
+      },
+      "IdentityProvider": {
+        "type": "string",
+        "enum": [
+          "telegram",
+          "email"
+        ],
+        "example": "email"
+      },
+      "EmailAddressRequest": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "type": "string",
+            "maxLength": 254,
+            "format": "email"
+          }
+        },
+        "required": [
+          "address"
+        ],
+        "example": {
+          "address": "sara@example.test"
+        }
+      },
+      "EmailCodeRequest": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "pattern": "^[0-9]{6}$"
+          }
+        },
+        "required": [
+          "code"
+        ],
+        "example": {
+          "code": "123456"
+        }
+      },
+      "EmailSignInVerifyRequest": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "type": "string",
+            "maxLength": 254,
+            "format": "email"
+          },
+          "code": {
+            "type": "string",
+            "pattern": "^[0-9]{6}$"
+          }
+        },
+        "required": [
+          "address",
+          "code"
+        ],
+        "example": {
+          "address": "sara@example.test",
+          "code": "123456"
+        }
       }
     },
     "parameters": {}
@@ -4393,6 +5137,72 @@
             }
           }
         }
+      },
+      "delete": {
+        "tags": [
+          "members"
+        ],
+        "security": [
+          {
+            "storefrontKey": [],
+            "memberSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteMeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "The account was deleted; this session no longer works"
+          },
+          "400": {
+            "description": "400: validation_failed, confirm_mismatch",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401: storefront_key_invalid, session_required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404: not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "409: sole_owner, last_admins",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteMeConflict"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/v1/members/{handle}": {
@@ -4568,6 +5378,16 @@
               }
             }
           },
+          "403": {
+            "description": "403: on_probation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
           "409": {
             "description": "409: slug_taken",
             "content": {
@@ -4705,7 +5525,7 @@
             }
           },
           "403": {
-            "description": "403: not_project_owner",
+            "description": "403: not_project_owner, on_probation",
             "content": {
               "application/json": {
                 "schema": {
@@ -4972,7 +5792,7 @@
             }
           },
           "403": {
-            "description": "403: not_project_owner",
+            "description": "403: not_project_owner, on_probation",
             "content": {
               "application/json": {
                 "schema": {
@@ -5218,7 +6038,7 @@
             }
           },
           "403": {
-            "description": "403: not_author",
+            "description": "403: not_author, on_probation",
             "content": {
               "application/json": {
                 "schema": {
@@ -6233,7 +7053,7 @@
             }
           },
           "403": {
-            "description": "403: not_project_owner",
+            "description": "403: not_project_owner, on_probation",
             "content": {
               "application/json": {
                 "schema": {
@@ -6551,7 +7371,7 @@
             }
           },
           "403": {
-            "description": "403: not_project_owner",
+            "description": "403: not_project_owner, on_probation",
             "content": {
               "application/json": {
                 "schema": {
@@ -6789,7 +7609,7 @@
             }
           },
           "403": {
-            "description": "403: not_project_owner",
+            "description": "403: not_project_owner, on_probation",
             "content": {
               "application/json": {
                 "schema": {
@@ -7099,6 +7919,679 @@
           },
           "401": {
             "description": "401: storefront_key_invalid, session_required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/reports": {
+      "post": {
+        "tags": [
+          "moderation"
+        ],
+        "security": [
+          {
+            "storefrontKey": [],
+            "memberSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FileReportRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The report was filed for the moderators",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FiledReport"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400: validation_failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401: storefront_key_invalid, session_required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404: not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "409: already_reported",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "429: rate_limited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/invites": {
+      "post": {
+        "tags": [
+          "invites"
+        ],
+        "security": [
+          {
+            "storefrontKey": [],
+            "memberSession": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "The invite was created; its code is shown only in this answer",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatedInvite"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401: storefront_key_invalid, session_required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "403: on_probation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "409: invite_limit_reached",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/me/invites": {
+      "get": {
+        "tags": [
+          "invites"
+        ],
+        "security": [
+          {
+            "storefrontKey": [],
+            "memberSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The caller's invites, newest first",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MyInviteList"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401: storefront_key_invalid, session_required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/invites/{id}": {
+      "delete": {
+        "tags": [
+          "invites"
+        ],
+        "security": [
+          {
+            "storefrontKey": [],
+            "memberSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "0199f1a2-7c3e-7a10-8000-000000000001"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The invite was revoked"
+          },
+          "400": {
+            "description": "400: validation_failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401: storefront_key_invalid, session_required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404: not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "409: invite_not_open",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/moderation/log": {
+      "get": {
+        "tags": [
+          "moderation"
+        ],
+        "security": [
+          {
+            "storefrontKey": [],
+            "memberSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "name": "cursor",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            },
+            "required": false,
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "One page of the moderation log, newest first",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModerationLogPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400: validation_failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401: storefront_key_invalid, session_required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/me/identities": {
+      "get": {
+        "tags": [
+          "identities"
+        ],
+        "security": [
+          {
+            "storefrontKey": [],
+            "memberSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The sign-in methods connected to the caller's account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentityList"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401: storefront_key_invalid, session_required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/me/identities/email": {
+      "post": {
+        "tags": [
+          "identities"
+        ],
+        "security": [
+          {
+            "storefrontKey": [],
+            "memberSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailAddressRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "A code was sent to the address"
+          },
+          "400": {
+            "description": "400: validation_failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401: storefront_key_invalid, session_required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "409: identity_in_use, identity_already_connected",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "429: rate_limited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "503: sign_in_method_unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "identities"
+        ],
+        "security": [
+          {
+            "storefrontKey": [],
+            "memberSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The email address was removed; the caller's remaining sign-in methods",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentityList"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401: storefront_key_invalid, session_required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404: not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "409: last_identity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/me/identities/email/verify": {
+      "post": {
+        "tags": [
+          "identities"
+        ],
+        "security": [
+          {
+            "storefrontKey": [],
+            "memberSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailCodeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The address is connected; the caller's sign-in methods",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentityList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400: validation_failed, email_code_invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401: storefront_key_invalid, session_required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "409: identity_in_use, identity_already_connected",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/email/start": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "security": [
+          {
+            "storefrontKey": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailAddressRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "If a member has this address, a code was sent to it; the answer is the same either way"
+          },
+          "400": {
+            "description": "400: validation_failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401: storefront_key_invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "429: rate_limited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "503: sign_in_method_unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/email/verify": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "security": [
+          {
+            "storefrontKey": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailSignInVerifyRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Signed in; `joined` is always false, because email sign-in never creates an account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SignInResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400: validation_failed, email_code_invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401: storefront_key_invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "503: sign_in_method_unavailable",
             "content": {
               "application/json": {
                 "schema": {

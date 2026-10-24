@@ -3,7 +3,9 @@ import type { ReactNode } from "react";
 import type { Locale } from "@/i18n/routing";
 import type { components } from "@/lib/api/schema";
 import { formatDate } from "@/lib/format";
+import { memberName } from "../member/member-name";
 import { buttonClasses } from "../ui/button";
+import { HiddenPlaceholder } from "../ui/hidden-placeholder";
 import { answerChip, stateChip } from "./chips";
 import { ResponseChip } from "./response-chip";
 
@@ -17,6 +19,8 @@ export type FeedbackControls = {
   reply?: ReactNode;
   edit?: ReactNode;
   editReplies?: Record<string, ReactNode>;
+  report?: ReactNode;
+  reportReplies?: Record<string, ReactNode>;
 };
 
 const NOTICE_KEY = {
@@ -62,9 +66,11 @@ export function FeedbackItem({
   controls?: FeedbackControls;
 }) {
   const t = useTranslations("Feedback");
+  const tReports = useTranslations("Reports");
   const bdi = (chunks: ReactNode) => <bdi>{chunks}</bdi>;
-  const nameOf = (member: { displayName: string } | null) =>
-    member ? member.displayName : t("unknownMember");
+  const nameOf = (member: { displayName: string } | null, position: "inline" | "start") =>
+    memberName(member, t, position);
+  const hidden = item.hidden;
   const response = item.response;
   const chip = response ? answerChip(response) : null;
   const replies = [...item.replies].sort((a, b) =>
@@ -82,14 +88,14 @@ export function FeedbackItem({
           className="m-0 rounded-sm bg-sunken px-3 py-2 text-small text-ink"
         >
           {notice === "answer"
-            ? t.rich("savedAnswer", { name: nameOf(item.author), n: bdi })
+            ? t.rich("savedAnswer", { name: nameOf(item.author, "start"), n: bdi })
             : t(NOTICE_KEY[notice])}
         </p>
       ) : null}
       <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
         <p className={`m-0 ${BYLINE}`}>
           <span className="font-semibold text-ink">
-            <bdi>{nameOf(item.author)}</bdi>
+            <bdi>{nameOf(item.author, "start")}</bdi>
           </span>
           <span>{formatDate(item.createdAt, locale)}</span>
           {item.editedAt ? <span>{t("edited")}</span> : null}
@@ -101,12 +107,21 @@ export function FeedbackItem({
           {t.rich("about", { question: item.question, n: bdi })}
         </p>
       ) : null}
-      <p className="m-0 max-w-read whitespace-pre-line">
-        <bdi>{item.body}</bdi>
-      </p>
-      {controls.edit ? (
+      {hidden !== null ? (
+        <HiddenPlaceholder hidden={hidden} locale={locale} />
+      ) : (
+        <p className="m-0 max-w-read whitespace-pre-line">
+          <bdi>{item.body}</bdi>
+        </p>
+      )}
+      {controls.edit && hidden === null ? (
         <Disclosure summary={t("edit")} summaryClasses={QUIET_SUMMARY}>
           {controls.edit}
+        </Disclosure>
+      ) : null}
+      {controls.report && hidden === null ? (
+        <Disclosure summary={tReports("link")} summaryClasses={QUIET_SUMMARY}>
+          {controls.report}
         </Disclosure>
       ) : null}
 
@@ -122,26 +137,26 @@ export function FeedbackItem({
             <p className={`m-0 ${BYLINE}`}>
               <span>
                 {t.rich("answerBy", {
-                  name: nameOf(response.responder),
+                  name: nameOf(response.responder, "inline"),
                   date: formatDate(response.createdAt, locale),
                   n: bdi,
                 })}
               </span>
               {response.editedAt ? <span>{t("edited")}</span> : null}
             </p>
-            {controls.editAnswer ? (
+            {controls.editAnswer && hidden === null ? (
               <Disclosure summary={t("edit")} summaryClasses={QUIET_SUMMARY}>
                 {controls.editAnswer}
               </Disclosure>
             ) : null}
-            {controls.answer ? (
+            {controls.answer && hidden === null ? (
               <Disclosure summary={t("reportBack")}>{controls.answer}</Disclosure>
             ) : null}
           </div>
         ) : (
           <div className="flex flex-col gap-3 rounded-sm border border-dashed border-rule-strong px-4 py-3 text-small text-ink-muted">
             <p className="m-0">{t("noAnswerYet")}</p>
-            {controls.answer ? (
+            {controls.answer && hidden === null ? (
               <Disclosure summary={t("answer")}>{controls.answer}</Disclosure>
             ) : null}
           </div>
@@ -151,23 +166,32 @@ export function FeedbackItem({
           <div key={reply.id} className="flex flex-col gap-1">
             <p className={`m-0 ${BYLINE}`}>
               <span className="font-semibold text-ink">
-                <bdi>{nameOf(reply.author)}</bdi>
+                <bdi>{nameOf(reply.author, "start")}</bdi>
               </span>
               <span>{formatDate(reply.createdAt, locale)}</span>
               {reply.editedAt ? <span>{t("edited")}</span> : null}
             </p>
-            <p className="m-0 max-w-read whitespace-pre-line">
-              <bdi>{reply.body}</bdi>
-            </p>
-            {controls.editReplies?.[reply.id] ? (
+            {reply.hidden !== null ? (
+              <HiddenPlaceholder hidden={reply.hidden} locale={locale} />
+            ) : (
+              <p className="m-0 max-w-read whitespace-pre-line">
+                <bdi>{reply.body}</bdi>
+              </p>
+            )}
+            {controls.editReplies?.[reply.id] && reply.hidden === null ? (
               <Disclosure summary={t("edit")} summaryClasses={QUIET_SUMMARY}>
                 {controls.editReplies[reply.id]}
+              </Disclosure>
+            ) : null}
+            {controls.reportReplies?.[reply.id] && reply.hidden === null ? (
+              <Disclosure summary={tReports("link")} summaryClasses={QUIET_SUMMARY}>
+                {controls.reportReplies[reply.id]}
               </Disclosure>
             ) : null}
           </div>
         ))}
 
-        {controls.reply ? (
+        {controls.reply && hidden === null ? (
           <Disclosure summary={t("reply")} summaryClasses={QUIET_SUMMARY}>
             {controls.reply}
           </Disclosure>

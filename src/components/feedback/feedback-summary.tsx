@@ -3,6 +3,7 @@ import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import type { components } from "@/lib/api/schema";
 import { formatDate } from "@/lib/format";
+import { HiddenPlaceholder } from "../ui/hidden-placeholder";
 import { answerChip, stateChip } from "./chips";
 import { ResponseChip } from "./response-chip";
 
@@ -40,7 +41,11 @@ export function FeedbackSummary({
           <span>{formatDate(item.createdAt, locale)}</span>
         </span>
         <span className="line-clamp-3 block max-w-read text-ink">
-          <bdi>{item.body}</bdi>
+          {item.hidden !== null ? (
+            <HiddenPlaceholder hidden={item.hidden} locale={locale} variant="inline" />
+          ) : (
+            <bdi>{item.body}</bdi>
+          )}
         </span>
         <span className="flex flex-wrap items-center gap-2">
           <ResponseChip {...stateChip(item.responseState)} />

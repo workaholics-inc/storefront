@@ -1,17 +1,21 @@
 import { useTranslations } from "next-intl";
+import type { ReactNode } from "react";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import type { components } from "@/lib/api/schema";
 import { formatDate } from "@/lib/format";
 import { answerChip } from "../feedback/chips";
 import { ResponseChip } from "../feedback/response-chip";
+import { isFormerMember, memberName } from "../member/member-name";
 import { buttonClasses } from "../ui/button";
+import { HiddenPlaceholder } from "../ui/hidden-placeholder";
 import { Icon } from "../ui/icon";
 import { PublicBadge, itemBadge } from "../ui/public-badge";
 
 type PostData = components["schemas"]["Post"];
 
 const SECTION_HEADING = "m-0 text-label font-bold text-ink-muted";
+const QUIET_SUMMARY = `${buttonClasses({ variant: "quiet", size: "sm" })} list-none [&::-webkit-details-marker]:hidden`;
 
 // One post on a project: work in progress asks for feedback, an update says
 // what changed because of it. The page decides how much of it to show.
@@ -23,6 +27,7 @@ export function Post({
   canGiveFeedback,
   now,
   projectPublic,
+  report,
 }: {
   post: PostData;
   locale: Locale;
@@ -31,13 +36,17 @@ export function Post({
   canGiveFeedback: boolean;
   now: Date;
   projectPublic?: boolean;
+  report?: ReactNode;
 }) {
   const t = useTranslations("Posts");
   const f = useTranslations("Feedback");
+  const tReports = useTranslations("Reports");
   const projectPath = `/projects/${encodeURIComponent(post.project.slug)}`;
   const threadPath = `${projectPath}/posts/${encodeURIComponent(post.id)}`;
+  const hidden = post.hidden;
   const editable =
-    post.editableUntil !== null && new Date(post.editableUntil) > now;
+    post.editableUntil !== null && new Date(post.editableUntil) > now && hidden === null;
+  const giveFeedback = canGiveFeedback && hidden === null;
   const isWip = post.kind === "wip";
   const badge = itemBadge({ isPublic: post.isPublic, projectPublic });
 
@@ -54,7 +63,11 @@ export function Post({
         </span>
         {badge ? <PublicBadge visibility={badge} /> : null}
         <span className="text-small text-ink-muted">
-          {post.author ? <bdi>{post.author.displayName}</bdi> : f("unknownMember")}
+          {post.author && !isFormerMember(post.author) ? (
+            <bdi>{post.author.displayName}</bdi>
+          ) : (
+            memberName(post.author, f, "start")
+          )}
         </span>
         <span className="text-small text-ink-muted">
           {formatDate(post.createdAt, locale)}
@@ -72,13 +85,15 @@ export function Post({
         ) : null}
       </div>
 
-      {post.body !== "" ? (
+      {hidden !== null ? <HiddenPlaceholder hidden={hidden} locale={locale} /> : null}
+
+      {hidden === null && post.body !== "" ? (
         <p className="m-0 max-w-read whitespace-pre-line">
           <bdi>{post.body}</bdi>
         </p>
       ) : null}
 
-      {isWip ? (
+      {hidden !== null ? null : isWip ? (
         <>
           <section className="flex flex-col gap-2 rounded-sm bg-sunken p-4">
             <h4 className={SECTION_HEADING}>{t("feedbackWanted")}</h4>
@@ -126,12 +141,16 @@ export function Post({
                       key={item.feedbackId}
                       className="flex flex-wrap items-baseline gap-x-2 gap-y-1"
                     >
-                      <bdi>{item.excerpt}</bdi>
+                      {item.hidden !== null ? (
+                        <HiddenPlaceholder hidden={item.hidden} locale={locale} variant="inline" />
+                      ) : (
+                        <bdi>{item.excerpt}</bdi>
+                      )}
                       <span className="text-small text-ink-muted">
-                        {item.author ? (
+                        {item.author && !isFormerMember(item.author) ? (
                           <bdi>{item.author.displayName}</bdi>
                         ) : (
-                          f("unknownMember")
+                          memberName(item.author, f, "start")
                         )}
                       </span>
                       {chip ? <ResponseChip {...chip} /> : null}
@@ -160,7 +179,7 @@ export function Post({
         </div>
       )}
 
-      {showThreadLink || canGiveFeedback ? (
+      {showThreadLink || giveFeedback ? (
         <div className="flex flex-wrap items-center justify-between gap-3 border-t border-rule pt-4">
           {showThreadLink ? (
             <Link
@@ -172,7 +191,7 @@ export function Post({
           ) : (
             <span />
           )}
-          {canGiveFeedback ? (
+          {giveFeedback ? (
             <Link
               href={`${threadPath}#give-feedback`}
               className={buttonClasses({ variant: "secondary", size: "sm" })}
@@ -181,6 +200,12 @@ export function Post({
             </Link>
           ) : null}
         </div>
+      ) : null}
+      {report && hidden === null ? (
+        <details className="flex flex-col gap-3">
+          <summary className={QUIET_SUMMARY}>{tReports("link")}</summary>
+          {report}
+        </details>
       ) : null}
     </article>
   );

@@ -5,6 +5,7 @@ import type { components } from "@/lib/api/schema";
 import { formatDate } from "@/lib/format";
 import { buttonClasses } from "../ui/button";
 import { Icon } from "../ui/icon";
+import { MemberLink, memberName } from "./member-name";
 
 type Member = components["schemas"]["Member"];
 
@@ -25,11 +26,12 @@ export function MemberHead({
   isSelf: boolean;
 }) {
   const t = useTranslations("Profile");
+  const f = useTranslations("Feedback");
+  const tNav = useTranslations("Nav");
   const initial = Array.from(member.displayName.trim())[0] ?? "";
   const inviter = member.invitedBy;
-  const [before, after] = inviter
-    ? splitAround(t("invitedBy", { name: inviter.displayName }), inviter.displayName)
-    : ["", ""];
+  const name = inviter ? memberName(inviter, f) : "";
+  const [before, after] = inviter ? splitAround(t("invitedBy", { name }), name) : ["", ""];
 
   return (
     <div className="flex items-start gap-5">
@@ -57,12 +59,10 @@ export function MemberHead({
           {inviter ? (
             <span>
               {before}
-              <Link
-                href={`/members/${encodeURIComponent(inviter.handle)}`}
+              <MemberLink
+                member={inviter}
                 className="font-semibold text-ink no-underline hover:underline"
-              >
-                <bdi>{inviter.displayName}</bdi>
-              </Link>
+              />
               {after}
             </span>
           ) : (
@@ -86,12 +86,24 @@ export function MemberHead({
           </ul>
         ) : null}
         {isSelf ? (
-          <div>
+          <div className="flex flex-wrap gap-2">
             <Link
               href="/me/edit"
               className={buttonClasses({ variant: "secondary", size: "sm" })}
             >
               {t("edit")}
+            </Link>
+            <Link
+              href="/me/invites"
+              className={buttonClasses({ variant: "secondary", size: "sm" })}
+            >
+              {tNav("invites")}
+            </Link>
+            <Link
+              href="/me/account"
+              className={buttonClasses({ variant: "secondary", size: "sm" })}
+            >
+              {tNav("account")}
             </Link>
           </div>
         ) : null}

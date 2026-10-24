@@ -1,6 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { memberName } from "@/components/member/member-name";
 import { Button, buttonClasses } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { StateMessage } from "@/components/ui/state-message";
@@ -103,7 +104,7 @@ export default async function NotificationsPage({
                     <span className={unread ? "font-semibold" : undefined}>
                       {unread ? <span className="sr-only">{t("unread")} </span> : null}
                       {t.rich(notification.kind, {
-                        actor: notification.actor?.displayName ?? tFeedback("unknownMember"),
+                        actor: memberName(notification.actor, tFeedback, "start"),
                         project: notification.project.name,
                         n: (chunks) => <bdi>{chunks}</bdi>,
                       })}
